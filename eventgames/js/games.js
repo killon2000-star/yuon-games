@@ -19,6 +19,22 @@ function Games(api){
     return {land:land,x0:x0,y0:y0,x1:x1,y1:y1,pw:Math.max(40,x1-x0),ph:Math.max(40,y1-y0),w:w,h:h};
   }
   // Portrait: whole figure ~25-30% of viewport height. Landscape: fit play rect with margin.
+  function isResult(){try{return !!(document.body&&document.body.classList.contains('result'))}catch(e){return false}}
+  // On result, keep the capybara fully visible beside (landscape) or above (portrait) the prize card.
+  function resultClear(L, yCap){
+    var x0=L.x0, y0=L.y0, x1=L.x1, y1=yCap!=null?yCap:L.y1, xWant=(x0+x1)/2;
+    if(isResult()){
+      if(L.land){ x0=L.x0+L.pw*0.52; xWant=L.x0+L.pw*0.80; y1=L.y1; }
+      else {
+        var el=document.getElementById('result');
+        if(el && !el.classList.contains('hide')){
+          var top=el.getBoundingClientRect().top;
+          if(top>80) y1=Math.min(y1, top-12);
+        }
+      }
+    }
+    return {x0:x0,y0:y0,x1:x1,y1:y1,xWant:xWant};
+  }
   function sizePlaceCapy(L, st, x0, y0, x1, y1, xWant, footY){
     var box=D.capyBox(st);
     var prefer=L.land? Math.min((y1-y0)*0.90, L.h*0.42) : Math.min((y1-y0)*0.90, L.h*0.28);
@@ -37,11 +53,14 @@ function Games(api){
         var barH=Math.max(32, Math.min(L.land?52:58, L.ph*0.10));
         var gap=12;
         var barY=L.y1-barH;
-        var p=sizePlaceCapy(L, capySt, L.x0, L.y0, L.x1, barY-gap, w*0.5, barY-gap);
+        var R=resultClear(L, isResult()?L.y1:barY-gap);
+        var p=sizePlaceCapy(L, capySt, R.x0, R.y0, R.x1, R.y1, R.xWant, R.y1-4);
         D.drawCapy(c, p.x, p.y, p.s, capySt);
-        var barW=Math.min(L.pw*0.98, 840), barX=(w-barW)/2;
-        var zs=(G.EG&&G.EG.zones)?G.EG.zones('center'):null;
-        D.drawBar(c,barX,barY,barW,barH,s.pos,zs);
+        if(!isResult()){
+          var barW=Math.min(L.pw*0.98, 840), barX=(w-barW)/2;
+          var zs=(G.EG&&G.EG.zones)?G.EG.zones('center'):null;
+          D.drawBar(c,barX,barY,barW,barH,s.pos,zs);
+        }
       }
     },
     target:{
@@ -66,25 +85,30 @@ function Games(api){
         var t=s.thrown?s.tThrow:(performance.now()-s.t0)/1000;
         var tg=s.land||L.targetState(t,s.seed);
         var st=Object.assign({},capySt,{act:s.thrown?'throw':capySt.act,u:s.flying?0.7: (s.hit?1:0), look:0.8});
-        var capyRight=P.land? P.x0+P.pw*0.58 : P.x0+P.pw*0.70;
-        var p=sizePlaceCapy(P, st, P.x0, P.y0, capyRight, P.y1, P.x0+(capyRight-P.x0)*0.48, P.y1-4);
-        var R=Math.min(P.pw,P.ph)*(P.land?0.18:0.16);
-        var tx=P.x0+P.pw*(P.land?0.80:0.74)+tg.x*P.pw*0.10;
-        var ty=P.y0+Math.max(R+8, P.ph*(P.land?0.30:0.24))+tg.y*P.ph*0.08;
-        tx=Math.max(P.x0+R, Math.min(P.x1-R, tx));
-        ty=Math.max(P.y0+R, Math.min(p.y-p.s*p.box.t+R, ty));
-        D.drawTarget(c,tx,ty,R,!!s.hit);
-        var throwU=0;
-        if(s.flying) throwU=Math.min(1,(performance.now()-s.f0)/(L.TARGET_FLIGHT*1000));
-        else if(s.hit) throwU=1;
+        var Rct=resultClear(P, P.y1);
+        var capyLeft=isResult()?Rct.x0:(P.x0);
+        var capyRight=isResult()?Rct.x1:(P.land? P.x0+P.pw*0.58 : P.x0+P.pw*0.70);
+        var xWant=isResult()?Rct.xWant: P.x0+(capyRight-capyLeft)*0.48;
+        var p=sizePlaceCapy(P, st, capyLeft, P.y0, capyRight, Rct.y1, xWant, Rct.y1-4);
         D.drawCapy(c,p.x,p.y,p.s, st);
-        if(s.flying){
-          var u=throwU, gx=p.x+(tx-p.x)*u, gy=p.y-40+(ty-(p.y-40))*u - Math.sin(u*Math.PI)*P.ph*0.18;
-          D.drawGummy(c,gx,gy,1.15,'#ff5b6a',-0.5+u);
-        } else if(!s.thrown){
-          D.drawGummy(c,p.x+p.s*62, p.y-p.s*16, 0.8,'#ff5b6a',0.2);
-        } else if(s.hit){
-          D.drawGummy(c,tx,ty,1.05,'#ff5b6a',0.3);
+        if(!isResult()){
+          var R=Math.min(P.pw,P.ph)*(P.land?0.18:0.16);
+          var tx=P.x0+P.pw*(P.land?0.80:0.74)+tg.x*P.pw*0.10;
+          var ty=P.y0+Math.max(R+8, P.ph*(P.land?0.30:0.24))+tg.y*P.ph*0.08;
+          tx=Math.max(P.x0+R, Math.min(P.x1-R, tx));
+          ty=Math.max(P.y0+R, Math.min(p.y-p.s*p.box.t+R, ty));
+          D.drawTarget(c,tx,ty,R,!!s.hit);
+          var throwU=0;
+          if(s.flying) throwU=Math.min(1,(performance.now()-s.f0)/(L.TARGET_FLIGHT*1000));
+          else if(s.hit) throwU=1;
+          if(s.flying){
+            var u=throwU, gx=p.x+(tx-p.x)*u, gy=p.y-40+(ty-(p.y-40))*u - Math.sin(u*Math.PI)*P.ph*0.18;
+            D.drawGummy(c,gx,gy,1.15,'#ff5b6a',-0.5+u);
+          } else if(!s.thrown){
+            D.drawGummy(c,p.x+p.s*62, p.y-p.s*16, 0.8,'#ff5b6a',0.2);
+          } else if(s.hit){
+            D.drawGummy(c,tx,ty,1.05,'#ff5b6a',0.3);
+          }
         }
       }
     },
@@ -127,9 +151,10 @@ function Games(api){
       result:function(s){return {err:s.err, meta:s.score};},
       draw:function(c,w,h,s,capySt){
         var P=playLayout(w,h);
-        var capyLeft=P.x0+P.pw*0.50;
-        var p=sizePlaceCapy(P, capySt, capyLeft, P.y0, P.x1, P.y1, capyLeft+P.pw*0.32, P.y1-4);
-        var w0=Math.min(capyLeft-P.x0-16, 400), bh=Math.min(48,P.ph*0.08);
+        var R=resultClear(P, P.y1);
+        var capyLeft=isResult()?R.x0: P.x0+P.pw*0.50;
+        var p=sizePlaceCapy(P, capySt, capyLeft, P.y0, P.x1, R.y1, isResult()?R.xWant: capyLeft+P.pw*0.32, R.y1-4);
+        var w0=Math.min((isResult()?P.x0+P.pw*0.50:capyLeft)-P.x0-16, 400), bh=Math.min(48,P.ph*0.08);
         var baseY=P.y1-4, bx=P.x0+w0*0.7;
         var blocks=s.drops.filter(function(d){return !d.miss;}).map(function(d,i){
           return {width:d.width, x:0, col:['#ff8fab','#ffd76a','#9be3b0','#cfd8ff','#ffb347','#ff9a3c','#cfd8ff'][i%7]};
@@ -139,7 +164,7 @@ function Games(api){
           var fy=s.falling? Math.min(1,(performance.now()-s.fallT)/180):0;
           slide={width:s.width, x:s.slideX, col:'#ff8fab', fall:fy};
         }
-        D.drawTower(c,bx,baseY,blocks,w0,bh,slide);
+        if(!isResult()) D.drawTower(c,bx,baseY,blocks,w0,bh,slide);
         D.drawCapy(c, p.x, p.y, p.s, capySt);
       }
     },
@@ -168,7 +193,8 @@ function Games(api){
         if(s.turned){u=Math.min(1,(performance.now()-(s.u0||s.turnAt))/180);}
         var act=s.falseStart?'lose':(!s.turned?'back':(u<1?'turn':(s.done?(capySt.act||'wow'):'wow')));
         var st=Object.assign({},capySt,{act:act,u:u,look:0});
-        var p=sizePlaceCapy(P, st, P.x0, P.y0, P.x1, P.y1, w*0.5, P.y1-4);
+        var R=resultClear(P, P.y1);
+        var p=sizePlaceCapy(P, st, R.x0, R.y0, R.x1, R.y1, R.xWant, R.y1-4);
         D.drawCapy(c,p.x,p.y,p.s, st);
       }
     }

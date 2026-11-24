@@ -237,11 +237,24 @@ function loop(){
     if(done) finish();
   } else {
     if(mode==='title'){
-      // idle capy on play canvas
       var S=GPlay.sizePlay(play), c=S.c,w=S.w,h=S.h;
       c.clearRect(0,0,w,h);
-      var land=w>h*1.15, sc=(land?h*0.55:h*0.44)/110;
-      D.drawCapy(c,w*0.5, land?h*0.78:h*0.76, sc, capyState());
+      var Lyt=GPlay.playLayout(w,h), st=capyState(), box=D.capyBox(st);
+      var y1=Lyt.y1;
+      if(!Lyt.land){
+        ['title','help','go','homeBtn'].forEach(function(id){
+          var el=document.getElementById(id);
+          if(!el||el.classList.contains('hide'))return;
+          var top=el.getBoundingClientRect().top;
+          if(top>40) y1=Math.min(y1, top-12);
+        });
+      }
+      var prefer=Lyt.land? Math.min((y1-Lyt.y0)*0.90, Lyt.h*0.42) : Math.min((y1-Lyt.y0)*0.90, Lyt.h*0.28);
+      var x1=Lyt.land? Lyt.x0+Lyt.pw*0.56 : Lyt.x1;
+      var xWant=Lyt.land? Lyt.x0+Lyt.pw*0.30 : w*0.5;
+      var sc=D.fitCapyInRect(Lyt.x0,Lyt.y0,x1,y1, box, prefer);
+      var pos=D.placeCapyInRect(Lyt.x0,Lyt.y0,x1,y1, box, sc, xWant, y1-4);
+      D.drawCapy(c,pos.x,pos.y,pos.s,st);
     } else {
       GPlay.draw(play, capyState());
     }
@@ -518,11 +531,26 @@ function boot(){
     resetHits:function(){hits=L.resetHits(hits);saveHits(hits);updateHitBadge();},
     startRun:startRun, finish:function(){ /* force */ if(mode!=='run')GPlay.start(GAME); finish(); },
     forceResult:function(err,opt){
+      if(!GPlay.state()) GPlay.start(GAME);
+      var s=GPlay.state();
+      if(s){
+        if(GAME==='center'){s.stopped=true;s.pos=0.5;s.err=err||0;}
+        if(GAME==='target'){s.thrown=true;s.flying=false;s.hit={dist:err||0};s.err=err||0;s.land={x:0,y:0};s.shot=s.hit;}
+        if(GAME==='stack'){
+          var n=L.STACK_N||7, drops=[], i;
+          for(i=0;i<n;i++) drops.push({width:1,x:0,miss:false,perfect:true});
+          s.done=true;s.waiting=false;s.falling=false;s.drops=drops;
+          s.score=L.stackScore(drops); s.err=err||0;
+        }
+        if(GAME==='timing'){s.turned=true;s.done=true;s.falseStart=false;s.err=err||0;s.rt=err||0;s.u0=performance.now()-400;s.turnAt=s.u0;}
+      }
       mode='result'; var a=L.applyAward(GAME,err,cfg,[],opt||{}); lastAward=a; saveCfg(cfg);
       if(a.index===0){L.bumpExact(hits,GAME);saveHits(hits);updateHitBadge(true);showPlus();}
-      renderResult(a,{err:err,meta:opt&&opt.meta,falseStart:opt&&opt.falseStart});
+      var meta=opt&&opt.meta; if(!meta&&s&&s.score) meta=s.score;
+      renderResult(a,{err:err,meta:meta,falseStart:opt&&opt.falseStart});
       burst(a.index===0?'gold':(a.index>0&&a.index<=3?'ok':'soft'));
       document.body.classList.remove('playing'); document.body.classList.add('result'); $('go').classList.add('hide');
+      var play=$('play'); if(play) GPlay.draw(play, capyState());
     },
     showTitle:showTitle, openAdmin:function(bypass){if(bypass&&/[?&](nosw|test)=1/.test(location.search))openAdmin();else showPin()},
     setLang:function(l){if(LANGS.indexOf(l)>=0){lang=l;cfg.lang=l;applyLang()}},
