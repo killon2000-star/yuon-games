@@ -280,6 +280,32 @@ function drawCapy(c,x,y,scale,st){
   c.restore();
 }
 
+function drawStar(c,x,y,r,col){
+  c.save();c.fillStyle=col||'#ffd76a';c.strokeStyle='#b8860b';c.lineWidth=0.4;
+  c.beginPath();
+  for(var i=0;i<5;i++){
+    var a=-Math.PI/2+i*Math.PI*2/5, b=a+Math.PI/5;
+    if(i===0)c.moveTo(x+Math.cos(a)*r,y+Math.sin(a)*r);
+    else c.lineTo(x+Math.cos(a)*r,y+Math.sin(a)*r);
+    c.lineTo(x+Math.cos(b)*r*0.45,y+Math.sin(b)*r*0.45);
+  }
+  c.closePath();c.fill();c.stroke();c.restore();
+}
+function drawSwirlEye(c,x,y,r,t){
+  c.save();
+  c.fillStyle='#fff';E(c,x,y,r,r);c.fill();
+  c.strokeStyle='rgba(80,52,30,.5)';c.lineWidth=0.65;E(c,x,y,r,r);c.stroke();
+  c.translate(x,y);c.rotate((t||0)*4);
+  c.strokeStyle='#3a2416';c.lineWidth=1.4;c.lineCap='round';
+  c.beginPath();
+  for(var a=0;a<Math.PI*2.2;a+=0.2){
+    var rr=r*0.15+r*0.7*(a/(Math.PI*2.2));
+    var px=Math.cos(a)*rr, py=Math.sin(a)*rr;
+    if(a===0)c.moveTo(px,py); else c.lineTo(px,py);
+  }
+  c.stroke();
+  c.restore();
+}
 function drawCapyEye(c,x,y,a,t){
   var look=a.look*3, lookY=a.lookY*2, open=1-a.blink;
   if(a.face==='dizzy'){
@@ -460,13 +486,71 @@ function drawLogo(c,img,cx,y,maxW,maxH){
   c.drawImage(img, cx-w/2, y, w, h);
   return h;
 }
-function scatterSnacks(c,w,h,seed,count){
+
+/* Measure capy local AABB (relative to draw anchor) including props + animation slack. */
+var _capyBoxCache={};
+function measureCapy(st){
+  var pad=180, S=3;
+  var W=pad*2*S, H=pad*2*S;
+  var cv=(typeof document!=='undefined')?document.createElement('canvas'):null;
+  if(!cv) return {l:72,r:102,t:122,b:52};
+  cv.width=W; cv.height=H;
+  var c=cv.getContext('2d');
+  c.clearRect(0,0,W,H);
+  drawCapy(c, pad*S, pad*S, S, st||{});
+  var data=c.getImageData(0,0,W,H).data;
+  var minX=W,minY=H,maxX=0,maxY=0,found=0;
+  for(var i=3,n=data.length;i<n;i+=4){
+    if(data[i]>10){
+      var p=(i/4)|0, x=p%W, y=(p/W)|0;
+      if(x<minX)minX=x; if(x>maxX)maxX=x; if(y<minY)minY=y; if(y>maxY)maxY=y; found=1;
+    }
+  }
+  if(!found) return {l:72,r:102,t:122,b:52};
+  return {l:(pad*S-minX)/S, r:(maxX-pad*S)/S, t:(pad*S-minY)/S, b:(maxY-pad*S)/S};
+}
+function capyBox(st, sampleT){
+  st=st||{};
+  var key=[st.act||'idle', st.crown?1:0, st.snack||'', st.u==null?'':String(Math.round((st.u||0)*10)), st.sweat?1:0, st.flip?1:0].join('|');
+  if(_capyBoxCache[key]) return _capyBoxCache[key];
+  var times=sampleT||[0,0.4,0.85,1.3,2.0,2.8,3.15,4.2,6.3,6.8];
+  var u={l:0,r:0,t:0,b:0};
+  for(var i=0;i<times.length;i++){
+    var b=measureCapy(Object.assign({},st,{t:times[i]}));
+    if(b.l>u.l)u.l=b.l; if(b.r>u.r)u.r=b.r; if(b.t>u.t)u.t=b.t; if(b.b>u.b)u.b=b.b;
+  }
+  u.l+=8; u.r+=8; u.t+=10; u.b+=8;
+  return _capyBoxCache[key]=u;
+}
+function safeRect(w,h,frac){
+  frac=frac==null?0.06:frac;
+  return {x0:w*frac, y0:h*frac, x1:w*(1-frac), y1:h*(1-frac), m:frac, w:w, h:h};
+}
+function fitCapyInRect(x0,y0,x1,y1, box, preferH){
+  var bw=box.l+box.r, bh=box.t+box.b, rw=Math.max(8,x1-x0), rh=Math.max(8,y1-y0);
+  var s=Math.min(rw/bw, rh/bh);
+  if(preferH) s=Math.min(s, preferH/bh);
+  return Math.max(0.2, s);
+}
+function placeCapyInRect(x0,y0,x1,y1, box, scale, xWant, footY){
+  var x=xWant, y=(footY!=null)?footY:(y1-box.b*scale);
+  x=Math.max(x0+box.l*scale, Math.min(x1-box.r*scale, x));
+  y=Math.max(y0+box.t*scale, Math.min(y1-box.b*scale, y));
+  return {x:x,y:y,s:scale,box:box};
+}
+
+function scatterSnacks(c,w,h,seed,count,rect){
   var kinds=['gummy','gummy-yel','gummy-grn','gummy-org','candy','candy-blu','candy-grn','lolly','lolly-blu','chew','chew-pink'];
   var rng=(function(){var s=seed||1;return function(){s=(s*1664525+1013904223)>>>0;return s/4294967296;};})();
+  var x0=rect?rect.x0:w*0.10, y0=rect?rect.y0:h*0.22, x1=rect?rect.x1:w*0.90, y1=rect?rect.y1:h*0.78;
+  var maxS=Math.min(w,h)*0.0016;
   for(var i=0;i<count;i++){
     var k=kinds[(rng()*kinds.length)|0];
-    var x=w*(0.06+rng()*0.88), y=h*(0.18+rng()*0.72);
-    var s=0.7+rng()*1.3, rot=(rng()-0.5)*1.2;
+    var s=0.55+rng()*0.85;
+    var rad=28*s*(w/1080);
+    var x=x0+rad+rng()*Math.max(8,x1-x0-rad*2);
+    var y=y0+rad+rng()*Math.max(8,y1-y0-rad*2);
+    var rot=(rng()-0.5)*1.2;
     drawSnack(c,k,x,y,s*(w/1080),rot);
   }
 }
@@ -476,11 +560,10 @@ function drawKeyart(c,w,h,id,assets){
   assets=assets||{};
   var logo=assets.logo;
   var t=assets.t!=null?assets.t:0.85;
-  drawPastelBg(c,w,h);
-  scatterSnacks(c,w,h, id==='center'?3:id==='target'?5:id==='stack'?7:id==='timing'?9:id==='tensec'?11:13, 10);
   var portrait=h>w*1.2;
-  var capyH = portrait? h*0.42 : h*0.48;
-  var scale = capyH/110;
+  var S=safeRect(w,h,0.075);
+  if(!assets.noBg) drawPastelBg(c,w,h);
+
   var titles={
     launcher:'이벤트 미니게임 모음',
     center:'정중앙 멈추기',
@@ -490,63 +573,123 @@ function drawKeyart(c,w,h,id,assets){
     tensec:'10초 맞추기'
   };
 
+  // Header: full SMG STORE logo + title, entirely inside the 6% safe area.
+  var logoMaxW=S.x1-S.x0;
+  var logoMaxH=Math.min(h*0.12, portrait?230:180);
+  var logoR=(logo&&logo.width)?Math.min(logoMaxW/logo.width, logoMaxH/logo.height):0;
+  var logoH=logoR?logo.height*logoR:(h*0.08);
+  var titleSize=portrait?Math.min(70,w*0.085):Math.min(56,w*0.075);
+  var headerBottom=S.y0+logoH+(portrait?h*0.018:h*0.022)+titleSize*0.85;
+  var C={x0:S.x0, y0:headerBottom+(portrait?h*0.02:h*0.015), x1:S.x1, y1:S.y1, w:S.x1-S.x0, h:S.y1-(headerBottom+(portrait?h*0.02:h*0.015))};
+
+  if(!assets.noBg) scatterSnacks(c,w,h, id==='center'?3:id==='target'?5:id==='stack'?7:id==='timing'?9:id==='tensec'?11:13, 8, {x0:C.x0,y0:C.y0,x1:C.x1,y1:C.y1});
+
+  // Whole-figure height ~25-30% of portrait canvas; in square, fit the leftover safe area.
+  var wantH=portrait? h*0.28 : Math.min(h*0.34, C.h*0.72);
+
+  function putCapy(st, xFrac, footY){
+    var box=capyBox(st);
+    var sc=fitCapyInRect(C.x0,C.y0,C.x1,C.y1, box, wantH);
+    var x=C.x0+C.w*(xFrac==null?0.5:xFrac);
+    var p=placeCapyInRect(C.x0,C.y0,C.x1,C.y1, box, sc, x, footY);
+    drawCapy(c,p.x,p.y,p.s,st);
+    return p;
+  }
+
   if(id==='launcher'){
-    drawBar(c, w*0.08, portrait?h*0.40:h*0.38, w*0.30, portrait?48:36, 0.51);
-    drawTarget(c, w*0.86, portrait?h*0.38:h*0.34, portrait?w*0.11:w*0.09);
-    drawTower(c, w*0.18, portrait?h*0.92:h*0.90, [
+    var st={t:t,act:'win1',snack:'gummy',crown:true};
+    var p=putCapy(st, 0.52, C.y1-4);
+    var barW=Math.min(C.w*0.34, 320), barH=portrait?36:28;
+    drawBar(c, C.x0, C.y0+C.h*0.12, barW, barH, 0.51);
+    var tR=Math.min(C.w,C.h)*0.11;
+    drawTarget(c, C.x1-tR-8, C.y0+tR+8, tR);
+    var tw=Math.min(C.w*0.18, 160), th=portrait?36:28;
+    drawTower(c, C.x0+tw*0.7, p.y+p.box.b*p.s*0.15, [
       {width:1,x:0,col:'#ff8fab'},{width:0.86,x:0.04,col:'#ffd76a'},{width:0.7,x:-0.02,col:'#9be3b0'}
-    ], portrait?w*0.16:w*0.14, portrait?46:36);
-    drawCapy(c, w*0.50, portrait?h*0.78:h*0.82, scale,{t:t,act:'win1',snack:'gummy',crown:true});
-    drawSnack(c,'lolly', w*0.84, portrait?h*0.80:h*0.74, 2.2, 0.3);
-    drawSnack(c,'candy-blu', w*0.16, portrait?h*0.58:h*0.62, 1.8, -0.4);
+    ], tw, th);
+    drawSnack(c,'lolly', Math.min(C.x1-30, p.x+p.s*p.box.r+24), p.y-p.s*20, 1.3, 0.3);
+    drawSnack(c,'candy-blu', C.x0+36, C.y0+C.h*0.36, 1.15, -0.4);
   }
   else if(id==='center'){
-    drawCapy(c,w*0.50, portrait?h*0.68:h*0.70, scale,{t:t,act:'play',look:0.2,sweat:1});
-    drawBar(c, w*0.08, portrait?h*0.82:h*0.84, w*0.84, portrait?70:54, 0.505);
-    drawTitle(c,'딱 가운데!', w/2, portrait?h*0.91:h*0.94, portrait?48:36, w*0.8);
+    var st={t:t,act:'play',look:0.2,sweat:1};
+    var box=capyBox(st);
+    var barH=portrait?56:44;
+    var gap=16;
+    var subH=barH+gap+titleSize*0.7;
+    var sc=fitCapyInRect(C.x0,C.y0,C.x1,C.y1-subH, box, wantH);
+    var foot=C.y1-subH-4;
+    var p=placeCapyInRect(C.x0,C.y0,C.x1,C.y1-subH, box, sc, (C.x0+C.x1)/2, foot);
+    drawCapy(c,p.x,p.y,p.s,st);
+    var barY=p.y+p.box.b*p.s+gap;
+    var barW=C.w;
+    drawBar(c, C.x0, barY, barW, barH, 0.505);
+    drawTitle(c,'딱 가운데!', w/2, Math.min(S.y1-8, barY+barH+titleSize*0.7), portrait?40:32, C.w);
   }
   else if(id==='target'){
-    drawCapy(c, w*0.34, portrait?h*0.80:h*0.82, scale*1.05,{t:t,act:'throw',u:0.75,look:0.8,snack:null});
-    drawTarget(c, w*0.74, portrait?h*0.48:h*0.44, portrait?w*0.20:w*0.16);
-    drawGummy(c, w*0.60, portrait?h*0.52:h*0.50, 1.8, '#ff5b6a', -0.6);
-    drawSnack(c,'gummy-yel', w*0.12, portrait?h*0.40:h*0.34, 1.4, 0.3);
-    drawSnack(c,'gummy-grn', w*0.88, portrait?h*0.82:h*0.80, 1.5, -0.2);
+    var st={t:t,act:'throw',u:0.75,look:0.8,snack:null};
+    var box=capyBox(st);
+    var tR=Math.min(C.w,C.h)*(portrait?0.16:0.18);
+    var sc=fitCapyInRect(C.x0,C.y0, C.x0+C.w*0.62, C.y1, box, wantH);
+    var p=placeCapyInRect(C.x0,C.y0, C.x0+C.w*0.62, C.y1, box, sc, C.x0+C.w*0.30, C.y1-4);
+    drawCapy(c,p.x,p.y,p.s,st);
+    var tx=Math.min(C.x1-tR, C.x0+C.w*0.78);
+    var ty=C.y0+tR+8;
+    drawTarget(c,tx,ty,tR);
+    drawGummy(c, (p.x+tx)/2, (p.y-p.s*40+ty)/2, 1.35, '#ff5b6a', -0.6);
   }
   else if(id==='stack'){
-    drawTower(c, w*0.32, portrait?h*0.88:h*0.86, [
+    var st={t:t,act:'win',snack:'gummy-org',look:-0.3};
+    var box=capyBox(st);
+    var sc=fitCapyInRect(C.x0+C.w*0.42, C.y0, C.x1, C.y1, box, wantH);
+    var p=placeCapyInRect(C.x0+C.w*0.42, C.y0, C.x1, C.y1, box, sc, C.x0+C.w*0.78, C.y1-4);
+    var tw=Math.min(C.w*0.38, p.x-p.s*p.box.l-C.x0-16);
+    var th=portrait?44:34;
+    drawTower(c, C.x0+tw*0.7, C.y1-4, [
       {width:1,x:0,col:'#ff8fab'},{width:0.92,x:0.02,col:'#ffd76a'},
       {width:0.84,x:-0.01,col:'#9be3b0'},{width:0.74,x:0.03,col:'#cfd8ff'},
       {width:0.62,x:-0.02,col:'#ffb347'}
-    ], portrait?w*0.36:w*0.30, portrait?58:44, {width:0.62,x:0.12,col:'#ff8fab'});
-    drawCapy(c, w*0.72, portrait?h*0.82:h*0.84, scale,{t:t,act:'win',snack:'gummy-org',look:-0.3});
+    ], tw, th, {width:0.62,x:0.12,col:'#ff8fab'});
+    drawCapy(c,p.x,p.y,p.s,st);
   }
   else if(id==='timing'){
-    drawCapy(c,w*0.50, portrait?h*0.78:h*0.80, scale*1.08,{t:t,act:'turn',u:0.95,look:0});
-    drawTitle(c,'지금!', w/2, portrait?h*0.38:h*0.34, portrait?84:56, w*0.7);
-    drawSnack(c,'lolly', w*0.14, portrait?h*0.50:h*0.48, 2.0, -0.4);
-    drawSnack(c,'candy', w*0.88, portrait?h*0.52:h*0.50, 1.8, 0.3);
+    var st={t:t,act:'turn',u:0.95,look:0};
+    putCapy(st, 0.5, C.y1-4);
+    drawTitle(c,'지금!', w/2, C.y0+titleSize, portrait?72:52, C.w*0.8);
+    drawSnack(c,'lolly', C.x0+40, C.y0+C.h*0.28, 1.25, -0.4);
+    drawSnack(c,'candy', C.x1-40, C.y0+C.h*0.30, 1.15, 0.3);
   }
   else if(id==='tensec'){
-    if(assets.tensecCapy){
-      var img=assets.tensecCapy, ih=capyH*1.25, iw=ih*(img.width/img.height);
-      c.drawImage(img, w*0.50-iw/2, (portrait?h*0.82:h*0.84)-ih*0.92, iw, ih);
+    var st={t:t,act:'win1',crown:true,snack:'candy'};
+    var clockS=portrait?1.7:1.45;
+    var clockR=70*clockS;
+    var clockY=C.y0+clockR+8;
+    drawClock(c, w*0.50, clockY, clockS, '10.00', false);
+    var y0c=clockY+clockR+12;
+    if(assets.tensecCapy && assets.tensecCapy.width){
+      var img=assets.tensecCapy;
+      var maxH=Math.min(wantH, C.y1-y0c);
+      var ih=maxH, iw=ih*(img.width/img.height);
+      if(iw>C.w){iw=C.w; ih=iw*(img.height/img.width);}
+      var cx=w*0.50, cy=C.y1-4;
+      c.drawImage(img, cx-iw/2, Math.max(y0c, cy-ih), iw, ih);
     } else {
-      drawCapy(c,w*0.50, portrait?h*0.82:h*0.84, scale,{t:t,act:'win1',crown:true,snack:'candy'});
+      var box=capyBox(st);
+      var sc=fitCapyInRect(C.x0,y0c,C.x1,C.y1, box, wantH);
+      var p=placeCapyInRect(C.x0,y0c,C.x1,C.y1, box, sc, w*0.50, C.y1-4);
+      drawCapy(c,p.x,p.y,p.s,st);
     }
-    drawClock(c, w*0.50, portrait?h*0.44:h*0.40, portrait?2.3:1.8, '10.00', false);
-    drawSnack(c,'gummy', w*0.14, portrait?h*0.52:h*0.50, 1.8, -0.3);
-    drawSnack(c,'lolly-blu', w*0.88, portrait?h*0.58:h*0.54, 2.0, 0.4);
   }
 
-  // logo + title last so the capy never covers them
-  var top=portrait?h*0.035:h*0.04;
-  var logoH=drawLogo(c,logo,w/2, top, Math.min(w*0.46,520), Math.min(h*0.12, 220))|| (h*0.1);
-  var titleY=top+logoH+(portrait?h*0.045:h*0.06);
-  drawTitle(c, titles[id]||titles.launcher, w/2, titleY, portrait?Math.min(92,w*0.105):Math.min(74,w*0.085), w*0.9);
+  // logo + title last so the capy never covers them; both inside the 6% safe area
+  drawLogo(c,logo,w/2, S.y0, logoMaxW, logoMaxH);
+  var titleY=S.y0+logoH+(portrait?h*0.018:h*0.022)+titleSize*0.55;
+  drawTitle(c, titles[id]||titles.launcher, w/2, titleY, titleSize, S.x1-S.x0);
 
-  var vg=c.createRadialGradient(w/2,h*0.55,h*0.2,w/2,h*0.55,h*0.85);
-  vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(91,70,54,0.05)');
-  c.fillStyle=vg;c.fillRect(0,0,w,h);
+  if(!assets.noBg){
+    var vg=c.createRadialGradient(w/2,h*0.55,h*0.2,w/2,h*0.55,h*0.85);
+    vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(91,70,54,0.05)');
+    c.fillStyle=vg;c.fillRect(0,0,w,h);
+  }
 }
 
 function applyWatermark(c,w,h,logo){
@@ -574,7 +717,8 @@ function applyWatermark(c,w,h,logo){
 G.EGDraw={
   E:E,RG:RG,rr:rr,FONT:FONT,shade:shade,
   drawGummy:drawGummy,drawCandyWrap:drawCandyWrap,drawLolly:drawLolly,drawChew:drawChew,drawSnack:drawSnack,
-  drawCapy:drawCapy,capyAnim:capyAnim,
+  drawCapy:drawCapy,capyAnim:capyAnim,measureCapy:measureCapy,capyBox:capyBox,
+  safeRect:safeRect,fitCapyInRect:fitCapyInRect,placeCapyInRect:placeCapyInRect,
   drawBar:drawBar,drawTarget:drawTarget,drawTower:drawTower,drawClock:drawClock,
   drawPastelBg:drawPastelBg,drawTitle:drawTitle,drawLogo:drawLogo,scatterSnacks:scatterSnacks,
   drawKeyart:drawKeyart,applyWatermark:applyWatermark

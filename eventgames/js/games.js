@@ -10,7 +10,21 @@ function Games(api){
     if(cv._w!==w||cv._h!==h||cv._d!==d){cv._w=w;cv._h=h;cv._d=d;cv.width=Math.round(w*d);cv.height=Math.round(h*d);}
     var c=cv.getContext('2d'); c.setTransform(d,0,0,d,0,0); return {c:c,w:w,h:h};
   }
-  function capyScale(h,land){return (land?h*0.55:h*0.42)/110;}
+  function playLayout(w,h){
+    var land=w>h*1.15;
+    var topSafe=land? Math.max(100, Math.min(136, h*0.17)) : Math.max(124, Math.min(170, h*0.15));
+    var botSafe=land? Math.max(152, Math.min(210, h*0.27)) : Math.max(196, Math.min(260, h*0.26));
+    var side=Math.max(12, Math.min(w,h)*0.025);
+    var x0=side, y0=topSafe, x1=w-side, y1=h-botSafe;
+    return {land:land,x0:x0,y0:y0,x1:x1,y1:y1,pw:Math.max(40,x1-x0),ph:Math.max(40,y1-y0),w:w,h:h};
+  }
+  // Portrait: whole figure ~25-30% of viewport height. Landscape: fit play rect with margin.
+  function sizePlaceCapy(L, st, x0, y0, x1, y1, xWant, footY){
+    var box=D.capyBox(st);
+    var prefer=L.land? Math.min((y1-y0)*0.90, L.h*0.42) : Math.min((y1-y0)*0.90, L.h*0.28);
+    var sc=D.fitCapyInRect(x0,y0,x1,y1, box, prefer);
+    return D.placeCapyInRect(x0,y0,x1,y1, box, sc, xWant, footY);
+  }
 
   var impl={
     center:{
@@ -19,11 +33,13 @@ function Games(api){
       tick:function(s){if(!s.stopped)s.pos=L.centerPos((performance.now()-s.t0)/1000);},
       result:function(s){return {err:s.err, meta:{pos:s.pos, t:s.t}};},
       draw:function(c,w,h,s,capySt){
-        var land=w>h*1.15;
-        var barW=Math.min(w*0.88, 720), barH=Math.max(36, Math.min(64,h*0.07));
-        var barX=(w-barW)/2, barY=land?h*0.62:h*0.68;
-        var sc=capyScale(h,land);
-        D.drawCapy(c, w*0.5, barY-14, sc, capySt);
+        var L=playLayout(w,h);
+        var barH=Math.max(32, Math.min(L.land?52:58, L.ph*0.10));
+        var gap=12;
+        var barY=L.y1-barH;
+        var p=sizePlaceCapy(L, capySt, L.x0, L.y0, L.x1, barY-gap, w*0.5, barY-gap);
+        D.drawCapy(c, p.x, p.y, p.s, capySt);
+        var barW=Math.min(L.pw*0.98, 840), barX=(w-barW)/2;
         var zs=(G.EG&&G.EG.zones)?G.EG.zones('center'):null;
         D.drawBar(c,barX,barY,barW,barH,s.pos,zs);
       }
@@ -46,25 +62,29 @@ function Games(api){
       },
       result:function(s){return {err:s.err, meta:{dist:s.err}};},
       draw:function(c,w,h,s,capySt){
-        var land=w>h*1.15;
+        var P=playLayout(w,h);
         var t=s.thrown?s.tThrow:(performance.now()-s.t0)/1000;
         var tg=s.land||L.targetState(t,s.seed);
-        var tx=w*0.68+tg.x*w*0.18, ty=(land?h*0.32:h*0.30)+tg.y*h*0.08;
-        var R=Math.min(w,h)*0.16;
+        var st=Object.assign({},capySt,{act:s.thrown?'throw':capySt.act,u:s.flying?0.7: (s.hit?1:0), look:0.8});
+        var capyRight=P.land? P.x0+P.pw*0.58 : P.x0+P.pw*0.70;
+        var p=sizePlaceCapy(P, st, P.x0, P.y0, capyRight, P.y1, P.x0+(capyRight-P.x0)*0.48, P.y1-4);
+        var R=Math.min(P.pw,P.ph)*(P.land?0.18:0.16);
+        var tx=P.x0+P.pw*(P.land?0.80:0.74)+tg.x*P.pw*0.10;
+        var ty=P.y0+Math.max(R+8, P.ph*(P.land?0.30:0.24))+tg.y*P.ph*0.08;
+        tx=Math.max(P.x0+R, Math.min(P.x1-R, tx));
+        ty=Math.max(P.y0+R, Math.min(p.y-p.s*p.box.t+R, ty));
         D.drawTarget(c,tx,ty,R,!!s.hit);
-        var sc=capyScale(h,land);
-        var cx=w*0.28, cy=land?h*0.82:h*0.84;
         var throwU=0;
         if(s.flying) throwU=Math.min(1,(performance.now()-s.f0)/(L.TARGET_FLIGHT*1000));
         else if(s.hit) throwU=1;
-        D.drawCapy(c,cx,cy,sc, Object.assign({},capySt,{act:s.thrown?'throw':capySt.act,u:s.flying?0.7: (s.hit?1:0), look:0.8}));
+        D.drawCapy(c,p.x,p.y,p.s, st);
         if(s.flying){
-          var p=throwU, gx=cx+(tx-cx)*p, gy=cy-70+(ty-(cy-70))*p - Math.sin(p*Math.PI)*h*0.16;
-          D.drawGummy(c,gx,gy,1.3,'#ff5b6a',-0.5+p);
+          var u=throwU, gx=p.x+(tx-p.x)*u, gy=p.y-40+(ty-(p.y-40))*u - Math.sin(u*Math.PI)*P.ph*0.18;
+          D.drawGummy(c,gx,gy,1.15,'#ff5b6a',-0.5+u);
         } else if(!s.thrown){
-          D.drawGummy(c,cx+sc*70, cy-sc*20, 0.9,'#ff5b6a',0.2);
+          D.drawGummy(c,p.x+p.s*62, p.y-p.s*16, 0.8,'#ff5b6a',0.2);
         } else if(s.hit){
-          D.drawGummy(c,tx,ty,1.15,'#ff5b6a',0.3);
+          D.drawGummy(c,tx,ty,1.05,'#ff5b6a',0.3);
         }
       }
     },
@@ -106,21 +126,21 @@ function Games(api){
       },
       result:function(s){return {err:s.err, meta:s.score};},
       draw:function(c,w,h,s,capySt){
-        var land=w>h*1.15;
-        var w0=Math.min(w*0.42, 340), bh=Math.min(52,h*0.055);
-        var baseY=land?h*0.86:h*0.88, bx=land?w*0.38:w*0.42;
+        var P=playLayout(w,h);
+        var capyLeft=P.x0+P.pw*0.50;
+        var p=sizePlaceCapy(P, capySt, capyLeft, P.y0, P.x1, P.y1, capyLeft+P.pw*0.32, P.y1-4);
+        var w0=Math.min(capyLeft-P.x0-16, 400), bh=Math.min(48,P.ph*0.08);
+        var baseY=P.y1-4, bx=P.x0+w0*0.7;
         var blocks=s.drops.filter(function(d){return !d.miss;}).map(function(d,i){
           return {width:d.width, x:0, col:['#ff8fab','#ffd76a','#9be3b0','#cfd8ff','#ffb347','#ff9a3c','#cfd8ff'][i%7]};
         });
-        // stacked x should stay centered (trim is already in width)
         var slide=null;
         if(!s.done && (s.waiting||s.falling)){
           var fy=s.falling? Math.min(1,(performance.now()-s.fallT)/180):0;
           slide={width:s.width, x:s.slideX, col:'#ff8fab', fall:fy};
         }
         D.drawTower(c,bx,baseY,blocks,w0,bh,slide);
-        var sc=capyScale(h,land)*0.9;
-        D.drawCapy(c, land?w*0.82:w*0.82, land?h*0.82:h*0.86, sc, capySt);
+        D.drawCapy(c, p.x, p.y, p.s, capySt);
       }
     },
     timing:{
@@ -143,12 +163,13 @@ function Games(api){
       },
       result:function(s){return {err:s.err, falseStart:!!s.falseStart, meta:{rt:s.rt,falseStart:s.falseStart}};},
       draw:function(c,w,h,s,capySt){
-        var land=w>h*1.15;
-        var sc=capyScale(h,land)*1.08;
+        var P=playLayout(w,h);
         var u=0;
         if(s.turned){u=Math.min(1,(performance.now()-(s.u0||s.turnAt))/180);}
         var act=s.falseStart?'lose':(!s.turned?'back':(u<1?'turn':(s.done?(capySt.act||'wow'):'wow')));
-        D.drawCapy(c,w*0.5, land?h*0.78:h*0.80, sc, Object.assign({},capySt,{act:act,u:u,look:0}));
+        var st=Object.assign({},capySt,{act:act,u:u,look:0});
+        var p=sizePlaceCapy(P, st, P.x0, P.y0, P.x1, P.y1, w*0.5, P.y1-4);
+        D.drawCapy(c,p.x,p.y,p.s, st);
       }
     }
   };
@@ -175,7 +196,7 @@ function Games(api){
       else if(gid==='stack'){D.drawTower(c,w*0.36,h*0.88,[{width:1,x:0,col:'#ff8fab'},{width:0.8,x:0.04,col:'#ffd76a'},{width:0.62,x:-0.02,col:'#9be3b0'}],w*0.36,h*0.12);D.drawCapy(c,w*0.78,h*0.86,sc*0.85,{t:t,act:'idle'});}
       else {D.drawCapy(c,w*0.5,h*0.82,sc*1.05,{t:t,act:'turn',u:0.5+0.5*Math.sin(t*1.5)});}
     },
-    sizePlay:sizePlay
+    sizePlay:sizePlay, playLayout:playLayout
   };
 }
 G.EGGames=Games;

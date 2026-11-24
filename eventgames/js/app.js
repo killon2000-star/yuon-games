@@ -121,9 +121,19 @@ function isIOS(){var ua=navigator.userAgent||'';return /iPad|iPhone|iPod/.test(u
 function isStandalone(){return window.navigator.standalone===true||(window.matchMedia&&(matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches))}
 function canFS(){if(window.Android)return false;if(isIOS())return false;var el=document.documentElement;return !!(el.requestFullscreen||el.webkitRequestFullscreen||el.webkitRequestFullScreen)}
 function isFS(){return !!(document.fullscreenElement||document.webkitFullscreenElement||document.webkitIsFullScreen)}
-function enterFS(){if(!canFS()||isFS())return;var el=document.documentElement;var fn=el.requestFullscreen||el.webkitRequestFullscreen||el.webkitRequestFullScreen;try{fn.call(el)}catch(e){}}
+function enterFS(){
+  if(!canFS()||isFS())return;
+  var opts={navigationUI:'hide'};
+  function req(node){
+    var fn=node&&(node.requestFullscreen||node.webkitRequestFullscreen||node.webkitRequestFullScreen);
+    if(!fn)return Promise.reject(new Error('no fs'));
+    try{var p=fn.call(node,opts);return (p&&typeof p.then==='function')?p:Promise.resolve()}
+    catch(e){return Promise.reject(e)}
+  }
+  req(document.documentElement).catch(function(){return req(document.body)}).catch(function(){});
+}
 function exitFS(){var ex=document.exitFullscreen||document.webkitExitFullscreen||document.webkitCancelFullScreen;if(ex)try{ex.call(document)}catch(e){}}
-function toggleFS(ev){if(ev){ev.preventDefault();ev.stopPropagation()}if(isFS())exitFS();else enterFS()}
+function toggleFS(ev){if(ev){ev.stopPropagation()}if(isFS())exitFS();else enterFS()}
 function updateFSUI(){
   var b=$('btnFS'); if(!b)return;
   var show=canFS(); b.classList.toggle('hide',!show); b.classList.toggle('on',isFS());
