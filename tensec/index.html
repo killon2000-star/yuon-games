@@ -6,23 +6,30 @@
 <meta name="theme-color" content="#fde7ef">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="10초 맞추기">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <title>10초 맞추기</title>
 <style>
 :root{--bg:#fde7ef;--ink:#5b4636;--card:#fff;--btn:#9be3b0;--stop:#ff9aa8;--btn2:#ffd59e;--btn3:#cfd8ff;--title:#ff8fab;--chip:#ffe3ef;--line:#5b4636;--gold:#ffd76a;--miss:#e8d5c8;--ov:rgba(255,240,246,.96)}
-html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);overscroll-behavior:none;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink);word-break:keep-all;overflow-wrap:break-word}
-#bg{position:fixed;inset:0;pointer-events:none;background:
+html,body{margin:0;position:fixed;inset:0;width:100%;height:100%;height:100dvh;height:var(--app-h,100dvh);overflow:hidden;background:var(--bg);overscroll-behavior:none;overscroll-behavior-y:none;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink);word-break:keep-all;overflow-wrap:break-word}
+#bg,#fx,#app{position:fixed;left:0;right:0;top:var(--app-top,0);width:100%;height:100%;height:var(--app-h,100dvh);box-sizing:border-box}
+#bg{pointer-events:none;background:
  radial-gradient(ellipse at 20% 10%,#fff6c8 0%,transparent 50%),
  radial-gradient(ellipse at 90% 80%,#d9ecff 0%,transparent 45%),
  radial-gradient(ellipse at 10% 90%,#ffd6e8 0%,transparent 40%),
  var(--bg)}
-#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:40}
-#app{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;padding:max(10px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left));box-sizing:border-box;z-index:1}
+#fx{pointer-events:none;z-index:40}
+#app{display:flex;flex-direction:column;align-items:center;padding:max(10px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left));z-index:1}
 #logo{position:absolute;top:max(8px,env(safe-area-inset-top));left:max(10px,env(safe-area-inset-left));z-index:5;background:var(--chip);border:3px solid var(--line);border-radius:16px;padding:6px 10px;font-weight:800;font-size:13px;color:var(--ink);font-family:inherit;box-shadow:0 3px 0 var(--line);letter-spacing:.04em}
 #logo:active{transform:translateY(2px);box-shadow:0 1px 0 var(--line)}
-#chipLang{position:absolute;top:max(8px,env(safe-area-inset-top));right:max(10px,env(safe-area-inset-right));z-index:5;background:var(--chip);border:3px solid var(--line);border-radius:16px;padding:6px 12px;font-weight:700;font-size:13px;color:var(--ink);font-family:inherit}
+#topRight{position:absolute;top:max(8px,env(safe-area-inset-top));right:max(10px,env(safe-area-inset-right));z-index:5;display:flex;gap:8px;align-items:center}
+#chipLang,#btnFS{background:var(--chip);border:3px solid var(--line);border-radius:16px;padding:6px 12px;font-weight:700;font-size:13px;color:var(--ink);font-family:inherit;box-shadow:0 3px 0 var(--line)}
+#btnFS{width:42px;height:42px;padding:0;font-size:22px;line-height:1;display:flex;align-items:center;justify-content:center}
+#btnFS:active,#chipLang:active{transform:translateY(2px);box-shadow:0 1px 0 var(--line)}
+#btnFS.on{background:var(--btn)}
+#iosHint{margin:10px 8px 0;max-width:22em;font-size:13px;font-weight:700;line-height:1.35;opacity:.85;text-align:center}
 #stage{flex:1;width:100%;max-width:720px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:0}
 #capy{width:min(200px,42vw);height:auto;max-height:28vh;display:block}
 h1{font-size:clamp(28px,7.2vmin,52px);margin:4px 0 6px;color:var(--title);-webkit-text-stroke:2px var(--line);paint-order:stroke fill;text-shadow:0 4px 0 var(--line);line-height:1.15;font-weight:900}
@@ -98,7 +105,10 @@ h1{font-size:clamp(28px,7.2vmin,52px);margin:4px 0 6px;color:var(--title);-webki
 <canvas id="fx"></canvas>
 <div id="app">
   <button id="logo" type="button">YUON</button>
-  <button id="chipLang" type="button"></button>
+  <div id="topRight">
+    <button id="btnFS" type="button" class="hide" aria-label="fullscreen">⛶</button>
+    <button id="chipLang" type="button"></button>
+  </div>
   <div id="stage">
     <div class="landCol">
       <canvas id="capy" width="300" height="240"></canvas>
@@ -118,6 +128,7 @@ h1{font-size:clamp(28px,7.2vmin,52px);margin:4px 0 6px;color:var(--title);-webki
         <button id="next" type="button"></button>
       </div>
       <button id="go" type="button"></button>
+      <p id="iosHint" class="hide"></p>
     </div>
   </div>
 </div>
@@ -136,6 +147,7 @@ h1{font-size:clamp(28px,7.2vmin,52px);margin:4px 0 6px;color:var(--title);-webki
     <div class="srow"><span id="lbHide"></span><button class="tg" type="button" id="tgHide"></button></div>
     <div class="srow"><span id="lbHideSec"></span><input id="inHideSec" type="number" min="1" max="9" step="0.5"></div>
     <div class="srow"><span id="lbStaff"></span><button class="tg" type="button" id="tgStaff"></button></div>
+    <div class="srow"><span id="lbFsStart"></span><button class="tg" type="button" id="tgFsStart"></button></div>
     <div class="srow"><span id="lbSfx"></span><button class="tg" type="button" id="tgSfx"></button></div>
     <div class="srow"><span id="lbVib"></span><button class="tg" type="button" id="tgVib"></button></div>
     <div class="srow"><span id="lbPin"></span><input id="inPin" type="password" inputmode="numeric" maxlength="4" pattern="[0-9]*" autocomplete="off"></div>
@@ -161,9 +173,9 @@ var LOW=/[?&]low=1/.test(location.search)||(window.matchMedia&&matchMedia('(pref
 if(LOW) document.body.classList.add('low');
 var LANGS=['ko','en','id'];
 var I18N={
-ko:{title:'10초 맞추기',help:'시작을 누른 뒤, 마음속으로 10초를 세고 정지를 누르세요. 숫자는 잠시 후 사라집니다.',start:'시작',stop:'정지',next:'다음 참가자',again:'다시 하기',hideMsg:'이제 감각으로!',rec:'기록',errFast:'초 빠름',errSlow:'초 느림',errExact:'정확해요!',tier:['참가상','1등','2등','3등','4등'],stockLeft:'남은 수량',fallen:'재고가 없어 아래 등급으로 지급되었습니다',soldOut:'상품이 모두 소진되었습니다',pinTitle:'관리자',pinWrong:'비밀번호가 달라요',cancel:'취소',adTitle:'이벤트 설정',lbHide:'타이머 숨기기',lbHideSec:'숨기는 시간(초)',lbStaff:'다음 참가자 확인',lbSfx:'효과음',lbVib:'진동',lbPin:'비밀번호 4자리',lbPrizes:'상품·오차 기준',prizeHint:'오차는 절대값(초). 재고를 비우면 무제한. 재고 0이면 아래 등급으로 내려갑니다.',lbLog:'참가 기록',thName:'상품명',thErr:'오차 ≤',thStock:'재고',save:'저장',csv:'CSV 저장',resetLog:'기록 지우기',close:'닫기',on:'켜짐',off:'꺼짐',sum:'회',confirmReset:'참가 기록을 모두 지울까요?',saved:'저장했습니다',langName:'한국어'},
-en:{title:'Hit 10 Seconds',help:'Press Start, count to 10 in your head, then press Stop. The timer hides after a moment.',start:'START',stop:'STOP',next:'Next player',again:'Play again',hideMsg:'Feel the time!',rec:'Time',errFast:'s early',errSlow:'s late',errExact:'Perfect!',tier:['Thanks','1st','2nd','3rd','4th'],stockLeft:'Left',fallen:'This prize was out of stock, so the next prize was given',soldOut:'All prizes are gone',pinTitle:'Staff',pinWrong:'Wrong PIN',cancel:'Cancel',adTitle:'Event settings',lbHide:'Hide the timer',lbHideSec:'Hide after (sec)',lbStaff:'Staff must confirm next',lbSfx:'Sound',lbVib:'Vibration',lbPin:'4-digit PIN',lbPrizes:'Prizes & error limits',prizeHint:'Error is absolute seconds. Leave stock blank for unlimited. Stock 0 falls to the next prize.',lbLog:'Play log',thName:'Prize',thErr:'Error ≤',thStock:'Stock',save:'Save',csv:'Export CSV',resetLog:'Clear log',close:'Close',on:'ON',off:'OFF',sum:'plays',confirmReset:'Clear the whole play log?',saved:'Saved',langName:'English'},
-id:{title:'Tebak 10 Detik',help:'Tekan Mulai, hitung 10 detik dalam hati, lalu tekan Berhenti. Angka akan hilang sebentar lagi.',start:'MULAI',stop:'BERHENTI',next:'Peserta berikut',again:'Main lagi',hideMsg:'Rasakan waktunya!',rec:'Waktu',errFast:' dtk lebih cepat',errSlow:' dtk lebih lambat',errExact:'Tepat sekali!',tier:['Hadiah trobosan','Juara 1','Juara 2','Juara 3','Juara 4'],stockLeft:'Sisa',fallen:'Stok habis, hadiah tingkat berikutnya diberikan',soldOut:'Semua hadiah habis',pinTitle:'Staf',pinWrong:'PIN salah',cancel:'Batal',adTitle:'Pengaturan acara',lbHide:'Sembunyikan timer',lbHideSec:'Sembunyi setelah (dtk)',lbStaff:'Staf konfirmasi peserta berikut',lbSfx:'Suara',lbVib:'Getar',lbPin:'PIN 4 digit',lbPrizes:'Hadiah & batas selisih',prizeHint:'Selisih dalam detik mutlak. Kosongkan stok untuk tak terbatas. Stok 0 turun ke hadiah berikutnya.',lbLog:'Catatan main',thName:'Hadiah',thErr:'Selisih ≤',thStock:'Stok',save:'Simpan',csv:'Unduh CSV',resetLog:'Hapus catatan',close:'Tutup',on:'NYALA',off:'MATI',sum:'kali',confirmReset:'Hapus semua catatan?',saved:'Tersimpan',langName:'Bahasa Indonesia'}
+ko:{title:'10초 맞추기',help:'시작을 누른 뒤, 마음속으로 10초를 세고 정지를 누르세요. 숫자는 잠시 후 사라집니다.',start:'시작',stop:'정지',next:'다음 참가자',again:'다시 하기',hideMsg:'이제 감각으로!',rec:'기록',errFast:'초 빠름',errSlow:'초 느림',errExact:'정확해요!',tier:['참가상','1등','2등','3등','4등'],stockLeft:'남은 수량',fallen:'재고가 없어 아래 등급으로 지급되었습니다',soldOut:'상품이 모두 소진되었습니다',pinTitle:'관리자',pinWrong:'비밀번호가 달라요',cancel:'취소',adTitle:'이벤트 설정',lbHide:'타이머 숨기기',lbHideSec:'숨기는 시간(초)',lbStaff:'다음 참가자 확인',lbSfx:'효과음',lbVib:'진동',lbPin:'비밀번호 4자리',lbPrizes:'상품·오차 기준',prizeHint:'오차는 절대값(초). 재고를 비우면 무제한. 재고 0이면 아래 등급으로 내려갑니다.',lbLog:'참가 기록',thName:'상품명',thErr:'오차 ≤',thStock:'재고',save:'저장',csv:'CSV 저장',resetLog:'기록 지우기',close:'닫기',on:'켜짐',off:'꺼짐',sum:'회',confirmReset:'참가 기록을 모두 지울까요?',saved:'저장했습니다',langName:'한국어',fs:'전체화면',fsExit:'전체화면 종료',lbFsStart:'시작 시 전체화면',iosHint:'공유 → 홈 화면에 추가하면 전체화면으로 실행돼요'},
+en:{title:'Hit 10 Seconds',help:'Press Start, count to 10 in your head, then press Stop. The timer hides after a moment.',start:'START',stop:'STOP',next:'Next player',again:'Play again',hideMsg:'Feel the time!',rec:'Time',errFast:'s early',errSlow:'s late',errExact:'Perfect!',tier:['Thanks','1st','2nd','3rd','4th'],stockLeft:'Left',fallen:'This prize was out of stock, so the next prize was given',soldOut:'All prizes are gone',pinTitle:'Staff',pinWrong:'Wrong PIN',cancel:'Cancel',adTitle:'Event settings',lbHide:'Hide the timer',lbHideSec:'Hide after (sec)',lbStaff:'Staff must confirm next',lbSfx:'Sound',lbVib:'Vibration',lbPin:'4-digit PIN',lbPrizes:'Prizes & error limits',prizeHint:'Error is absolute seconds. Leave stock blank for unlimited. Stock 0 falls to the next prize.',lbLog:'Play log',thName:'Prize',thErr:'Error ≤',thStock:'Stock',save:'Save',csv:'Export CSV',resetLog:'Clear log',close:'Close',on:'ON',off:'OFF',sum:'plays',confirmReset:'Clear the whole play log?',saved:'Saved',langName:'English',fs:'Full screen',fsExit:'Exit full screen',lbFsStart:'Full screen on Start',iosHint:'Share → Add to Home Screen to play full screen'},
+id:{title:'Tebak 10 Detik',help:'Tekan Mulai, hitung 10 detik dalam hati, lalu tekan Berhenti. Angka akan hilang sebentar lagi.',start:'MULAI',stop:'BERHENTI',next:'Peserta berikut',again:'Main lagi',hideMsg:'Rasakan waktunya!',rec:'Waktu',errFast:' dtk lebih cepat',errSlow:' dtk lebih lambat',errExact:'Tepat sekali!',tier:['Hadiah trobosan','Juara 1','Juara 2','Juara 3','Juara 4'],stockLeft:'Sisa',fallen:'Stok habis, hadiah tingkat berikutnya diberikan',soldOut:'Semua hadiah habis',pinTitle:'Staf',pinWrong:'PIN salah',cancel:'Batal',adTitle:'Pengaturan acara',lbHide:'Sembunyikan timer',lbHideSec:'Sembunyi setelah (dtk)',lbStaff:'Staf konfirmasi peserta berikut',lbSfx:'Suara',lbVib:'Getar',lbPin:'PIN 4 digit',lbPrizes:'Hadiah & batas selisih',prizeHint:'Selisih dalam detik mutlak. Kosongkan stok untuk tak terbatas. Stok 0 turun ke hadiah berikutnya.',lbLog:'Catatan main',thName:'Hadiah',thErr:'Selisih ≤',thStock:'Stok',save:'Simpan',csv:'Unduh CSV',resetLog:'Hapus catatan',close:'Tutup',on:'NYALA',off:'MATI',sum:'kali',confirmReset:'Hapus semua catatan?',saved:'Tersimpan',langName:'Bahasa Indonesia',fs:'Layar penuh',fsExit:'Keluar layar penuh',lbFsStart:'Layar penuh saat Mulai',iosHint:'Bagikan → Tambah ke Layar Utama untuk tampilan penuh'}
 };
 function detectLang(){
   var q=/[?&]lang=(en|id|ko)/.exec(location.search);if(q)return q[1];
@@ -173,7 +185,7 @@ function detectLang(){
   return'ko';
 }
 function defaultCfg(){
-  return{pin:'0000',hideTimer:true,hideAfterSec:3,staffReset:true,sfx:true,vib:true,lang:'',
+  return{pin:'0000',hideTimer:true,hideAfterSec:3,staffReset:true,fsOnStart:true,sfx:true,vib:true,lang:'',
     prizes:[
       {name:'1등 상품',maxErr:0.005,stock:null},
       {name:'2등 상품',maxErr:0.05,stock:null},
@@ -213,6 +225,7 @@ function mergeCfg(raw){
   d.hideTimer=!!raw.hideTimer;if(raw.hideTimer===false)d.hideTimer=false;
   var hs=Number(raw.hideAfterSec);if(isFinite(hs)&&hs>=1&&hs<=9)d.hideAfterSec=hs;
   d.staffReset=raw.staffReset!==false;
+  d.fsOnStart=raw.fsOnStart!==false;
   d.sfx=raw.sfx!==false;d.vib=raw.vib!==false;
   if(raw.lang&&LANGS.indexOf(raw.lang)>=0)d.lang=raw.lang;
   if(Array.isArray(raw.prizes)&&raw.prizes.length>=5){
@@ -346,18 +359,53 @@ var cfg=loadCfg(), log=loadLog(), lang=cfg.lang||detectLang(), L=I18N[lang]||I18
 var mode='title', t0=0, raf=0, hidden=false, lastAward=null, pinBuf='', pinMode='open';
 var $=function(id){return document.getElementById(id)};
 
+function isIOS(){var ua=navigator.userAgent||'';return /iPad|iPhone|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)}
+function isStandalone(){return window.navigator.standalone===true||(window.matchMedia&&(matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches))}
+function canFS(){if(window.Android)return false;if(isIOS())return false;var el=document.documentElement;return !!(el.requestFullscreen||el.webkitRequestFullscreen||el.webkitRequestFullScreen)}
+function isFS(){return !!(document.fullscreenElement||document.webkitFullscreenElement||document.webkitIsFullScreen)}
+function enterFS(){
+  if(!canFS()||isFS())return;
+  var el=document.documentElement,req=el.requestFullscreen||el.webkitRequestFullscreen||el.webkitRequestFullScreen;
+  if(!req)return;
+  try{var p=req.call(el, {navigationUI:'hide'});if(p&&p.catch)p.catch(function(){})}catch(e){try{req.call(el)}catch(e2){}}
+}
+function exitFS(){var ex=document.exitFullscreen||document.webkitExitFullscreen||document.webkitCancelFullScreen;if(ex)try{ex.call(document)}catch(e){}}
+function toggleFS(ev){if(ev){ev.preventDefault();ev.stopPropagation()}if(isFS())exitFS();else enterFS()}
+function updateFSUI(){
+  var b=$('btnFS');if(!b)return;
+  var show=canFS();
+  b.classList.toggle('hide',!show);
+  b.classList.toggle('on',isFS());
+  b.textContent=isFS()?'✕':'⛶';
+  b.setAttribute('aria-label',isFS()?t('fsExit'):t('fs'));
+  b.title=isFS()?t('fsExit'):t('fs');
+}
+function syncChrome(){
+  updateFSUI();
+  var hint=$('iosHint');if(!hint)return;
+  var show=isIOS()&&!isStandalone()&&mode==='title';
+  hint.classList.toggle('hide',!show);
+  if(show)hint.textContent=t('iosHint');
+}
+function fitH(){
+  var vv=window.visualViewport,h=Math.round((vv&&vv.height)||window.innerHeight),top=vv?Math.round(vv.offsetTop):0;
+  document.documentElement.style.setProperty('--app-h',h+'px');
+  document.documentElement.style.setProperty('--app-top',top+'px');
+}
+
 function t(k){return L[k]||I18N.ko[k]||k}
 function applyLang(){
   L=I18N[lang]||I18N.ko;document.documentElement.lang=lang;
   $('title').textContent=t('title');$('help').textContent=t('help');$('hideMsg').textContent=t('hideMsg');
   $('chipLang').textContent=t('langName');$('pinTitle').textContent=t('pinTitle');$('pinCancel').textContent=t('cancel');
   $('adTitle').textContent=t('adTitle');$('lbHide').textContent=t('lbHide');$('lbHideSec').textContent=t('lbHideSec');
-  $('lbStaff').textContent=t('lbStaff');$('lbSfx').textContent=t('lbSfx');$('lbVib').textContent=t('lbVib');$('lbPin').textContent=t('lbPin');
+  $('lbStaff').textContent=t('lbStaff');$('lbFsStart').textContent=t('lbFsStart');$('lbSfx').textContent=t('lbSfx');$('lbVib').textContent=t('lbVib');$('lbPin').textContent=t('lbPin');
   $('lbPrizes').textContent=t('lbPrizes');$('prizeHint').textContent=t('prizeHint');$('lbLog').textContent=t('lbLog');
   $('adSave').textContent=t('save');$('adCsv').textContent=t('csv');$('adReset').textContent=t('resetLog');$('adClose').textContent=t('close');
   if(mode==='title')$('go').textContent=t('start');
   else if(mode==='run')$('go').textContent=t('stop');
   $('next').textContent=cfg.staffReset?t('next'):t('again');
+  syncChrome();
 }
 function setToggle(el,on){el.className='tg'+(on?' on':'');el.textContent=on?t('on'):t('off');el.setAttribute('aria-pressed',on?'true':'false')}
 
@@ -367,7 +415,7 @@ function showTitle(){
   $('result').classList.add('hide');$('go').classList.remove('hide','stop');$('go').textContent=t('start');
   $('title').classList.remove('hide');$('help').classList.remove('hide');
   $('clock').className='';$('clock').textContent='0.00';$('hintHide').classList.remove('on','snap');
-  drawCapy(0,false);
+  drawCapy(0,false);syncChrome();
 }
 function startRun(ev){
   if(ev){ev.preventDefault();ev.stopPropagation()}
@@ -376,7 +424,7 @@ function startRun(ev){
   $('result').classList.add('hide');$('title').classList.add('hide');$('help').classList.add('hide');
   $('go').classList.remove('hide');$('go').classList.add('stop');$('go').textContent=t('stop');
   $('clock').className='';$('clock').textContent='0.00';$('hintHide').classList.remove('on','snap');
-  drawCapy(0,true);sfxStart();vibe(18);keepOn(true);
+  drawCapy(0,true);sfxStart();vibe(18);keepOn(true);syncChrome();
   if(raf)cancelAnimationFrame(raf);raf=requestAnimationFrame(tick);
 }
 function tick(){
@@ -424,7 +472,7 @@ function renderResult(a){
   else if(a.soldOut){$('fallen').classList.remove('hide');$('fallen').textContent=t('soldOut')}
   else $('fallen').classList.add('hide');
   $('next').textContent=cfg.staffReset?t('next'):t('again');
-  drawCapy(a.index>=0&&a.index<=3?1:0,false);
+  drawCapy(a.index>=0&&a.index<=3?1:0,false);syncChrome();
 }
 
 /* ===== admin ===== */
@@ -456,7 +504,7 @@ function stockText(s){return(s==null||s==='')?'':String(s)}
 function openAdmin(){
   clearFx();$('admin').classList.remove('hide');
   setToggle($('tgHide'),cfg.hideTimer);$('inHideSec').value=cfg.hideAfterSec;
-  setToggle($('tgStaff'),cfg.staffReset);setToggle($('tgSfx'),cfg.sfx);setToggle($('tgVib'),cfg.vib);
+  setToggle($('tgStaff'),cfg.staffReset);setToggle($('tgFsStart'),cfg.fsOnStart);setToggle($('tgSfx'),cfg.sfx);setToggle($('tgVib'),cfg.vib);
   $('inPin').value=cfg.pin;
   var th=$('pTable').tHead;th.innerHTML='<tr><th>#</th><th>'+t('thName')+'</th><th>'+t('thErr')+'</th><th>'+t('thStock')+'</th></tr>';
   var tb=$('pTable').tBodies[0];tb.innerHTML='';
@@ -491,6 +539,7 @@ function readAdminForm(){
   next.hideAfterSec=Number($('inHideSec').value);if(!isFinite(next.hideAfterSec))next.hideAfterSec=3;
   next.hideAfterSec=Math.min(9,Math.max(1,next.hideAfterSec));
   next.staffReset=$('tgStaff').classList.contains('on');
+  next.fsOnStart=$('tgFsStart').classList.contains('on');
   next.sfx=$('tgSfx').classList.contains('on');next.vib=$('tgVib').classList.contains('on');
   var pin=$('inPin').value.trim();if(/^\d{4}$/.test(pin))next.pin=pin;
   var names=document.querySelectorAll('#pTable input[data-k=name]');
@@ -522,10 +571,14 @@ function closeAdmin(){$('admin').classList.add('hide');if(mode==='title')applyLa
 /* ===== events ===== */
 function onGo(ev){
   ev.preventDefault();ev.stopPropagation();
-  if(mode==='title')startRun(ev);
+  if(mode==='title'){if(cfg.fsOnStart)enterFS();startRun(ev)}
   else if(mode==='run')stopRun(ev);
 }
 $('go').addEventListener('pointerdown',onGo);
+$('btnFS').addEventListener('pointerdown',toggleFS);
+['fullscreenchange','webkitfullscreenchange'].forEach(function(ev){document.addEventListener(ev,updateFSUI)});
+fitH();addEventListener('resize',fitH,{passive:true});if(window.visualViewport){visualViewport.addEventListener('resize',fitH);visualViewport.addEventListener('scroll',fitH);}
+var lastTap=0;document.addEventListener('touchend',function(e){var n=Date.now();if(n-lastTap<280)e.preventDefault();lastTap=n},{passive:false});
 $('next').addEventListener('pointerdown',function(ev){ev.preventDefault();showTitle()});
 $('chipLang').addEventListener('click',function(){
   lang=LANGS[(LANGS.indexOf(lang)+1)%LANGS.length];cfg.lang=lang;saveCfg(cfg);applyLang();
@@ -537,7 +590,7 @@ $('logo').addEventListener('pointerdown',function(e){e.preventDefault();lpOn=tru
 ['pointerup','pointercancel','pointerleave'].forEach(function(ev){$('logo').addEventListener(ev,lpClear)});
 $('pinCancel').addEventListener('click',hidePin);
 $('pad').addEventListener('pointerdown',function(e){var b=e.target.closest('button');if(!b)return;e.preventDefault();pinKey(b.dataset.k)});
-['tgHide','tgStaff','tgSfx','tgVib'].forEach(function(id){$(id).addEventListener('click',function(){setToggle(this,!this.classList.contains('on'))})});
+['tgHide','tgStaff','tgFsStart','tgSfx','tgVib'].forEach(function(id){$(id).addEventListener('click',function(){setToggle(this,!this.classList.contains('on'))})});
 $('adSave').addEventListener('click',saveAdmin);
 $('adCsv').addEventListener('click',exportCSV);
 $('adReset').addEventListener('click',resetLog);
@@ -558,6 +611,7 @@ if('serviceWorker' in navigator&&location.protocol!=='file:'&&!/[?&]nosw=1/.test
 
 window.__ts={
   TARGET:TARGET, defaultCfg:defaultCfg, mergeCfg:mergeCfg, absErr:absErr, toMs:toMs, inStock:inStock,
+  isIOS:isIOS, isStandalone:isStandalone, canFS:canFS, isFS:isFS, enterFS:enterFS, exitFS:exitFS, toggleFS:toggleFS, updateFSUI:updateFSUI, syncChrome:syncChrome,
   pickTierIndex:pickTierIndex, awardPrize:awardPrize, applyAward:applyAward, fmtTime:fmtTime,
   get cfg(){return cfg}, set cfg(v){cfg=mergeCfg(v)}, get log(){return log}, set log(v){log=v},
   get mode(){return mode}, get lang(){return lang}, get hidden(){return hidden}, get lastAward(){return lastAward},
@@ -570,7 +624,7 @@ window.__ts={
     $('go').classList.remove('hide');$('go').classList.add('stop');$('go').textContent=t('stop');
     if(hide){$('clock').className='gone';$('clock').textContent=fmtTime(elapsed).main;$('hintHide').classList.remove('snap');$('hintHide').classList.add('on');drawCapy(0,true)}
     else{$('clock').className='';$('clock').textContent=fmtTime(elapsed).main;$('hintHide').classList.remove('on','snap');drawCapy(0,false)}
-    keepOn(true);
+    keepOn(true);syncChrome();
   },
   forceResult:function(elapsed){if(raf){cancelAnimationFrame(raf);raf=0}mode='result';var a=applyAward(elapsed,cfg,log);lastAward=a;saveCfg(cfg);saveLog(log);renderResult(a);if(a.index===0)burst('gold');else if(a.index>=1&&a.index<=3)burst('ok');else burst('soft')},
   setLang:function(l){if(LANGS.indexOf(l)>=0){lang=l;cfg.lang=l;applyLang()}}
