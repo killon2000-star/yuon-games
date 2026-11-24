@@ -1,0 +1,2 @@
+source=/workspace/brand/smg_store_logo.png (same processed asset as /workspace/tensec/assets/smg_logo.png)
+source=/workspace/kuji_limition/enc_{kuji_bgm,bubble_bgm,clear}.mp3 (Suno tracks already used in kuji; re-encoded 96kbps mono, cover stripped)
