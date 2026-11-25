@@ -217,10 +217,9 @@ function Games(api){
       draw:function(c,w,h,s,capySt){
         var P=playLayout(w,h), R=resultClear(P, P.y1);
         var scaleW=Math.min(P.pw*(P.land?0.42:0.72), 420), scaleH=Math.min(P.ph*0.72, 280);
-        var sx=P.land?(isResult()?P.x0+P.pw*0.26:P.x0+P.pw*0.62): (P.x0+P.pw*0.5);
+        var sx=P.land?P.x0+P.pw*0.62: (P.x0+P.pw*0.5);
         var sy=R.y1-4;
         if(!isResult()) D.drawScale(c,sx,sy,scaleW,scaleH,s.g,{snacks:4});
-        else D.drawScale(c, P.land?P.x0+P.pw*0.26:P.x0+P.pw*0.5, sy, scaleW, scaleH, s.g, {snacks:4, label:(Math.round(s.g*10)/10)+'g'});
         var capyLeft=isResult()?R.x0:(P.land?P.x0:P.x0);
         var capyRight=isResult()?R.x1:(P.land?P.x0+P.pw*0.42:P.x1);
         var xWant=isResult()?R.xWant:(P.land?P.x0+P.pw*0.22:P.x0+P.pw*0.5);
@@ -395,7 +394,18 @@ function Games(api){
       c.clearRect(0,0,w,h);
       c.save();
       if(G.EGFx&&G.EGFx.applyCam) G.EGFx.applyCam(c);
-      if(D.drawWorld) D.drawWorld(c,w,h,performance.now()/1000);
+      if(D.drawWorld){
+        var avoid=[], ids=['recWrap','result','grade','hitBadge'], ii,el,rr;
+        if(isResult()){
+          for(ii=0;ii<ids.length;ii++){
+            el=document.getElementById(ids[ii]);
+            if(!el||el.classList.contains('hide')) continue;
+            rr=el.getBoundingClientRect();
+            if(rr.width>2&&rr.height>2) avoid.push({l:rr.left,t:rr.top,r:rr.right,b:rr.bottom});
+          }
+        }
+        D.drawWorld(c,w,h,performance.now()/1000,{avoid:avoid});
+      }
       cur.draw(c,w,h,st,capySt||{t:performance.now()/1000,act:'play'});
       c.restore();
     },

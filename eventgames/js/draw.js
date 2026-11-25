@@ -539,13 +539,23 @@ function drawWorld(c,w,h,t,opt){
     c.restore();
     c.globalAlpha=1;
   }
+  function inAvoid(px,py){
+    var av=opt.avoid,j,b;
+    if(!av||!av.length)return false;
+    for(j=0;j<av.length;j++){
+      b=av[j];
+      if(px>b.l-24&&px<b.r+24&&py>b.t-24&&py<b.b+24) return true;
+    }
+    return false;
+  }
   // slow snacks
-  if(typeof drawSnack==='function'){
+  if(!opt.noSnacks && typeof drawSnack==='function'){
     var kinds=['gummy','candy','lolly','chew','gummy-yel'];
     for(i=0;i<7;i++){
       x=w*((0.08+i*0.13 + Math.sin(t*0.25+i)*0.03)%1);
       y=top+70+((i*89)%Math.max(80,h*0.5))+Math.sin(t*0.7+i)*10;
       if(y>h-80) continue;
+      if(inAvoid(x,y)) continue;
       c.globalAlpha=0.38;
       drawSnack(c,kinds[i%kinds.length],x,y,0.55+0.12*(i%3),t*0.4+i);
       c.globalAlpha=1;

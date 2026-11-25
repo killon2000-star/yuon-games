@@ -231,9 +231,49 @@ function updateHitBadge(pop){
 function showPlus(){
   var el=$('hitFloat'); if(!el)return;
   el.textContent=t('plus');
-  el.classList.remove('on');void el.offsetWidth;el.classList.add('on');
+  el.classList.remove('on','below');
+  void el.offsetWidth;
+  function unscaledRect(node){
+    if(!node) return null;
+    var b=node.getBoundingClientRect(), tr=getComputedStyle(node).transform, sx=1, sy=1, m, p, cx, cy, w, h;
+    if(tr && tr!=='none'){
+      m=tr.match(/matrix\(([^)]+)\)/);
+      if(m){p=m[1].split(','); sx=Math.abs(parseFloat(p[0])||1); sy=Math.abs(parseFloat(p[3])||1);}
+    }
+    cx=(b.left+b.right)/2; cy=(b.top+b.bottom)/2;
+    w=b.width/sx; h=b.height/sy;
+    return {left:cx-w/2,right:cx+w/2,top:cy-h/2,bottom:cy+h/2,width:w,height:h};
+  }
+  var badge=$('hitBadge'), tr=$('topRight');
+  var br=badge&&!badge.classList.contains('hide')?unscaledRect(badge):null;
+  var trr=tr?tr.getBoundingClientRect():null;
+  var pr=unscaledRect(el);
+  var pw=Math.max(pr.width,90), ph=Math.max(pr.height,70);
+  // hitpop scale 1.12 and +1 peak scale 1.1 grow the boxes mid-animation
+  var badgeGrow=br?br.width*0.1:0;
+  var plusGrow=pw*0.1;
+  var gap=18;
+  var w=pw*1.16, h=ph*1.16;
+  var x,y,below=false, rightLimit=innerWidth-8;
+  if(trr) rightLimit=Math.min(rightLimit, trr.left-8);
+  if(br){
+    x=br.right + badgeGrow + gap + plusGrow + w/2;
+    y=(br.top+br.bottom)/2;
+    if(x+w/2 > rightLimit){
+      below=true;
+      x=Math.min(rightLimit-w/2, Math.max(w/2+8, (br.left+br.right)/2 + Math.min(80, br.width*0.25)));
+      y=br.bottom + badgeGrow + gap + plusGrow + h/2;
+    }
+  } else {
+    x=Math.min(rightLimit-w/2, innerWidth*0.82);
+    y=Math.max(72, (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--chrome-h'))||80)+36);
+  }
+  el.style.left=Math.round(x)+'px';
+  el.style.top=Math.round(y)+'px';
+  if(below) el.classList.add('below');
+  void el.offsetWidth;
+  el.classList.add('on');
 }
-
 function cycleLang(){var i=LANGS.indexOf(lang);lang=LANGS[(i+1)%LANGS.length];cfg.lang=lang;saveCfg(cfg);applyLang();}
 function toggleMusic(){cfg.music=!cfg.music;saveCfg(cfg);if(cfg.music){A.unlock();A.playBgm(GAME);}else A.stopBgm();syncChrome();}
 
@@ -588,9 +628,9 @@ function tickFx(){
   fxx.clearRect(0,0,innerWidth,innerHeight);
   if(window.EGFx&&EGFx.draw){
     EGFx.tick(16.67);
-    var safe0=fxSafe();
+    var safe0=fxSafe(), rects0=uiRects();
     fxx.save(); fxx.beginPath(); fxx.rect(0,safe0,innerWidth,Math.max(0,innerHeight-safe0)); fxx.clip();
-    EGFx.draw(fxx,D); fxx.restore();
+    EGFx.draw(fxx,D,function(x,y,s){return hitsUi(x,y,s,rects0)}); fxx.restore();
     if(EGFx.liveCount()) fxR=requestAnimationFrame(tickFx); else fxR=0;
     return;
   }
@@ -748,9 +788,12 @@ function boot(){
       onPlayTap(e);
     }
   },{passive:false});
+  document.addEventListener('touchstart',function(){A.unlock()},{passive:true});
   document.addEventListener('keydown',function(e){
     if(e.repeat)return;
     var k=e.key, code=e.keyCode;
+    var _ok=k==='Enter'||k===' '||k==='Spacebar'||k==='OK'||k==='Accept'||k==='Select'||code===13||code===32;
+    if(_ok) A.unlock();
     var isOk=k==='Enter'||k===' '||k==='Spacebar'||k==='OK'||k==='Accept'||k==='Select'||code===13||code===32;
     if(!isOk)return;
     if($('admin')&&!$('admin').classList.contains('hide'))return;
@@ -786,8 +829,8 @@ function boot(){
   }
   L.GAMES.forEach(function(id){
     var a=$('gc-'+id); if(!a)return;
+    a.addEventListener('pointerdown',function(){ A.unlock(); A.playBgm('launcher'); },{passive:true});
     a.addEventListener('click',function(e){
-      // allow default nav
       A.unlock();
     });
   });
