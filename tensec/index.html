@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <title>10초 맞추기</title>
 <style>
-:root{--bg:#fde7ef;--ink:#5b4636;--card:#fff;--btn:#9be3b0;--stop:#ff9aa8;--btn2:#ffd59e;--btn3:#cfd8ff;--title:#ff8fab;--chip:#ffe3ef;--line:#5b4636;--gold:#ffd76a;--miss:#e8d5c8;--ov:rgba(255,240,246,.96)}
+:root{--bg:#fde7ef;--ink:#5b4636;--card:#fff;--btn:#9be3b0;--stop:#ff9aa8;--btn2:#ffd59e;--btn3:#cfd8ff;--title:#ff8fab;--chip:#ffe3ef;--line:#5b4636;--gold:#ffd76a;--miss:#e8d5c8;--ov:rgba(255,240,246,.96);--chrome-h:76px}
 html,body{margin:0;position:fixed;inset:0;width:100%;height:100%;height:100dvh;height:var(--app-h,100dvh);overflow:hidden;background:var(--bg);overscroll-behavior:none;overscroll-behavior-y:none;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink);word-break:keep-all;overflow-wrap:break-word}
 #bg,#fx,#app{position:fixed;left:0;right:0;top:var(--app-top,0);width:100%;height:100%;height:var(--app-h,100dvh);box-sizing:border-box}
 #bg{pointer-events:none;background:
@@ -20,22 +20,22 @@ html,body{margin:0;position:fixed;inset:0;width:100%;height:100%;height:100dvh;h
  radial-gradient(ellipse at 90% 80%,#d9ecff 0%,transparent 45%),
  radial-gradient(ellipse at 10% 90%,#ffd6e8 0%,transparent 40%),
  var(--bg)}
-#fx{pointer-events:none;z-index:40}
-#app{display:flex;flex-direction:column;align-items:center;padding:max(10px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left));z-index:1}
+#fx{pointer-events:none;z-index:0}
+#app{display:flex;flex-direction:column;align-items:center;padding:0 max(14px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left));z-index:1}
 #scene{position:fixed;left:0;right:0;top:var(--app-top,0);width:100%;height:var(--app-h,100dvh);z-index:0;pointer-events:auto}
 #app{pointer-events:none;background:transparent}
 #app button,#app input,#app table,#app .ov,#app .card,#app #chipLang,#app #clockWrap,#app #result,#app #iosHint,#app #prizeRow,#pin,#admin{pointer-events:auto}
-#logo{position:absolute;top:max(8px,env(safe-area-inset-top));left:max(10px,env(safe-area-inset-left));z-index:5;background:#fff;border:3px solid var(--line);border-radius:16px;padding:4px 8px;font-family:inherit;box-shadow:0 3px 0 var(--line);line-height:0}
+#logo{position:absolute;top:max(8px,env(safe-area-inset-top));left:max(10px,env(safe-area-inset-left));z-index:25;background:#fff;border:3px solid var(--line);border-radius:16px;padding:4px 8px;font-family:inherit;box-shadow:0 3px 0 var(--line);line-height:0}
 #logo img{display:block;height:44px;width:auto;max-width:168px}
 #logo:active{transform:translateY(2px);box-shadow:0 1px 0 var(--line)}
-#topRight{position:absolute;top:max(8px,env(safe-area-inset-top));right:max(10px,env(safe-area-inset-right));z-index:5;display:flex;gap:8px;align-items:center;pointer-events:auto}
+#topRight{position:absolute;top:max(8px,env(safe-area-inset-top));right:max(10px,env(safe-area-inset-right));z-index:25;display:flex;gap:8px;align-items:center;pointer-events:auto}
 #chipLang,#btnFS,#btnMusic{background:var(--chip);border:3px solid var(--line);border-radius:16px;padding:6px 12px;font-weight:700;font-size:13px;color:var(--ink);font-family:inherit;box-shadow:0 3px 0 var(--line)}
 #btnFS,#btnMusic{width:42px;height:42px;padding:0;font-size:22px;line-height:1;display:flex;align-items:center;justify-content:center}
 #btnMusic.off{background:#eee;opacity:.85}
 #btnFS:active,#chipLang:active,#btnMusic:active{transform:translateY(2px);box-shadow:0 1px 0 var(--line)}
 #btnFS.on{background:var(--btn)}
 #iosHint{margin:10px 8px 0;max-width:22em;font-size:13px;font-weight:700;line-height:1.35;opacity:.85;text-align:center}
-#stage{flex:1;width:100%;max-width:1100px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;text-align:center;min-height:0;padding-top:52px;pointer-events:none}
+#stage{flex:1;width:100%;max-width:1100px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;text-align:center;min-height:0;padding-top:var(--chrome-h);pointer-events:none}
 #stage > *{pointer-events:none}
 #stage button,#stage #clockWrap,#stage #result,#stage #prizeRow,#stage #iosHint,#dock{pointer-events:auto}
 .hud{flex:0 0 auto;width:100%;z-index:6}
@@ -99,10 +99,10 @@ h1{font-size:clamp(28px,7.2vmin,52px);margin:4px 0 6px;color:var(--title);-webki
 .muted{opacity:.75;font-size:13px;text-align:center;margin:6px 0 0}
 @media (orientation:landscape){
   .help{font-size:13px;max-width:22em}
-  #stage{flex-direction:row;gap:12px;justify-content:flex-end;align-items:stretch;padding-top:8px;max-width:none}
-  .hud{position:absolute;left:0;right:44%;top:max(8px,env(safe-area-inset-top));text-align:center}
+  #stage{flex-direction:row;gap:12px;justify-content:flex-end;align-items:stretch;padding-top:0;max-width:none}
+  .hud{position:absolute;left:0;right:calc(min(480px,40%) + 4%);width:auto;max-width:none;top:var(--chrome-h);text-align:center;box-sizing:border-box;padding:0 8px}
   h1{font-size:clamp(22px,5vmin,40px)}
-  #dock{width:min(480px,40%);margin:0 2% 0 0;justify-content:center;background:linear-gradient(90deg,rgba(253,231,239,0) 0%,rgba(253,231,239,.78) 18%,rgba(243,215,196,.92) 100%);padding:12px 16px}
+  #dock{width:min(480px,40%);margin:var(--chrome-h) 2% 0 0;justify-content:center;align-self:stretch;max-height:calc(100% - var(--chrome-h));box-sizing:border-box;background:linear-gradient(90deg,rgba(253,231,239,0) 0%,rgba(253,231,239,.78) 18%,rgba(243,215,196,.92) 100%);padding:12px 16px}
   #go{width:min(140px,20vw);height:min(140px,20vw);max-width:32vh;max-height:32vh;font-size:clamp(22px,5vmin,36px);margin:4px 0}
   #clock{font-size:clamp(48px,12vmin,104px)}
   #clockWrap{min-height:clamp(56px,16vmin,120px)}
@@ -1049,8 +1049,19 @@ function updateFSUI(){
   b.setAttribute('aria-label',isFS()?t('fsExit'):t('fs'));
   b.title=isFS()?t('fsExit'):t('fs');
 }
+function padChrome(){
+  var bot=0;
+  ['logo','topRight'].forEach(function(id){
+    var el=$(id);if(!el)return;
+    var r=el.getBoundingClientRect();
+    if(r.width>1&&r.height>1)bot=Math.max(bot,r.bottom);
+  });
+  var h=Math.max(64, Math.ceil(bot+10));
+  document.documentElement.style.setProperty('--chrome-h',h+'px');
+}
 function syncChrome(){
   updateFSUI();
+  padChrome();
   var hint=$('iosHint');if(!hint)return;
   var show=isIOS()&&!isStandalone()&&mode==='title';
   hint.classList.toggle('hide',!show);
@@ -1060,6 +1071,7 @@ function fitH(){
   var vv=window.visualViewport,h=Math.round((vv&&vv.height)||window.innerHeight),top=vv?Math.round(vv.offsetTop):0;
   document.documentElement.style.setProperty('--app-h',h+'px');
   document.documentElement.style.setProperty('--app-top',top+'px');
+  padChrome();
 }
 
 function t(k){return L[k]||I18N.ko[k]||k}
@@ -1349,7 +1361,7 @@ window.__ts={
   forceReveal:function(elapsed){if(raf){cancelAnimationFrame(raf);raf=0}var a=awardPrize(elapsed,cfg);lastAward=a;startReveal(a)},
   get revealing(){return revealing}, REVEAL_HOLD:REVEAL_HOLD,
   setLang:function(l){if(LANGS.indexOf(l)>=0){lang=l;cfg.lang=l;applyLang()}},
-  setCapyPose:setPose, capy:capy, capyBounds:function(){return capy._box||null}, stepScene:stepScene, spinFits:spinFits, fitCapyScale:fitCapyScale, layoutBand:layoutBand, unlockMusic:unlockMusic, addExactHit:addExactHit, resetHitsSilent:function(){hits={day:todayKey(),n:0};saveHits(hits);renderHits(false)}, get hits(){return hits}, setMusicOn:setMusicOn, setMusicVol:setMusicVol,
+  padChrome:padChrome, setCapyPose:setPose, capy:capy, capyBounds:function(){return capy._box||null}, stepScene:stepScene, spinFits:spinFits, fitCapyScale:fitCapyScale, layoutBand:layoutBand, unlockMusic:unlockMusic, addExactHit:addExactHit, resetHitsSilent:function(){hits={day:todayKey(),n:0};saveHits(hits);renderHits(false)}, get hits(){return hits}, setMusicOn:setMusicOn, setMusicVol:setMusicVol,
   musicCaptureStream:musicCaptureStream, get mus(){return mus}, playJingle:playJingle, setMusicState:setMusicState
 };
 })();
