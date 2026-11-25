@@ -19,25 +19,28 @@ function Games(api){
     return {land:land,x0:x0,y0:y0,x1:x1,y1:y1,pw:Math.max(40,x1-x0),ph:Math.max(40,y1-y0),w:w,h:h};
   }
   // Portrait: whole figure ~25-30% of viewport height. Landscape: fit play rect with margin.
-  function isResult(){try{return !!(document.body&&document.body.classList.contains('result'))}catch(e){return false}}
+  function isResult(){try{var b=document.body;return !!(b&&(b.classList.contains('result')||b.classList.contains('reveal')))}catch(e){return false}}
   // On result, keep the capybara fully visible beside (landscape) or above (portrait) the prize card.
   function resultClear(L, yCap){
     var x0=L.x0, y0=L.y0, x1=L.x1, y1=yCap!=null?yCap:L.y1, xWant=(x0+x1)/2;
     if(isResult()){
       if(L.land){ x0=L.x0+L.pw*0.52; xWant=L.x0+L.pw*0.80; y1=L.y1; }
       else {
-        var el=document.getElementById('result');
-        if(el && !el.classList.contains('hide')){
+        ['recWrap','result','go','next','homeBtn'].forEach(function(id){
+          var el=document.getElementById(id);
+          if(!el || el.classList.contains('hide')) return;
+          var cs=window.getComputedStyle(el);
+          if(cs.display==='none'||cs.visibility==='hidden') return;
           var top=el.getBoundingClientRect().top;
           if(top>80) y1=Math.min(y1, top-12);
-        }
+        });
       }
     }
     return {x0:x0,y0:y0,x1:x1,y1:y1,xWant:xWant};
   }
   function sizePlaceCapy(L, st, x0, y0, x1, y1, xWant, footY){
     var box=D.capyBox(st);
-    var prefer=L.land? Math.min((y1-y0)*0.90, L.h*0.42) : Math.min((y1-y0)*0.90, L.h*0.28);
+    var prefer=L.land? Math.min((y1-y0)*0.90, L.h*0.32) : Math.min((y1-y0)*0.90, L.h*0.28);
     var sc=D.fitCapyInRect(x0,y0,x1,y1, box, prefer);
     return D.placeCapyInRect(x0,y0,x1,y1, box, sc, xWant, footY);
   }
@@ -140,8 +143,10 @@ function Games(api){
         if(s.waiting){
           var spd=L.stackPieceSpeed(s.drops.length,s.width);
           var dt=s.last?Math.min(0.04,(now-s.last)/1000):0.016;
-          s.slideX+=s.dir*spd*dt*0.55;
           var span=Math.max(0.85, 0.55+s.width);
+          var u=Math.min(1, Math.abs(s.slideX)/span);
+          var fac=0.40+0.60*(1-u*u); // slower near the ends
+          s.slideX+=s.dir*spd*dt*0.55*fac;
           if(s.slideX>span){s.slideX=span;s.dir=-1;}
           if(s.slideX<-span){s.slideX=-span;s.dir=1;}
         }
@@ -190,7 +195,7 @@ function Games(api){
       draw:function(c,w,h,s,capySt){
         var P=playLayout(w,h);
         var u=0;
-        if(s.turned){u=Math.min(1,(performance.now()-(s.u0||s.turnAt))/180);}
+        if(s.turned){u=Math.min(1,(performance.now()-(s.u0||s.turnAt))/220); u=u*u*(3-2*u);}
         var act=s.falseStart?'lose':(!s.turned?'back':(u<1?'turn':(s.done?(capySt.act||'wow'):'wow')));
         var st=Object.assign({},capySt,{act:act,u:u,look:0});
         var R=resultClear(P, P.y1);
@@ -211,6 +216,7 @@ function Games(api){
       if(!cur||!st)return;
       var S=sizePlay(cv), c=S.c,w=S.w,h=S.h;
       c.clearRect(0,0,w,h);
+      if(D.drawWorld) D.drawWorld(c,w,h,performance.now()/1000);
       cur.draw(c,w,h,st,capySt||{t:performance.now()/1000,act:'play'});
     },
     drawPreview:function(cv,gid,t){

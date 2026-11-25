@@ -109,9 +109,11 @@ function capyAnim(st){
   if(st.blink!=null) a.blink=st.blink;
   if(act==='idle'||act==='wait'){
     a.look=st.look!=null?st.look:0.55*Math.sin(t*0.5);
-    var g=(t%7.2);
-    if(g>6.2){var u=(g-6.2)/1.0;a.hop=Math.sin(u*Math.PI)*16;a.sy=1-0.14*Math.sin(u*Math.PI*2);a.face='happy';}
-    if(g>2.5&&g<3.3){a.eat=true;a.snack=a.snack||'gummy';a.face='eat';}
+    a.offX=5.5*Math.sin(t*1.12);
+    a.rot=0.045*Math.sin(t*0.9);
+    var g=(t%8.4);
+    if(g>7.3){var u=(g-7.3)/1.1;a.hop=Math.sin(u*Math.PI)*14;a.sy=1-0.12*Math.sin(u*Math.PI*2);a.face='happy';}
+    if(g>2.8&&g<3.6){a.eat=true;a.snack=a.snack||'gummy';a.face='eat';}
   }
   if(act==='play'){
     a.face='focus'; a.sweat=Math.max(a.sweat,0.9); a.brow=1;
@@ -123,13 +125,13 @@ function capyAnim(st){
     a.sx=1+0.12*Math.sin(u*Math.PI); a.sy=1-0.1*Math.sin(u*Math.PI);
   }
   if(act==='win'||act==='dance'){
-    a.face='happy'; a.hop=Math.abs(Math.sin(t*8))*18; a.rot=0.1*Math.sin(t*8);
-    a.arm=0.8+0.35*Math.sin(t*8); a.snack=st.snack||'gummy'; a.blink=0;
+    a.face='happy'; a.hop=Math.abs(Math.sin(t*5.2))*16; a.rot=0.08*Math.sin(t*5.2);
+    a.arm=0.8+0.3*Math.sin(t*5.2); a.snack=st.snack||'gummy'; a.blink=0;
   }
   if(act==='win1'){
     a.face='wow'; a.crown=true; a.snack=st.snack||'gummy';
-    a.hop=Math.abs(Math.sin(t*9))*24; a.rot=0.14*Math.sin(t*9);
-    a.arm=1.1; a.sy=1-0.1*Math.sin(t*9); a.blink=0; a.tongue=1;
+    a.hop=Math.abs(Math.sin(t*5.6))*20; a.rot=0.11*Math.sin(t*5.6);
+    a.arm=1.1; a.sy=1-0.08*Math.sin(t*5.6); a.blink=0; a.tongue=1;
   }
   if(act==='lose'){
     a.face='dizzy'; a.rot=1.05; a.offY=14; a.stars=1; a.arm=-0.3; a.blink=0;
@@ -389,12 +391,16 @@ function drawBar(c,x,y,w,h,pos,zones){
   }
   // center line
   c.strokeStyle='#c45b7a';c.lineWidth=3;c.beginPath();c.moveTo(cx,y+4);c.lineTo(cx,y+h-4);c.stroke();
-  // marker (gummy)
+  // marker (gummy) — squash a little at the ends so the turnaround feels soft
   var mx=x+pos*w, my=midY;
+  var edge=Math.min(pos,1-pos);
+  var squash=edge<0.08?1+0.4*(1-edge/0.08):1;
   c.save();c.translate(mx,my);
-  c.fillStyle='rgba(91,70,54,.2)';E(c,0,h*0.4,14,5);c.fill();
+  c.fillStyle='rgba(91,70,54,.2)';E(c,0,h*0.4,14*squash,5/squash);c.fill();
   c.restore();
-  drawGummy(c,mx,my-6, Math.max(0.7,h/28), '#ff5b6a', Math.sin(pos*20)*0.2);
+  c.save();c.translate(mx,my-6);c.scale(squash,2-squash);
+  drawGummy(c,0,0, Math.max(0.7,h/28), '#ff5b6a', Math.sin(pos*Math.PI*2)*0.25);
+  c.restore();
   c.restore();
 }
 function drawTarget(c,x,y,R,hit){
@@ -463,6 +469,76 @@ function drawPastelBg(c,w,h){
   c.fillStyle='rgba(217,236,255,.55)';E(c,w*0.9,h*0.75,w*0.4,h*0.22);c.fill();
   c.fillStyle='rgba(255,214,232,.45)';E(c,w*0.1,h*0.9,w*0.35,h*0.16);c.fill();
 }
+
+function drawWorld(c,w,h,t,opt){
+  // Translucent stage + slowly drifting pastel decorations. Leaves the top chrome clear.
+  opt=opt||{}; t=t||0;
+  var reduce=opt.still||(typeof document!=='undefined'&&document.body&&document.body.classList.contains('low'));
+  if(reduce) t=0;
+  var top=opt.topSafe!=null?opt.topSafe:Math.max(96, Math.min(140, h*0.16));
+  c.save();
+  // floor / stage
+  var fy=h*0.90, frx=Math.min(w*0.46, h*0.62), fry=Math.max(18,h*0.055);
+  var fg=c.createRadialGradient(w*0.5,fy,fry*0.2,w*0.5,fy,frx);
+  fg.addColorStop(0,'rgba(255,255,255,0.55)');
+  fg.addColorStop(1,'rgba(255,255,255,0)');
+  c.fillStyle=fg;
+  c.beginPath();c.ellipse(w*0.5,fy,frx,fry,0,0,Math.PI*2);c.fill();
+  c.strokeStyle='rgba(91,70,54,0.08)';c.lineWidth=2;
+  c.beginPath();c.ellipse(w*0.5,fy,frx*0.82,fry*0.7,0,0,Math.PI*2);c.stroke();
+  // soft polka in the mid band (not over the top bar)
+  var i,x,y,s;
+  c.fillStyle='rgba(255,255,255,0.22)';
+  for(i=0;i<18;i++){
+    x=((i*97.3)+w*0.07)%w;
+    y=top+28+((i*53.1)%Math.max(40,h-top-140));
+    c.beginPath();c.arc(x,y,3+(i%3),0,7);c.fill();
+  }
+  // clouds
+  function cloud(cx,cy,sc,a){
+    c.globalAlpha=a;c.fillStyle='#fff';
+    c.beginPath();
+    c.ellipse(cx,cy,38*sc,16*sc,0,0,7);
+    c.ellipse(cx-22*sc,cy+2,22*sc,12*sc,0,0,7);
+    c.ellipse(cx+24*sc,cy+1,24*sc,13*sc,0,0,7);
+    c.fill();
+    c.globalAlpha=1;
+  }
+  for(i=0;i<5;i++){
+    var spd=8+i*5;
+    x=((i*w*0.23 + t*spd)%(w+220))-110;
+    y=top+30+(i%3)*Math.min(52,h*0.07);
+    cloud(x,y,0.7+i*0.12,0.22+0.08*(i%3));
+  }
+  // twinkling stars / sparkles, mid-field
+  for(i=0;i<10;i++){
+    x=(i*w*0.11+40)%w;
+    y=top+50+((i*71)%Math.max(60,h*0.45));
+    var tw=0.25+0.25*Math.sin(t*1.6+i);
+    c.globalAlpha=tw;
+    c.fillStyle='#ffd76a';
+    c.save();c.translate(x,y);c.rotate(0.2);
+    c.beginPath();
+    for(var k=0;k<4;k++){c.rotate(Math.PI/2);c.lineTo(0,5.5);c.lineTo(1.6,1.6);}
+    c.closePath();c.fill();
+    c.restore();
+    c.globalAlpha=1;
+  }
+  // slow snacks
+  if(typeof drawSnack==='function'){
+    var kinds=['gummy','candy','lolly','chew','gummy-yel'];
+    for(i=0;i<7;i++){
+      x=w*((0.08+i*0.13 + Math.sin(t*0.25+i)*0.03)%1);
+      y=top+70+((i*89)%Math.max(80,h*0.5))+Math.sin(t*0.7+i)*10;
+      if(y>h-80) continue;
+      c.globalAlpha=0.38;
+      drawSnack(c,kinds[i%kinds.length],x,y,0.55+0.12*(i%3),t*0.4+i);
+      c.globalAlpha=1;
+    }
+  }
+  c.restore();
+}
+
 function drawTitle(c,text,x,y,px,maxW){
   c.save();
   c.font='900 '+px+'px '+FONT();
@@ -720,7 +796,7 @@ G.EGDraw={
   drawCapy:drawCapy,capyAnim:capyAnim,measureCapy:measureCapy,capyBox:capyBox,
   safeRect:safeRect,fitCapyInRect:fitCapyInRect,placeCapyInRect:placeCapyInRect,
   drawBar:drawBar,drawTarget:drawTarget,drawTower:drawTower,drawClock:drawClock,
-  drawPastelBg:drawPastelBg,drawTitle:drawTitle,drawLogo:drawLogo,scatterSnacks:scatterSnacks,
+  drawPastelBg:drawPastelBg,drawWorld:drawWorld,drawTitle:drawTitle,drawLogo:drawLogo,scatterSnacks:scatterSnacks,
   drawKeyart:drawKeyart,applyWatermark:applyWatermark
 };
 if(typeof module!=='undefined') module.exports=G.EGDraw;

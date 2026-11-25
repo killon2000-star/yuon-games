@@ -24,17 +24,17 @@ ko:{
   fs:'전체화면', fsExit:'전체화면 종료', lbFsStart:'시작 시 전체화면',
   iosHint:'공유 → 홈 화면에 추가하면 전체화면으로 실행돼요',
   games:{
-    center:{title:'정중앙 멈추기', help:'좌우로 움직이는 젤리를 정가운데에서 멈추세요.', unit:'거리', hit:'오늘 정중앙 맞춘 사람 {n}명'},
-    target:{title:'과녁 맞추기', help:'움직이는 과녁의 정중앙에 젤리를 던지세요. 조금 앞서 누르면 됩니다.', unit:'거리', hit:'오늘 과녁 정중앙 맞춘 사람 {n}명'},
-    stack:{title:'카피바라 탑 쌓기', help:'움직이는 블록을 타이밍 맞춰 떨어뜨려 높이 쌓으세요.', unit:'오차', hit:'오늘 완벽한 탑을 쌓은 사람 {n}명'},
-    timing:{title:'타이밍 잡기', help:'카피바라가 돌아보면 바로 누르세요. 먼저 누르면 실격입니다.', unit:'ms', hit:'오늘 정확히 잡아낸 사람 {n}명'}
+    center:{title:'정중앙 멈추기', help:'시작을 누른 뒤, 좌우로 움직이는 젤리가 가운데 분홍 선에 왔을 때 정지를 누르세요.', unit:'거리', hit:'오늘 정중앙 맞춘 사람 {n}명'},
+    target:{title:'과녁 맞추기', help:'시작 후 과녁이 움직입니다. 한가운데를 노리고, 조금 일찍 던지기를 누르세요.', unit:'거리', hit:'오늘 과녁 정중앙 맞춘 사람 {n}명'},
+    stack:{title:'카피바라 탑 쌓기', help:'시작을 누르면 블록이 좌우로 움직입니다. 아래 탑과 맞춰 떨어뜨려 7층을 쌓으세요.', unit:'오차', hit:'오늘 완벽한 탑을 쌓은 사람 {n}명'},
+    timing:{title:'타이밍 잡기', help:'카피바라가 등을 보입니다. 갑자기 돌아보는 순간 바로 지금! 을 누르세요. 먼저 누르면 실격입니다.', unit:'ms', hit:'오늘 정확히 잡아낸 사람 {n}명'}
   },
   falseStart:'너무 빨랐어요!',
   metaCenter:'가운데에서 {v}',
   metaTarget:'중심에서 {v}',
   metaStack:'{h}층 · 완벽한 블록 {p}개',
   metaTiming:'{v}ms',
-  plus:'+1'
+  plus:'+1', prizePrev:'1등 상품: {n}', floorUnit:'층'
 },
 en:{
   pack:'Event Minigames', helpPack:'Short party games — pick one to play.',
@@ -52,14 +52,14 @@ en:{
   fs:'Full screen', fsExit:'Exit full screen', lbFsStart:'Full screen on Start',
   iosHint:'Share → Add to Home Screen to play full screen',
   games:{
-    center:{title:'Stop in the Center', help:'Stop the sliding gummy right in the middle.', unit:'dist', hit:'{n} perfect center hits today'},
-    target:{title:'Hit the Target', help:'Throw a gummy at the bullseye of the moving target. Lead it a little.', unit:'dist', hit:'{n} bullseyes today'},
-    stack:{title:'Capybara Tower', help:'Tap to drop blocks and stack them as high as you can.', unit:'err', hit:'{n} perfect towers today'},
-    timing:{title:'Quick Turn', help:'Tap the moment the capybara turns around. Too early is a miss.', unit:'ms', hit:'{n} perfect reactions today'}
+    center:{title:'Stop in the Center', help:'Press Start, then press Stop when the sliding gummy hits the pink center line.', unit:'dist', hit:'{n} perfect center hits today'},
+    target:{title:'Hit the Target', help:'After Start, throw a little early so the gummy meets the moving bullseye.', unit:'dist', hit:'{n} bullseyes today'},
+    stack:{title:'Capybara Tower', help:'Press Start, then drop each moving block so it lines up. Stack all 7 floors.', unit:'err', hit:'{n} perfect towers today'},
+    timing:{title:'Quick Turn', help:'The capybara faces away. Tap NOW! the instant it turns around. Too early is a miss.', unit:'ms', hit:'{n} perfect reactions today'}
   },
   falseStart:'Too early!',
   metaCenter:'{v} from center', metaTarget:'{v} from center', metaStack:'{h} high · {p} perfect', metaTiming:'{v} ms',
-  plus:'+1'
+  plus:'+1', prizePrev:'1st prize: {n}', floorUnit:'F'
 },
 id:{
   pack:'Minigame Acara', helpPack:'Permainan singkat untuk acara — pilih satu.',
@@ -77,14 +77,14 @@ id:{
   fs:'Layar penuh', fsExit:'Keluar layar penuh', lbFsStart:'Layar penuh saat Mulai',
   iosHint:'Bagikan → Tambah ke Layar Utama untuk tampilan penuh',
   games:{
-    center:{title:'Berhenti di Tengah', help:'Hentikan permen di tepat tengah.', unit:'jarak', hit:'{n} orang tepat di tengah hari ini'},
-    target:{title:'Lempar Sasaran', help:'Lempar permen ke pusat sasaran yang bergerak.', unit:'jarak', hit:'{n} tembakan tepat hari ini'},
-    stack:{title:'Menara Capybara', help:'Jatuhkan blok dan tumpuk setinggi mungkin.', unit:'selisih', hit:'{n} menara sempurna hari ini'},
-    timing:{title:'Giliran Cepat', help:'Ketuk saat capybara berbalik. Terlalu cepat = gagal.', unit:'ms', hit:'{n} reaksi tepat hari ini'}
+    center:{title:'Berhenti di Tengah', help:'Tekan Mulai, lalu tekan Berhenti saat permen tepat di garis tengah.', unit:'jarak', hit:'{n} orang tepat di tengah hari ini'},
+    target:{title:'Lempar Sasaran', help:'Setelah Mulai, lempar sedikit lebih awal agar mengenai pusat sasaran.', unit:'jarak', hit:'{n} tembakan tepat hari ini'},
+    stack:{title:'Menara Capybara', help:'Tekan Mulai, lalu jatuhkan blok agar sejajar. Tumpuk 7 lantai.', unit:'selisih', hit:'{n} menara sempurna hari ini'},
+    timing:{title:'Giliran Cepat', help:'Capybara memunggungi Anda. Ketuk SEKARANG! saat ia berbalik. Terlalu cepat = gagal.', unit:'ms', hit:'{n} reaksi tepat hari ini'}
   },
   falseStart:'Terlalu cepat!',
   metaCenter:'{v} dari tengah', metaTarget:'{v} dari tengah', metaStack:'{h} tingkat · {p} sempurna', metaTiming:'{v} ms',
-  plus:'+1'
+  plus:'+1', prizePrev:'Hadiah juara 1: {n}', floorUnit:'lt'
 }
 };
 
@@ -108,7 +108,8 @@ function loadHits(){try{return L.mergeHits(JSON.parse(localStorage.getItem(LS_HI
 function saveHits(h){try{localStorage.setItem(LS_HITS,JSON.stringify(h))}catch(e){}}
 
 var cfg=loadCfg(), hits=loadHits(), lang=cfg.lang||detectLang(), T=I18N[lang]||I18N.ko;
-var GAME=detectGame(), mode='title', raf=0, lastAward=null, pinBuf='', GPlay=window.EGGames(window);
+var GAME=detectGame(), mode='title', raf=0, lastAward=null, lastResult=null, pinBuf='', GPlay=window.EGGames(window);
+var revealing=false, revealT=0, ignoreClick=0, REVEAL_HOLD=2.5;
 var $=function(id){return document.getElementById(id)};
 window.EG={cfg:cfg, LOW:LOW, lang:lang, game:GAME};
 
@@ -146,10 +147,26 @@ function syncChrome(){
   var bm=$('btnBgm');
   if(bm){bm.classList.toggle('on',cfg.music);bm.classList.toggle('off',!cfg.music);bm.textContent=cfg.music?'♪':'♪̸';}
 }
+function measureChrome(){
+  var bot=0;
+  ['logo','topRight'].forEach(function(id){
+    var el=$(id); if(!el)return;
+    var r=el.getBoundingClientRect();
+    if(r.bottom>bot) bot=r.bottom;
+  });
+  var h=Math.max(84, Math.ceil(bot+10));
+  document.documentElement.style.setProperty('--chrome-h', h+'px');
+  return h;
+}
+function chromeSafe(){
+  var v=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--chrome-h'));
+  return isFinite(v)&&v>0?v:92;
+}
 function fitH(){
   var vv=window.visualViewport,h=Math.round((vv&&vv.height)||window.innerHeight),top=vv?Math.round(vv.offsetTop):0;
   document.documentElement.style.setProperty('--app-h',h+'px');
   document.documentElement.style.setProperty('--app-top',top+'px');
+  measureChrome();
 }
 function vibe(ms){
   if(!cfg.vib)return;
@@ -182,10 +199,12 @@ function applyLang(){
     if($('help'))$('help').textContent=gT(GAME,'help');
     if($('homeBtn')){$('homeBtn').classList.remove('hide');$('homeBtn').textContent=t('back');}
     if($('go')&&mode==='title'){$('go').classList.remove('hide','stop','wide');$('go').textContent=t('start');}
+    fillPrizesPreview();
   }
   updateHitBadge();
   if($('iosHint'))$('iosHint').textContent=t('iosHint');
   syncChrome();
+  measureChrome();
 }
 function updateHitBadge(pop){
   var el=$('hitBadge'); if(!el)return;
@@ -223,11 +242,23 @@ function loop(){
   raf=requestAnimationFrame(loop);
   var play=$('play'); if(!play)return;
   if(GAME==='launcher'){
-    // previews
     L.GAMES.forEach(function(id){
       var cv=$('pv-'+id); if(!cv)return;
       GPlay.drawPreview(cv,id,performance.now()/1000);
     });
+    if(play){
+      var S=GPlay.sizePlay(play), c=S.c,w=S.w,h=S.h;
+      c.clearRect(0,0,w,h);
+      if(D.drawWorld) D.drawWorld(c,w,h,performance.now()/1000);
+      var st={t:performance.now()/1000,act:'idle'};
+      var box=D.capyBox(st), land=w>h*1.05;
+      var y0=Math.max(h*0.18, chromeSafe()+8), y1=h*0.96;
+      var x0=0, x1=land?w*0.40:w;
+      var prefer=Math.min(h*(land?0.40:0.22), y1-y0);
+      var sc=D.fitCapyInRect(x0,y0,x1,y1, box, prefer);
+      var pos=D.placeCapyInRect(x0,y0,x1,y1, box, sc, land?w*0.18:w*0.5, y1-8);
+      D.drawCapy(c,pos.x,pos.y,pos.s,st);
+    }
     return;
   }
   if(mode==='run'){
@@ -239,17 +270,18 @@ function loop(){
     if(mode==='title'){
       var S=GPlay.sizePlay(play), c=S.c,w=S.w,h=S.h;
       c.clearRect(0,0,w,h);
+      if(D.drawWorld) D.drawWorld(c,w,h,performance.now()/1000);
       var Lyt=GPlay.playLayout(w,h), st=capyState(), box=D.capyBox(st);
       var y1=Lyt.y1;
       if(!Lyt.land){
-        ['title','help','go','homeBtn'].forEach(function(id){
+        ['title','help','go','homeBtn','prizesPreview'].forEach(function(id){
           var el=document.getElementById(id);
           if(!el||el.classList.contains('hide'))return;
           var top=el.getBoundingClientRect().top;
           if(top>40) y1=Math.min(y1, top-12);
         });
       }
-      var prefer=Lyt.land? Math.min((y1-Lyt.y0)*0.90, Lyt.h*0.42) : Math.min((y1-Lyt.y0)*0.90, Lyt.h*0.28);
+      var prefer=Lyt.land? Math.min((y1-Lyt.y0)*0.90, Lyt.h*0.32) : Math.min((y1-Lyt.y0)*0.90, Lyt.h*0.28);
       var x1=Lyt.land? Lyt.x0+Lyt.pw*0.56 : Lyt.x1;
       var xWant=Lyt.land? Lyt.x0+Lyt.pw*0.30 : w*0.5;
       var sc=D.fitCapyInRect(Lyt.x0,Lyt.y0,x1,y1, box, prefer);
@@ -266,43 +298,131 @@ function goLabel(){
   if(GAME==='timing')return t('now');
   return t('stop');
 }
+function busy(){return revealing||mode==='reveal'}
+function markPointer(){ignoreClick=performance.now()+450}
+function clickFresh(){return performance.now()>=ignoreClick}
+function ensureUi(){
+  var stage=$('stage'); if(!stage)return;
+  if(!$('recWrap')){
+    var w=document.createElement('div');
+    w.id='recWrap'; w.className='hide'; w.setAttribute('aria-live','polite');
+    w.innerHTML='<div id="recLabel"></div><div id="recVal"><span id="recNum"></span><span id="recUnit"></span></div>';
+    var res=$('result');
+    if(res) stage.insertBefore(w,res); else stage.appendChild(w);
+  }
+  if(!$('prizesPreview') && GAME!=='launcher'){
+    var p=document.createElement('div');
+    p.id='prizesPreview';
+    var help=$('help');
+    if(help&&help.parentNode) help.parentNode.insertBefore(p, help.nextSibling);
+    else stage.insertBefore(p, stage.firstChild);
+  }
+}
+function fillPrizesPreview(){
+  var el=$('prizesPreview'); if(!el||GAME==='launcher')return;
+  var list=L.prizeList?L.prizeList(cfg,GAME):((cfg.prizes)||[]);
+  var p=list&&list[0];
+  if(!p||!p.name){el.classList.add('hide');return;}
+  el.classList.remove('hide');
+  el.textContent=(t('prizePrev')||'1등 상품: {n}').replace('{n}', p.name);
+}
+function recordParts(a,r){
+  if(a&&a.falseStart) return {label:t('rec'), num:t('falseStart'), unit:''};
+  if(GAME==='timing') return {label:t('rec'), num:String(Math.round(a.err)), unit:'ms'};
+  if(GAME==='stack'){
+    var h=(r&&r.meta&&r.meta.height!=null)?r.meta.height:'-';
+    return {label:t('rec'), num:String(h), unit:t('floorUnit')||'층'};
+  }
+  if((GAME==='center'||GAME==='target') && a && a.err<=0.0025) return {label:t('rec'), num:t('errExact'), unit:''};
+  return {label:t('rec'), num:fmt(a.err,GAME), unit:''};
+}
+function paintRecord(a,r,big){
+  ensureUi();
+  var wrap=$('recWrap'); if(!wrap)return;
+  var parts=recordParts(a,r);
+  $('recLabel').textContent=parts.label;
+  $('recNum').textContent=parts.num;
+  $('recUnit').textContent=parts.unit||'';
+  wrap.classList.toggle('hide', false);
+  wrap.classList.toggle('big', !!big);
+  wrap.classList.remove('pop'); void wrap.offsetWidth; wrap.classList.add('pop');
+}
+function clearReveal(){
+  revealing=false;
+  if(revealT){clearTimeout(revealT);revealT=0}
+  document.body.classList.remove('reveal');
+}
+function startReveal(a,r){
+  revealing=true; mode='reveal'; lastAward=a; lastResult=r;
+  document.body.classList.remove('playing','result');
+  document.body.classList.add('reveal');
+  if($('result'))$('result').classList.add('hide');
+  if($('go'))$('go').classList.add('hide');
+  paintRecord(a,r,true);
+  keepOn(true);
+  try{A.sfxTap()}catch(e){}
+  syncChrome(); measureChrome();
+  revealT=setTimeout(function(){revealT=0; showPrize(a,r);}, Math.round(REVEAL_HOLD*1000));
+}
+function showPrize(a,r,opts){
+  opts=opts||{};
+  clearReveal();
+  mode='result';
+  document.body.classList.remove('playing','reveal');
+  document.body.classList.add('result');
+  renderResult(a,r);
+  paintRecord(a,r,true);
+  if($('go'))$('go').classList.add('hide');
+  if(a.index===0 && !opts.silent) showPlus();
+  if(!opts.silent){
+    A.sfxWin(a.index);
+    if(a.index===0)vibe(70); else if(a.index>0&&a.index<=3)vibe(40); else vibe(20);
+    burst(a.index===0?'gold':(a.index>0&&a.index<=3?'ok':'soft'));
+  }
+  keepOn(false);
+  syncChrome(); measureChrome();
+  if($('next')) try{$('next').focus()}catch(e){}
+}
 function startRun(ev){
+  if(busy()||mode==='run')return;
   if(ev){ev.preventDefault();ev.stopPropagation();}
+  clearReveal();
   A.unlock();
   if(cfg.fsOnStart)enterFS();
-  mode='run'; document.body.classList.add('playing');
-  lastAward=null;
+  mode='run'; document.body.classList.remove('result','reveal'); document.body.classList.add('playing');
+  lastAward=null; lastResult=null;
   $('result').classList.add('hide');
+  if($('recWrap'))$('recWrap').classList.add('hide');
   $('go').classList.remove('hide'); $('go').classList.add('stop'); $('go').textContent=goLabel();
   if(GAME==='stack')$('go').classList.add('wide');
   GPlay.start(GAME);
   A.sfxStart(); vibe(18); keepOn(true); syncChrome(); A.playBgm(GAME);
 }
 function onPlayTap(ev){
-  if(mode!=='run')return;
+  if(busy()||mode!=='run')return;
   if(ev&&ev.target&&(ev.target.closest&&ev.target.closest('#logo,#topRight,#admin,#pin')))return;
   ev&&ev.preventDefault();
   A.sfxTap(); vibe(12);
   var finished=GPlay.tap();
   if(finished) finish();
 }
+function onGo(e){
+  if(e){e.preventDefault(); if(e.stopPropagation)e.stopPropagation()}
+  A.unlock();
+  if(busy())return;
+  if(mode==='title') startRun(e);
+  else if(mode==='run') onPlayTap(e);
+}
 function finish(){
   if(mode!=='run')return;
-  mode='result'; document.body.classList.remove('playing'); document.body.classList.add('result');
-  keepOn(false);
   var r=GPlay.result();
   var a=L.applyAward(GAME, r.err, cfg, /*log*/[], {falseStart:!!r.falseStart});
-  lastAward=a; saveCfg(cfg);
+  lastAward=a; lastResult=r; saveCfg(cfg);
   if(a.index===0){
     L.bumpExact(hits,GAME); saveHits(hits);
-    updateHitBadge(true); showPlus();
+    updateHitBadge(true);
   }
-  renderResult(a,r);
-  A.sfxWin(a.index);
-  if(a.index===0)vibe(70); else if(a.index>0&&a.index<=3)vibe(40); else vibe(20);
-  burst(a.index===0?'gold':(a.index>0&&a.index<=3?'ok':'soft'));
-  $('go').classList.add('hide');
-  syncChrome();
+  startReveal(a,r);
 }
 function fmt(v,game){
   if(game==='timing')return Math.round(v);
@@ -326,29 +446,77 @@ function renderResult(a,r){
   next.textContent=cfg.staffReset?t('next'):t('again');
 }
 function showTitle(){
-  mode='title'; lastAward=null; document.body.classList.remove('playing','result');
+  clearReveal();
+  mode='title'; lastAward=null; lastResult=null;
+  document.body.classList.remove('playing','result','reveal');
   $('result').classList.add('hide');
+  if($('recWrap'))$('recWrap').classList.add('hide');
   if(GAME!=='launcher'){$('go').classList.remove('hide','stop','wide');$('go').textContent=t('start');}
-  applyLang(); keepOn(false);
+  applyLang(); keepOn(false); measureChrome();
 }
 
 /* confetti candy */
 var bits=[], fxR=0, fx, fxx;
 function sizeFx(){fx=$('fx'); if(!fx)return; fxx=fx.getContext('2d'); var d=LOW?1:Math.min(2,devicePixelRatio||1);fx.width=innerWidth*d;fx.height=innerHeight*d;fxx.setTransform(d,0,0,d,0,0)}
+function uiRects(){
+  var ids=['logo','topRight','hitBadge','result','recWrap','go','next','homeBtn','title','help','prizesPreview','grid'], out=[], i,el,s,r;
+  for(i=0;i<ids.length;i++){
+    el=$(ids[i]); if(!el||el.classList.contains('hide')) continue;
+    s=getComputedStyle(el); if(s.display==='none'||s.visibility==='hidden'||parseFloat(s.opacity)===0) continue;
+    r=el.getBoundingClientRect();
+    if(r.width>2&&r.height>2) out.push({l:r.left-10,t:r.top-10,r:r.right+10,b:r.bottom+10});
+  }
+  return out;
+}
+function hitsUi(x,y,sc,rects){
+  var pad=18*Math.max(0.7,sc||1), i,u;
+  for(i=0;i<rects.length;i++){
+    u=rects[i];
+    if(x+pad>u.l && x-pad<u.r && y+pad>u.t && y-pad<u.b) return true;
+  }
+  return false;
+}
+function fxSafe(){
+  var s=chromeSafe();
+  var b=$('hitBadge');
+  if(b && !b.classList.contains('hide')){
+    var r=b.getBoundingClientRect();
+    if(r.bottom+8>s) s=r.bottom+8;
+  }
+  return s;
+}
 function burst(kind){
   bits=[]; var n=LOW?16:(kind==='gold'?70:kind==='soft'?28:48);
-  for(var i=0;i<n;i++) bits.push({x:innerWidth*(.15+Math.random()*.7),y:-20-Math.random()*40,v:2+Math.random()*5,vx:(Math.random()-.5)*4,s:.5+Math.random()*1,rot:Math.random()*6,vr:(Math.random()-.5)*.3,k:['gummy','gummy-yel','gummy-grn','candy','lolly','chew'][(Math.random()*6)|0]});
+  var safe=fxSafe();
+  var rects=uiRects();
+  var land=innerWidth>innerHeight*1.05;
+  var resultOn=mode==='result'||mode==='reveal';
+  for(var i=0;i<n;i++){
+    var x,y,tries=0;
+    do{
+      if(resultOn&&land) x=innerWidth*(0.52+Math.random()*0.42);
+      else x=innerWidth*(0.10+Math.random()*0.80);
+      y=safe+20+Math.random()*Math.max(40, innerHeight-safe-80);
+      tries++;
+    }while(tries<10 && hitsUi(x,y,1,rects));
+    bits.push({x:x,y:y,v:1.6+Math.random()*4.2,vx:(Math.random()-.5)*3.2,s:.5+Math.random()*1,rot:Math.random()*6,vr:(Math.random()-.5)*.3,k:['gummy','gummy-yel','gummy-grn','candy','lolly','chew'][(Math.random()*6)|0]});
+  }
   if(!fxR)fxR=requestAnimationFrame(tickFx);
 }
 function tickFx(){
   if(!fxx){fxR=0;return;}
   fxx.clearRect(0,0,innerWidth,innerHeight);
-  var live=0;
+  var live=0, safe=fxSafe(), rects=uiRects();
+  fxx.save();
+  fxx.beginPath(); fxx.rect(0,safe,innerWidth,Math.max(0,innerHeight-safe)); fxx.clip();
   for(var i=0;i<bits.length;i++){
     var b=bits[i];if(!b)continue;b.y+=b.v;b.x+=b.vx;b.v+=0.08;b.rot+=b.vr;
     if(b.y>innerHeight+40){bits[i]=null;continue}live++;
+    if(b.y+20<safe)continue;
+    if(hitsUi(b.x,b.y,b.s,rects))continue;
     D.drawSnack(fxx,b.k,b.x,b.y,b.s,b.rot);
   }
+  fxx.restore();
   if(live)fxR=requestAnimationFrame(tickFx);else{fxR=0;fxx.clearRect(0,0,innerWidth,innerHeight)}
 }
 
@@ -454,30 +622,57 @@ function boot(){
     img.src=window.EG_BASE+'assets/smg_logo.png';
     img.onerror=function(){img.classList.add('hide');var fb=$('logoText');if(fb)fb.classList.remove('hide');};
   }
+  ensureUi();
   fitH(); sizeFx(); applyLang();
   buildPad();
   if(GAME==='launcher')$('grid').classList.remove('hide');
   else $('grid').classList.add('hide');
+  fillPrizesPreview(); measureChrome();
 
   $('btnFS').addEventListener('click',toggleFS);
   $('chipLang').addEventListener('click',cycleLang);
   $('btnBgm').addEventListener('click',function(e){e.preventDefault();toggleMusic();});
-  $('go').addEventListener('pointerdown',function(e){
-    e.preventDefault(); A.unlock();
-    if(mode==='title') startRun(e);
-    else if(mode==='run') onPlayTap(e);
-  });
-  $('next').addEventListener('pointerdown',function(e){e.preventDefault();showTitle();});
-  $('homeBtn').addEventListener('click',function(e){e.preventDefault();goHome();});
+  function bindAct(el, fn){
+    if(!el)return;
+    el.addEventListener('pointerdown',function(e){markPointer();fn(e);});
+    el.addEventListener('click',function(e){if(!clickFresh()){e.preventDefault();return;}fn(e);});
+  }
+  bindAct($('go'), onGo);
+  bindAct($('next'), function(e){e.preventDefault(); if(busy())return; showTitle();});
+  $('homeBtn').addEventListener('click',function(e){e.preventDefault(); if(busy())return; goHome();});
   $('play').style.pointerEvents='none';
   document.addEventListener('pointerdown',function(e){
     A.unlock();
+    if(busy())return;
     if(mode==='run'){
       var t=e.target;
       if(t&&t.closest&&t.closest('#logo,#topRight,#go,#admin,#pin,.ov'))return;
+      markPointer();
       onPlayTap(e);
     }
   },{passive:false});
+  document.addEventListener('click',function(e){
+    if(!clickFresh())return;
+    if(busy())return;
+    if(mode==='run'){
+      var t=e.target;
+      if(t&&t.closest&&t.closest('#logo,#topRight,#go,#admin,#pin,.ov,button,a,input'))return;
+      onPlayTap(e);
+    }
+  },{passive:false});
+  document.addEventListener('keydown',function(e){
+    if(e.repeat)return;
+    var k=e.key, code=e.keyCode;
+    var isOk=k==='Enter'||k===' '||k==='Spacebar'||k==='OK'||k==='Accept'||k==='Select'||code===13||code===32;
+    if(!isOk)return;
+    if($('admin')&&!$('admin').classList.contains('hide'))return;
+    if($('pin')&&!$('pin').classList.contains('hide'))return;
+    var tag=(e.target&&e.target.tagName||'').toLowerCase();
+    if(tag==='input'||tag==='textarea')return;
+    if(busy()){e.preventDefault();return;}
+    if(mode==='result'){e.preventDefault();showTitle();return;}
+    if(mode==='title'||mode==='run'){e.preventDefault();onGo(e);}
+  });
 
   var lpOn=false,lpT=0;
   function lpClear(){lpOn=false;if(lpT){clearTimeout(lpT);lpT=0}}
@@ -514,7 +709,7 @@ function boot(){
   window.onAndroidBack=function(){
     if(!$('admin').classList.contains('hide')){closeAdmin();return' stay'}
     if(!$('pin').classList.contains('hide')){hidePin();return' stay'}
-    if(mode==='run'||mode==='result'){showTitle();return' stay'}
+    if(mode==='run'||mode==='result'||mode==='reveal'){showTitle();return' stay'}
     if(GAME!=='launcher'){goHome();return' stay'}
     return'exit';
   };
@@ -529,8 +724,9 @@ function boot(){
     GAME:GAME, defaultCfg:L.defaultCfg, mergeCfg:L.mergeCfg, awardPrize:L.awardPrize, applyAward:L.applyAward,
     pickTierIndex:L.pickTierIndex, loadHits:loadHits, hits:function(){return hits}, bumpExact:function(id){L.bumpExact(hits,id||GAME);saveHits(hits);updateHitBadge(true);showPlus();},
     resetHits:function(){hits=L.resetHits(hits);saveHits(hits);updateHitBadge();},
-    startRun:startRun, finish:function(){ /* force */ if(mode!=='run')GPlay.start(GAME); finish(); },
+    startRun:startRun, finish:function(){ if(mode!=='run'){ if(!GPlay.state()) GPlay.start(GAME); mode='run'; document.body.classList.add('playing'); } finish(); },
     forceResult:function(err,opt){
+      opt=opt||{};
       if(!GPlay.state()) GPlay.start(GAME);
       var s=GPlay.state();
       if(s){
@@ -544,14 +740,30 @@ function boot(){
         }
         if(GAME==='timing'){s.turned=true;s.done=true;s.falseStart=false;s.err=err||0;s.rt=err||0;s.u0=performance.now()-400;s.turnAt=s.u0;}
       }
-      mode='result'; var a=L.applyAward(GAME,err,cfg,[],opt||{}); lastAward=a; saveCfg(cfg);
-      if(a.index===0){L.bumpExact(hits,GAME);saveHits(hits);updateHitBadge(true);showPlus();}
-      var meta=opt&&opt.meta; if(!meta&&s&&s.score) meta=s.score;
-      renderResult(a,{err:err,meta:meta,falseStart:opt&&opt.falseStart});
-      burst(a.index===0?'gold':(a.index>0&&a.index<=3?'ok':'soft'));
-      document.body.classList.remove('playing'); document.body.classList.add('result'); $('go').classList.add('hide');
-      var play=$('play'); if(play) GPlay.draw(play, capyState());
+      var a=L.applyAward(GAME,err,cfg,[],opt); lastAward=a; saveCfg(cfg);
+      var meta=opt.meta; if(!meta&&s&&s.score) meta=s.score;
+      var r={err:err,meta:meta,falseStart:!!opt.falseStart};
+      lastResult=r;
+      if(a.index===0){L.bumpExact(hits,GAME);saveHits(hits);updateHitBadge(true);}
+      var playEl=$('play');
+      if(opt.hold){
+        startReveal(a,r);
+        if(playEl) GPlay.draw(playEl, capyState());
+        return a;
+      }
+      clearReveal();
+      mode='result';
+      if(a.index===0) showPlus();
+      renderResult(a,r);
+      paintRecord(a,r,true);
+      if(!opt.silent) burst(a.index===0?'gold':(a.index>0&&a.index<=3?'ok':'soft'));
+      document.body.classList.remove('playing','reveal'); document.body.classList.add('result'); $('go').classList.add('hide');
+      if(playEl) GPlay.draw(playEl, capyState());
+      measureChrome();
+      return a;
     },
+    mode:function(){return mode},
+    revealing:function(){return revealing},
     showTitle:showTitle, openAdmin:function(bypass){if(bypass&&/[?&](nosw|test)=1/.test(location.search))openAdmin();else showPin()},
     setLang:function(l){if(LANGS.indexOf(l)>=0){lang=l;cfg.lang=l;applyLang()}},
     isIOS:isIOS, canFS:canFS, isStandalone:isStandalone, cfg:function(){return cfg},
