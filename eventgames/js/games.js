@@ -5,7 +5,8 @@ var L=G.EGLogic, D=G.EGDraw;
 function Games(api){
   var cur=null, id=null, st=null;
   function sizePlay(cv){
-    var d=Math.min(2, (G.EG&&G.EG.LOW)?1:(window.devicePixelRatio||1));
+    var d=(G.EGFx&&G.EGFx.capDpr)?G.EGFx.capDpr():Math.min(2, window.devicePixelRatio||1);
+    if(G.EG&&G.EG.LOW)d=1;
     var w=cv.clientWidth||innerWidth, h=cv.clientHeight||innerHeight;
     if(cv._w!==w||cv._h!==h||cv._d!==d){cv._w=w;cv._h=h;cv._d=d;cv.width=Math.round(w*d);cv.height=Math.round(h*d);}
     var c=cv.getContext('2d'); c.setTransform(d,0,0,d,0,0); return {c:c,w:w,h:h};
@@ -202,6 +203,182 @@ function Games(api){
         var p=sizePlaceCapy(P, st, R.x0, R.y0, R.x1, R.y1, R.xWant, R.y1-4);
         D.drawCapy(c,p.x,p.y,p.s, st);
       }
+    },
+    weight:{
+      start:function(){return {t0:performance.now(), seed:Math.random()*6.28, stopped:false, g:100, err:null};},
+      tap:function(s){
+        if(s.stopped)return;
+        var t=(performance.now()-s.t0)/1000;
+        s.g=L.weightGrams(t,s.seed); s.err=L.weightError(s.g); s.stopped=true; s.t=t;
+        return true;
+      },
+      tick:function(s){if(!s.stopped)s.g=L.weightGrams((performance.now()-s.t0)/1000,s.seed);},
+      result:function(s){return {err:s.err, meta:{grams:s.g, err:s.err, t:s.t}};},
+      draw:function(c,w,h,s,capySt){
+        var P=playLayout(w,h), R=resultClear(P, P.y1);
+        var scaleW=Math.min(P.pw*(P.land?0.42:0.72), 420), scaleH=Math.min(P.ph*0.72, 280);
+        var sx=P.land?(isResult()?P.x0+P.pw*0.26:P.x0+P.pw*0.62): (P.x0+P.pw*0.5);
+        var sy=R.y1-4;
+        if(!isResult()) D.drawScale(c,sx,sy,scaleW,scaleH,s.g,{snacks:4});
+        else D.drawScale(c, P.land?P.x0+P.pw*0.26:P.x0+P.pw*0.5, sy, scaleW, scaleH, s.g, {snacks:4, label:(Math.round(s.g*10)/10)+'g'});
+        var capyLeft=isResult()?R.x0:(P.land?P.x0:P.x0);
+        var capyRight=isResult()?R.x1:(P.land?P.x0+P.pw*0.42:P.x1);
+        var xWant=isResult()?R.xWant:(P.land?P.x0+P.pw*0.22:P.x0+P.pw*0.5);
+        var st=Object.assign({},capySt,{act:isResult()?capySt.act:(s.stopped?'play':'place'), snack:'gummy'});
+        var p=sizePlaceCapy(P, st, capyLeft, P.y0, capyRight, R.y1, xWant, R.y1-4);
+        D.drawCapy(c,p.x,p.y,p.s, st);
+      }
+    },
+    jump:{
+      start:function(){
+        var seed=Math.random()*100;
+        return {t0:performance.now(), seed:seed, plan:L.jumpPlan(seed), jumped:false, done:false, tTap:null, err:null, jumpU:0, lateAuto:false};
+      },
+      tap:function(s){
+        if(s.jumped||s.done)return;
+        var t=(performance.now()-s.t0)/1000;
+        s.tTap=t; s.err=L.jumpError(t,s.plan.tOpt); s.jumped=true; s.late=t>s.plan.tOpt; s.j0=performance.now();
+        return false;
+      },
+      tick:function(s){
+        if(s.done)return false;
+        var t=(performance.now()-s.t0)/1000;
+        if(!s.jumped && t>=s.plan.tHit){
+          s.jumped=true; s.lateAuto=true; s.late=true; s.tTap=t; s.err=L.jumpError(t,s.plan.tOpt); s.j0=performance.now();
+        }
+        if(s.jumped){
+          s.jumpU=Math.min(1,(performance.now()-s.j0)/700);
+          if(s.jumpU>=1){s.done=true;return true;}
+        }
+        return false;
+      },
+      result:function(s){return {err:s.err, meta:{dt:s.err, late:!!s.late, tTap:s.tTap, tOpt:s.plan&&s.plan.tOpt}};},
+      draw:function(c,w,h,s,capySt){
+        var P=playLayout(w,h), R=resultClear(P, P.y1);
+        var yG=R.y1-4;
+        if(!isResult()) D.drawGround(c,P.x0,P.x1,yG, (performance.now()-s.t0)/1000);
+        var obsX=P.x0+P.pw*(P.land?0.70:0.68);
+        var startX=P.x0+P.pw*0.10;
+        var t=(performance.now()-s.t0)/1000;
+        var tHit=s.plan.tHit, tOpt=s.plan.tOpt;
+        var runU=Math.min(1, t/tHit);
+        var x, y, act='run', ju=0, hop=0;
+        if(!s.jumped){
+          x=startX+(obsX-startX-8)*runU;
+          y=yG; act='run';
+        } else {
+          ju=s.jumpU||0;
+          var juE=ju*ju*(3-2*ju);
+          var early=s.tTap+0.05<tOpt;
+          var late=!!s.late;
+          var xLand = early? startX+(obsX-startX-8)*Math.min(1,s.tTap/tHit) + (obsX-(startX+(obsX-startX-8)*Math.min(1,s.tTap/tHit)))*0.35
+                           : obsX+(P.pw*0.08);
+          var x0=startX+(obsX-startX-8)*Math.min(1,(s.tTap||0)/tHit);
+          if(late||s.lateAuto){
+            // short hop into the crate
+            x=x0+(obsX-x0)*Math.min(1,juE*1.1);
+            hop=Math.sin(Math.min(1,ju)*Math.PI)*Math.max(18, P.ph*0.10);
+            act=ju>0.55?'bump':'jump';
+          } else if(early){
+            // jump too soon, land short, then slide toward crate
+            var mid=x0+(obsX-x0)*0.45;
+            x=juE<0.7? x0+(mid-x0)*(juE/0.7) : mid+(obsX-mid)*((juE-0.7)/0.3);
+            hop=juE<0.7? Math.sin((juE/0.7)*Math.PI)*Math.max(36,P.ph*0.22) : 0;
+            act=juE>0.85?'bump':'jump';
+          } else {
+            // clear the crate
+            x=x0+(xLand-x0)*juE;
+            hop=Math.sin(juE*Math.PI)*Math.max(70,P.ph*0.36);
+            act='jump';
+          }
+          y=yG;
+        }
+        if(!isResult()) D.drawObstacle(c,obsX,yG, P.land?1.45:1.28, 'box');
+        var st=Object.assign({},capySt,{act:isResult()?capySt.act:act, u:ju, look:0.2});
+        var box=D.capyBox(st);
+        var prefer=P.land? Math.min(P.ph*0.70, P.h*0.28) : Math.min(P.ph*0.70, P.h*0.26);
+        var sc=D.fitCapyInRect(P.x0,P.y0,P.x1,yG, box, prefer);
+        hop=Math.min(hop, Math.max(0, y - (P.y0 + box.t*sc) - 4));
+        if(isResult()){
+          var p=sizePlaceCapy(P, st, R.x0, R.y0, R.x1, R.y1, R.xWant, R.y1-4);
+          D.drawCapy(c,p.x,p.y,p.s,st);
+        } else {
+          D.drawCapy(c, x, y-hop, sc, st);
+        }
+      }
+    },
+    crane:{
+      start:function(){
+        var seed=Math.random()*6.28;
+        var sw=L.craneSweep(0,seed);
+        return {t0:performance.now(), seed:seed, gold:sw.gold, pos:sw.pos, dropped:false, done:false, err:null, phase:'move', u:0, held:null, p0:0};
+      },
+      tap:function(s){
+        if(s.dropped||s.done)return;
+        var t=(performance.now()-s.t0)/1000;
+        var sw=L.craneSweep(t,s.seed);
+        s.pos=sw.pos; s.gold=sw.gold; s.err=L.craneError(s.pos,s.gold);
+        s.dropped=true; s.phase='down'; s.p0=performance.now(); s.u=0;
+        s.held=null; // decided at grab
+        return false;
+      },
+      tick:function(s){
+        if(s.done)return false;
+        if(!s.dropped) return false;
+        var dt=performance.now()-s.p0, lim;
+        if(s.phase==='down'){ s.u=Math.min(1,dt/320); if(s.u>=1){s.phase='grab';s.p0=performance.now();s.u=0;} }
+        else if(s.phase==='grab'){
+          s.u=Math.min(1,dt/180);
+          if(s.u>=0.4 && !s.held){ s.held=L.craneHold(s.err); }
+          if(s.u>=1){s.phase='up';s.p0=performance.now();s.u=0;}
+        }
+        else if(s.phase==='up'){
+          s.u=Math.min(1,dt/380);
+          // mid-tier regular can slip near the top if error is in the 4th band? No: 4th still holds regular; only 'none' is empty.
+          // If held is none, claw is empty all the way. If we want a drop animation for 'none' that tried to pinch: show a slip at u>0.45
+          if(s.held==='none' && s.u>0.35 && !s.slipped){ s.slipped=true; }
+          if(s.u>=1){s.phase='settle';s.p0=performance.now();s.u=0;}
+        }
+        else if(s.phase==='settle'){
+          s.u=Math.min(1,dt/200);
+          if(s.u>=1){s.done=true;return true;}
+        }
+        return false;
+      },
+      result:function(s){return {err:s.err, meta:{err:s.err, held:s.held, gold:s.gold, pos:s.pos}};},
+      draw:function(c,w,h,s,capySt){
+        var P=playLayout(w,h), R=resultClear(P, P.y1);
+        var t=(performance.now()-s.t0)/1000;
+        var pos=s.dropped?s.pos:L.craneSweep(t,s.seed).pos;
+        var gold=s.gold;
+        var railY=P.y0+Math.min(36,P.ph*0.10);
+        var floorY=R.y1-8;
+        var downMax=floorY-railY-36;
+        var clawY=railY+28, open=0.85, held=null, hideNear=false;
+        if(s.dropped){
+          if(s.phase==='down'){ clawY=railY+28+downMax*(s.u*s.u*(3-2*s.u)); open=0.85-0.15*s.u; }
+          else if(s.phase==='grab'){ clawY=railY+28+downMax; open=0.85*(1-s.u); held=s.held==='none'?null:s.held; hideNear=!!held; }
+          else if(s.phase==='up'||s.phase==='settle'||s.done){
+            var uu=s.phase==='up'?s.u:1;
+            clawY=railY+28+downMax*(1-uu*uu*(3-2*uu));
+            open=s.held&&s.held!=='none'?0.15:0.55;
+            held=(s.held&&s.held!=='none')?s.held:null;
+            hideNear=!!held;
+            if(s.held==='none' && s.slipped){ held=null; open=0.7; }
+          }
+        }
+        if(!isResult()){
+          D.drawCrane(c,{x0:P.x0+8,x1:P.land?(isResult()?P.x0+P.pw*0.50:P.x1-8):P.x1-8, railY:railY, pos:pos, gold:gold, clawY:clawY, open:open, held:held, hideNear:hideNear, floorY:floorY});
+        }
+        var st=Object.assign({},capySt,{act:isResult()?capySt.act:'idle', look: (pos-0.5)*2});
+        {
+          var capyLeft=isResult()?R.x0:P.x0;
+          var capyRight=isResult()?R.x1:(P.land?P.x0+P.pw*0.36:P.x0+P.pw*0.42);
+          var xWant=isResult()?R.xWant:(P.land?P.x0+P.pw*0.18:P.x0+P.pw*0.20);
+          var p=sizePlaceCapy(P, st, capyLeft, P.y0, capyRight, R.y1, xWant, R.y1-4);
+          D.drawCapy(c,p.x,p.y,p.s,st);
+        }
+      }
     }
   };
 
@@ -216,8 +393,11 @@ function Games(api){
       if(!cur||!st)return;
       var S=sizePlay(cv), c=S.c,w=S.w,h=S.h;
       c.clearRect(0,0,w,h);
+      c.save();
+      if(G.EGFx&&G.EGFx.applyCam) G.EGFx.applyCam(c);
       if(D.drawWorld) D.drawWorld(c,w,h,performance.now()/1000);
       cur.draw(c,w,h,st,capySt||{t:performance.now()/1000,act:'play'});
+      c.restore();
     },
     drawPreview:function(cv,gid,t){
       var S=sizePlay(cv), c=S.c,w=S.w,h=S.h;
@@ -226,6 +406,9 @@ function Games(api){
       if(gid==='center'){D.drawCapy(c,w*0.5,h*0.72,sc,{t:t,act:'idle'});D.drawBar(c,w*0.08,h*0.84,w*0.84,14,0.5+0.35*Math.sin(t*2));}
       else if(gid==='target'){D.drawCapy(c,w*0.32,h*0.82,sc,{t:t,act:'throw',u:0.5,look:1});D.drawTarget(c,w*0.72,h*0.38,Math.min(w,h)*0.22);}
       else if(gid==='stack'){D.drawTower(c,w*0.36,h*0.88,[{width:1,x:0,col:'#ff8fab'},{width:0.8,x:0.04,col:'#ffd76a'},{width:0.62,x:-0.02,col:'#9be3b0'}],w*0.36,h*0.12);D.drawCapy(c,w*0.78,h*0.86,sc*0.85,{t:t,act:'idle'});}
+      else if(gid==='weight'){D.drawScale(c,w*0.62,h*0.92,w*0.7,h*0.7,100+40*Math.sin(t*1.4),{snacks:3});D.drawCapy(c,w*0.22,h*0.90,sc*0.9,{t:t,act:'place',snack:'gummy'});}
+      else if(gid==='jump'){D.drawGround(c,8,w-8,h*0.88,t);D.drawObstacle(c,w*0.72,h*0.88,0.7,'box');D.drawCapy(c,w*0.32,h*0.88-Math.abs(Math.sin(t*3))*10,sc*0.9,{t:t,act:'run'});}
+      else if(gid==='crane'){D.drawCrane(c,{x0:w*0.08,x1:w*0.92,railY:h*0.14,pos:0.5+0.3*Math.sin(t*1.3),gold:0.55,clawY:h*0.34,open:0.7,held:null,floorY:h*0.86});D.drawCapy(c,w*0.18,h*0.92,sc*0.7,{t:t,act:'idle'});}
       else {D.drawCapy(c,w*0.5,h*0.82,sc*1.05,{t:t,act:'turn',u:0.5+0.5*Math.sin(t*1.5)});}
     },
     sizePlay:sizePlay, playLayout:playLayout

@@ -10,7 +10,7 @@ var I18N={
 ko:{
   pack:'이벤트 미니게임 모음',
   helpPack:'한 판이 금방 끝나는 이벤트 게임입니다. 게임을 골라 주세요.',
-  start:'시작', stop:'정지', throw:'던지기', drop:'놓기', wait:'준비…', now:'지금!',
+  start:'시작', stop:'정지', throw:'던지기', drop:'놓기', jumpBtn:'점프', grab:'집기', wait:'준비…', now:'지금!',
   next:'다음 참가자', again:'다시 하기', back:'모음으로',
   rec:'기록', errExact:'정확해요!',
   tier:['1등','2등','3등','4등','참가상'],
@@ -27,18 +27,23 @@ ko:{
     center:{title:'정중앙 멈추기', help:'시작을 누른 뒤, 좌우로 움직이는 젤리가 가운데 분홍 선에 왔을 때 정지를 누르세요.', unit:'거리', hit:'오늘 정중앙 맞춘 사람 {n}명'},
     target:{title:'과녁 맞추기', help:'시작 후 과녁이 움직입니다. 한가운데를 노리고, 조금 일찍 던지기를 누르세요.', unit:'거리', hit:'오늘 과녁 정중앙 맞춘 사람 {n}명'},
     stack:{title:'카피바라 탑 쌓기', help:'시작을 누르면 블록이 좌우로 움직입니다. 아래 탑과 맞춰 떨어뜨려 7층을 쌓으세요.', unit:'오차', hit:'오늘 완벽한 탑을 쌓은 사람 {n}명'},
-    timing:{title:'타이밍 잡기', help:'카피바라가 등을 보입니다. 갑자기 돌아보는 순간 바로 지금! 을 누르세요. 먼저 누르면 실격입니다.', unit:'ms', hit:'오늘 정확히 잡아낸 사람 {n}명'}
+    timing:{title:'타이밍 잡기', help:'카피바라가 등을 보입니다. 갑자기 돌아보는 순간 바로 지금! 을 누르세요. 먼저 누르면 실격입니다.', unit:'ms', hit:'오늘 정확히 잡아낸 사람 {n}명'},
+    weight:{title:'과자 무게 맞추기', help:'시작을 누른 뒤, 저울 바늘이 100g에 왔을 때 정지를 누르세요.', unit:'g', hit:'오늘 100g을 맞춘 사람 {n}명'},
+    jump:{title:'카피바라 점프', help:'달려오는 카피바라가 상자 앞에서 점프하도록, 한 번 눌러 주세요.', unit:'초', hit:'오늘 완벽한 점프를 한 사람 {n}명'},
+    crane:{title:'사탕 뽑기 크레인', help:'집게가 황금 사탕 위에 왔을 때 집기를 누르세요.', unit:'거리', hit:'오늘 황금 사탕을 집은 사람 {n}명'}
   },
   falseStart:'너무 빨랐어요!',
   metaCenter:'가운데에서 {v}',
   metaTarget:'중심에서 {v}',
   metaStack:'{h}층 · 완벽한 블록 {p}개',
   metaTiming:'{v}ms',
-  plus:'+1', prizePrev:'1등 상품: {n}', floorUnit:'층'
+  plus:'+1', prizePrev:'1등 상품: {n}', floorUnit:'층',
+  metaWeight:'{v}g', metaJump:'{v}', metaCrane:'목표에서 {v}',
+  grade:['PERFECT','GREAT','GOOD','NICE','MISS'], gramUnit:'g', jumpFast:'초 빠름', jumpSlow:'초 늦음'
 },
 en:{
   pack:'Event Minigames', helpPack:'Short party games — pick one to play.',
-  start:'START', stop:'STOP', throw:'THROW', drop:'DROP', wait:'Ready…', now:'NOW!',
+  start:'START', stop:'STOP', throw:'THROW', drop:'DROP', jumpBtn:'JUMP', grab:'GRAB', wait:'Ready…', now:'NOW!',
   next:'Next player', again:'Play again', back:'All games',
   rec:'Result', errExact:'Perfect!',
   tier:['1st','2nd','3rd','4th','Thanks'],
@@ -55,15 +60,20 @@ en:{
     center:{title:'Stop in the Center', help:'Press Start, then press Stop when the sliding gummy hits the pink center line.', unit:'dist', hit:'{n} perfect center hits today'},
     target:{title:'Hit the Target', help:'After Start, throw a little early so the gummy meets the moving bullseye.', unit:'dist', hit:'{n} bullseyes today'},
     stack:{title:'Capybara Tower', help:'Press Start, then drop each moving block so it lines up. Stack all 7 floors.', unit:'err', hit:'{n} perfect towers today'},
-    timing:{title:'Quick Turn', help:'The capybara faces away. Tap NOW! the instant it turns around. Too early is a miss.', unit:'ms', hit:'{n} perfect reactions today'}
+    timing:{title:'Quick Turn', help:'The capybara faces away. Tap NOW! the instant it turns around. Too early is a miss.', unit:'ms', hit:'{n} perfect reactions today'},
+    weight:{title:'Snack Scale', help:'Press Start, then press Stop when the needle hits 100g.', unit:'g', hit:'{n} perfect 100g stops today'},
+    jump:{title:'Capybara Jump', help:'Tap once so the running capybara jumps over the crate.', unit:'sec', hit:'{n} perfect jumps today'},
+    crane:{title:'Candy Crane', help:'Press Grab when the claw is over the golden candy.', unit:'dist', hit:'{n} golden catches today'}
   },
   falseStart:'Too early!',
   metaCenter:'{v} from center', metaTarget:'{v} from center', metaStack:'{h} high · {p} perfect', metaTiming:'{v} ms',
-  plus:'+1', prizePrev:'1st prize: {n}', floorUnit:'F'
+  plus:'+1', prizePrev:'1st prize: {n}', floorUnit:'F',
+  metaWeight:'{v}g', metaJump:'{v}', metaCrane:'{v} from target',
+  grade:['PERFECT','GREAT','GOOD','NICE','MISS'], gramUnit:'g', jumpFast:'s early', jumpSlow:'s late'
 },
 id:{
   pack:'Minigame Acara', helpPack:'Permainan singkat untuk acara — pilih satu.',
-  start:'MULAI', stop:'BERHENTI', throw:'LEMPAR', drop:'JATUHKAN', wait:'Siap…', now:'SEKARANG!',
+  start:'MULAI', stop:'BERHENTI', throw:'LEMPAR', drop:'JATUHKAN', jumpBtn:'LOMPAT', grab:'AMBIL', wait:'Siap…', now:'SEKARANG!',
   next:'Peserta berikut', again:'Main lagi', back:'Semua game',
   rec:'Hasil', errExact:'Sempurna!',
   tier:['Juara 1','Juara 2','Juara 3','Juara 4','Hadiah trobosan'],
@@ -80,19 +90,24 @@ id:{
     center:{title:'Berhenti di Tengah', help:'Tekan Mulai, lalu tekan Berhenti saat permen tepat di garis tengah.', unit:'jarak', hit:'{n} orang tepat di tengah hari ini'},
     target:{title:'Lempar Sasaran', help:'Setelah Mulai, lempar sedikit lebih awal agar mengenai pusat sasaran.', unit:'jarak', hit:'{n} tembakan tepat hari ini'},
     stack:{title:'Menara Capybara', help:'Tekan Mulai, lalu jatuhkan blok agar sejajar. Tumpuk 7 lantai.', unit:'selisih', hit:'{n} menara sempurna hari ini'},
-    timing:{title:'Giliran Cepat', help:'Capybara memunggungi Anda. Ketuk SEKARANG! saat ia berbalik. Terlalu cepat = gagal.', unit:'ms', hit:'{n} reaksi tepat hari ini'}
+    timing:{title:'Giliran Cepat', help:'Capybara memunggungi Anda. Ketuk SEKARANG! saat ia berbalik. Terlalu cepat = gagal.', unit:'ms', hit:'{n} reaksi tepat hari ini'},
+    weight:{title:'Timbang Permen', help:'Tekan Mulai, lalu tekan Berhenti saat jarum di 100g.', unit:'g', hit:'{n} orang tepat 100g hari ini'},
+    jump:{title:'Lompat Capybara', help:'Ketuk sekali agar capybara lompat melewati kotak.', unit:'dtk', hit:'{n} lompatan sempurna hari ini'},
+    crane:{title:'Derek Permen', help:'Tekan Ambil saat capit di atas permen emas.', unit:'jarak', hit:'{n} tangkapan emas hari ini'}
   },
   falseStart:'Terlalu cepat!',
   metaCenter:'{v} dari tengah', metaTarget:'{v} dari tengah', metaStack:'{h} tingkat · {p} sempurna', metaTiming:'{v} ms',
-  plus:'+1', prizePrev:'Hadiah juara 1: {n}', floorUnit:'lt'
+  plus:'+1', prizePrev:'Hadiah juara 1: {n}', floorUnit:'lt',
+  metaWeight:'{v}g', metaJump:'{v}', metaCrane:'{v} dari sasaran',
+  grade:['PERFECT','GREAT','GOOD','NICE','MISS'], gramUnit:'g', jumpFast:' dtk lebih cepat', jumpSlow:' dtk lebih lambat'
 }
 };
 
 function detectGame(){
-  var q=/[?&]g=(center|target|stack|timing)/.exec(location.search); if(q)return q[1];
+  var q=/[?&]g=(center|target|stack|timing|weight|jump|crane)/.exec(location.search); if(q)return q[1];
   var d=document.body.getAttribute('data-game'); if(d&&d!=='launcher')return d;
   var p=location.pathname||'';
-  var m=p.match(/\/(center|target|stack|timing)(?:\/|\/index\.html)?$/);
+  var m=p.match(/\/(center|target|stack|timing|weight|jump|crane)(?:\/|\/index\.html)?$/);
   return m?m[1]:'launcher';
 }
 function detectLang(){
@@ -109,7 +124,7 @@ function saveHits(h){try{localStorage.setItem(LS_HITS,JSON.stringify(h))}catch(e
 
 var cfg=loadCfg(), hits=loadHits(), lang=cfg.lang||detectLang(), T=I18N[lang]||I18N.ko;
 var GAME=detectGame(), mode='title', raf=0, lastAward=null, lastResult=null, pinBuf='', GPlay=window.EGGames(window);
-var revealing=false, revealT=0, ignoreClick=0, REVEAL_HOLD=2.5;
+var revealing=false, revealT=0, ignoreClick=0, REVEAL_HOLD=2.5, recAnim=0;
 var $=function(id){return document.getElementById(id)};
 window.EG={cfg:cfg, LOW:LOW, lang:lang, game:GAME};
 
@@ -188,7 +203,7 @@ function applyLang(){
   if(GAME==='launcher'){
     if($('title'))$('title').textContent=t('pack');
     if($('help'))$('help').textContent=t('helpPack');
-    L.GAMES.forEach(function(id){
+    (L.LAUNCHER_GAMES||L.GAMES).forEach(function(id){
       var el=$('gt-'+id); if(el)el.textContent=gT(id,'title');
       var h=$('gh-'+id); if(h)h.textContent=hitText(id,hits[id]||0);
     });
@@ -242,13 +257,15 @@ function loop(){
   raf=requestAnimationFrame(loop);
   var play=$('play'); if(!play)return;
   if(GAME==='launcher'){
-    L.GAMES.forEach(function(id){
+    (L.LAUNCHER_GAMES||L.GAMES).forEach(function(id){
       var cv=$('pv-'+id); if(!cv)return;
       GPlay.drawPreview(cv,id,performance.now()/1000);
     });
     if(play){
       var S=GPlay.sizePlay(play), c=S.c,w=S.w,h=S.h;
       c.clearRect(0,0,w,h);
+      c.save();
+      if(window.EGFx&&EGFx.applyCam) EGFx.applyCam(c);
       if(D.drawWorld) D.drawWorld(c,w,h,performance.now()/1000);
       var st={t:performance.now()/1000,act:'idle'};
       var box=D.capyBox(st), land=w>h*1.05;
@@ -262,7 +279,8 @@ function loop(){
     return;
   }
   if(mode==='run'){
-    var done=GPlay.tick();
+    var done=false;
+    if(!(window.EGFx&&EGFx.frozen&&EGFx.frozen())) done=GPlay.tick();
     if(GAME==='center'||GAME==='stack'){/* continuous */}
     GPlay.draw(play, capyState());
     if(done) finish();
@@ -287,6 +305,7 @@ function loop(){
       var sc=D.fitCapyInRect(Lyt.x0,Lyt.y0,x1,y1, box, prefer);
       var pos=D.placeCapyInRect(Lyt.x0,Lyt.y0,x1,y1, box, sc, xWant, y1-4);
       D.drawCapy(c,pos.x,pos.y,pos.s,st);
+      c.restore();
     } else {
       GPlay.draw(play, capyState());
     }
@@ -296,6 +315,8 @@ function goLabel(){
   if(GAME==='target')return t('throw');
   if(GAME==='stack')return t('drop');
   if(GAME==='timing')return t('now');
+  if(GAME==='jump')return t('jumpBtn');
+  if(GAME==='crane')return t('grab');
   return t('stop');
 }
 function busy(){return revealing||mode==='reveal'}
@@ -309,6 +330,11 @@ function ensureUi(){
     w.innerHTML='<div id="recLabel"></div><div id="recVal"><span id="recNum"></span><span id="recUnit"></span></div>';
     var res=$('result');
     if(res) stage.insertBefore(w,res); else stage.appendChild(w);
+  }
+  if(!$('grade')){
+    var g=document.createElement('div'); g.id='grade'; g.className='hide';
+    var rec=$('recWrap'); if(rec&&rec.parentNode) rec.parentNode.insertBefore(g, rec.nextSibling);
+    else stage.appendChild(g);
   }
   if(!$('prizesPreview') && GAME!=='launcher'){
     var p=document.createElement('div');
@@ -331,10 +357,42 @@ function recordParts(a,r){
   if(GAME==='timing') return {label:t('rec'), num:String(Math.round(a.err)), unit:'ms'};
   if(GAME==='stack'){
     var h=(r&&r.meta&&r.meta.height!=null)?r.meta.height:'-';
-    return {label:t('rec'), num:String(h), unit:t('floorUnit')||'층'};
+    return {label:t('rec'), num:String(h), unit:t('floorUnit')||'층', raw:Number(h)};
+  }
+  if(GAME==='weight'){
+    var g=(r&&r.meta&&r.meta.grams!=null)?r.meta.grams:(100+(a&&a.err||0));
+    if(a&&a.err<=1.5) return {label:t('rec'), num:t('errExact'), unit:''};
+    return {label:t('rec'), num:(Math.round(g*10)/10).toString(), unit:t('gramUnit')||'g', raw:g};
+  }
+  if(GAME==='jump'){
+    if(a&&a.err<=0.045) return {label:t('rec'), num:t('errExact'), unit:''};
+    var late=r&&r.meta&&r.meta.late;
+    return {label:t('rec'), num:fmt(a.err,'jump'), unit: late?t('jumpSlow'):t('jumpFast')};
+  }
+  if(GAME==='crane'){
+    if(a&&a.err<=0.016) return {label:t('rec'), num:t('errExact'), unit:''};
+    return {label:t('rec'), num:fmt(a.err,'crane'), unit:''};
   }
   if((GAME==='center'||GAME==='target') && a && a.err<=0.0025) return {label:t('rec'), num:t('errExact'), unit:''};
   return {label:t('rec'), num:fmt(a.err,GAME), unit:''};
+}
+function startCountUp(a,r){
+  if(recAnim){cancelAnimationFrame(recAnim);recAnim=0}
+  var parts=recordParts(a,r);
+  if(parts.raw==null||!isFinite(parts.raw)) return;
+  var from=GAME==='weight'?Math.max(0,parts.raw-20):0, to=parts.raw, t0=performance.now(), dur=400;
+  function step(now){
+    var u=Math.min(1,(now-t0)/dur); u=u*u*(3-2*u);
+    var v=from+(to-from)*u;
+    if($('recNum')){
+      if(GAME==='weight') $('recNum').textContent=(Math.round(v*10)/10).toString();
+      else if(GAME==='jump') $('recNum').textContent=fmt(v,'jump');
+      else $('recNum').textContent=String(Math.round(v));
+    }
+    if(u<1) recAnim=requestAnimationFrame(step);
+    else {recAnim=0; paintRecord(a,r,true);}
+  }
+  recAnim=requestAnimationFrame(step);
 }
 function paintRecord(a,r,big){
   ensureUi();
@@ -358,9 +416,12 @@ function startReveal(a,r){
   document.body.classList.add('reveal');
   if($('result'))$('result').classList.add('hide');
   if($('go'))$('go').classList.add('hide');
+  if($('grade'))$('grade').classList.add('hide');
   paintRecord(a,r,true);
+  startCountUp(a,r);
   keepOn(true);
   try{A.sfxTap()}catch(e){}
+  if(window.EGFx){ EGFx.punch(a.index===0?9:5, a.index===0?80:45); if(a.index===0) EGFx.slowmo(0.42,180); }
   syncChrome(); measureChrome();
   revealT=setTimeout(function(){revealT=0; showPrize(a,r);}, Math.round(REVEAL_HOLD*1000));
 }
@@ -426,6 +487,8 @@ function finish(){
 }
 function fmt(v,game){
   if(game==='timing')return Math.round(v);
+  if(game==='weight')return (Math.round(v*10)/10).toFixed(1).replace(/\.0$/,'');
+  if(game==='jump')return (Math.round(v*1000)/1000).toFixed(3).replace(/0+$/,'').replace(/\.$/,'');
   return (Math.round(v*1000)/1000).toFixed(3).replace(/0+$/,'').replace(/\.$/,'');
 }
 function renderResult(a,r){
@@ -440,7 +503,18 @@ function renderResult(a,r){
   else if(GAME==='target') m=t('metaTarget').replace('{v}',fmt(a.err,GAME));
   else if(GAME==='stack'&&r&&r.meta) m=t('metaStack').replace('{h}',r.meta.height).replace('{p}',r.meta.perfects);
   else if(GAME==='timing') m=t('metaTiming').replace('{v}',fmt(a.err,GAME));
+  else if(GAME==='weight') m=t('metaWeight').replace('{v}', (r&&r.meta&&r.meta.grams!=null)?fmt(r.meta.grams,'weight'):fmt(a.err,'weight'));
+  else if(GAME==='jump') m=t('metaJump').replace('{v}', (a.err<=0.045)?t('errExact'):(fmt(a.err,'jump')+((r&&r.meta&&r.meta.late)?t('jumpSlow'):t('jumpFast'))));
+  else if(GAME==='crane') m=t('metaCrane').replace('{v}',fmt(a.err,'crane'));
   meta.innerHTML=m;
+  var grade=$('grade');
+  if(grade){
+    var gi=a.index<0||a.index>4?4:a.index;
+    var labels=t('grade')||['PERFECT','GREAT','GOOD','NICE','MISS'];
+    grade.textContent=labels[gi]||'';
+    grade.className='g'+gi;
+    grade.classList.remove('hide');
+  }
   if(a.fallen&&!a.soldOut){fallen.classList.remove('hide');fallen.textContent=t('fallen');}
   else fallen.classList.add('hide');
   next.textContent=cfg.staffReset?t('next'):t('again');
@@ -451,15 +525,18 @@ function showTitle(){
   document.body.classList.remove('playing','result','reveal');
   $('result').classList.add('hide');
   if($('recWrap'))$('recWrap').classList.add('hide');
+  if($('grade'))$('grade').classList.add('hide');
+  if(window.EGFx&&EGFx.reset) EGFx.reset();
+  if(recAnim){cancelAnimationFrame(recAnim);recAnim=0}
   if(GAME!=='launcher'){$('go').classList.remove('hide','stop','wide');$('go').textContent=t('start');}
   applyLang(); keepOn(false); measureChrome();
 }
 
 /* confetti candy */
 var bits=[], fxR=0, fx, fxx;
-function sizeFx(){fx=$('fx'); if(!fx)return; fxx=fx.getContext('2d'); var d=LOW?1:Math.min(2,devicePixelRatio||1);fx.width=innerWidth*d;fx.height=innerHeight*d;fxx.setTransform(d,0,0,d,0,0)}
+function sizeFx(){fx=$('fx'); if(!fx)return; fxx=fx.getContext('2d'); var d=LOW?1:((window.EGFx&&EGFx.capDpr)?EGFx.capDpr():Math.min(2,devicePixelRatio||1));fx.width=innerWidth*d;fx.height=innerHeight*d;fxx.setTransform(d,0,0,d,0,0)}
 function uiRects(){
-  var ids=['logo','topRight','hitBadge','result','recWrap','go','next','homeBtn','title','help','prizesPreview','grid'], out=[], i,el,s,r;
+  var ids=['logo','topRight','hitBadge','result','recWrap','grade','go','next','homeBtn','title','help','prizesPreview','grid'], out=[], i,el,s,r;
   for(i=0;i<ids.length;i++){
     el=$(ids[i]); if(!el||el.classList.contains('hide')) continue;
     s=getComputedStyle(el); if(s.display==='none'||s.visibility==='hidden'||parseFloat(s.opacity)===0) continue;
@@ -486,6 +563,9 @@ function fxSafe(){
   return s;
 }
 function burst(kind){
+  if(window.EGFx&&EGFx.confetti){ EGFx.confetti(kind); if(!fxR)fxR=requestAnimationFrame(tickFx); return; }
+  // legacy fallback
+
   bits=[]; var n=LOW?16:(kind==='gold'?70:kind==='soft'?28:48);
   var safe=fxSafe();
   var rects=uiRects();
@@ -506,6 +586,14 @@ function burst(kind){
 function tickFx(){
   if(!fxx){fxR=0;return;}
   fxx.clearRect(0,0,innerWidth,innerHeight);
+  if(window.EGFx&&EGFx.draw){
+    EGFx.tick(16.67);
+    var safe0=fxSafe();
+    fxx.save(); fxx.beginPath(); fxx.rect(0,safe0,innerWidth,Math.max(0,innerHeight-safe0)); fxx.clip();
+    EGFx.draw(fxx,D); fxx.restore();
+    if(EGFx.liveCount()) fxR=requestAnimationFrame(tickFx); else fxR=0;
+    return;
+  }
   var live=0, safe=fxSafe(), rects=uiRects();
   fxx.save();
   fxx.beginPath(); fxx.rect(0,safe,innerWidth,Math.max(0,innerHeight-safe)); fxx.clip();
@@ -559,7 +647,7 @@ function openAdmin(){
 }
 function renderHitsAdmin(){
   var box=$('hitsBox'); if(!box)return;
-  box.innerHTML=L.GAMES.map(function(id){
+  box.innerHTML=(L.LAUNCHER_GAMES||L.GAMES).map(function(id){
     return '<div class="srow"><span>'+gT(id,'title')+'</span><b>'+(hits[id]||0)+'</b></div>';
   }).join('');
 }
@@ -739,9 +827,22 @@ function boot(){
           s.score=L.stackScore(drops); s.err=err||0;
         }
         if(GAME==='timing'){s.turned=true;s.done=true;s.falseStart=false;s.err=err||0;s.rt=err||0;s.u0=performance.now()-400;s.turnAt=s.u0;}
+        if(GAME==='weight'){s.stopped=true;s.g=100+(err||0);s.err=err||0;s.t=1;}
+        if(GAME==='jump'){
+          s.plan=s.plan||L.jumpPlan(1);
+          s.jumped=true;s.done=true;s.err=err||0;s.tTap=s.plan.tOpt+(err||0);s.late=(err||0)>0;s.jumpU=1;s.j0=performance.now()-800;
+        }
+        if(GAME==='crane'){
+          var sw=L.craneSweep?L.craneSweep(0,1):{gold:0.5,pos:0.5};
+          s.dropped=true;s.done=true;s.gold=sw.gold;s.pos=sw.gold+(err||0);s.err=err||0;s.phase='settle';s.u=1;
+          s.held=(L.craneHold?L.craneHold(s.err):((err||0)<=0.04?'gold':'none'));
+        }
       }
       var a=L.applyAward(GAME,err,cfg,[],opt); lastAward=a; saveCfg(cfg);
       var meta=opt.meta; if(!meta&&s&&s.score) meta=s.score;
+      if(!meta&&GAME==='weight'&&s) meta={grams:s.g,err:s.err};
+      if(!meta&&GAME==='jump'&&s) meta={dt:s.err,late:!!s.late,tTap:s.tTap,tOpt:s.plan&&s.plan.tOpt};
+      if(!meta&&GAME==='crane'&&s) meta={err:s.err,held:s.held,gold:s.gold,pos:s.pos};
       var r={err:err,meta:meta,falseStart:!!opt.falseStart};
       lastResult=r;
       if(a.index===0){L.bumpExact(hits,GAME);saveHits(hits);updateHitBadge(true);}

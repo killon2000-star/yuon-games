@@ -1,7 +1,8 @@
 /* Event minigames — pure logic (node + browser). No DOM. */
 (function(G){
 'use strict';
-var GAMES=['center','target','stack','timing'];
+var GAMES=['center','target','stack','timing','weight','jump','crane'];
+var LAUNCHER_GAMES=['center','stack','weight','jump','crane'];
 var PRIZE_NAMES=['하리보 젤리 큰 봉지','하리보 젤리','캔디 3개','캔디 1개','마이쮸 1개'];
 var TIER_KO=['1등','2등','3등','4등','참가상'];
 
@@ -11,7 +12,10 @@ function defaultLimits(){
     center:[0.0025,0.012,0.048,0.100],   // |pos-0.5|
     target:[0.10,0.22,0.40,0.70],       // hit distance / target radius
     stack:[0.21,0.55,1.10,1.80],        // composite error
-    timing:[188,228,275,345]            // reaction ms (false-start → 참가상)
+    timing:[188,228,275,345],           // reaction ms (false-start → 참가상)
+    weight:[1.5, 5.0, 12.0, 24.0],      // |grams-100|
+    jump:[0.045, 0.100, 0.180, 0.280],  // |tTap-tOpt| seconds
+    crane:[0.016, 0.040, 0.085, 0.150]  // |claw-gold| in [0,1] track
   };
 }
 function defaultCfg(){
@@ -166,6 +170,47 @@ function timingError(rtMs,falseStart){
   return {err:Math.max(0,rtMs),falseStart:false,rt:rtMs};
 }
 
+
+/* ===== weight: oscillating scale needle, stop near 100g ===== */
+function frac01(s){var r=s-Math.floor(s);return r<0?r+1:r;}
+function weightFreq(seed){return 1.18+0.38*frac01(seed*1.37);} // rad/s, ends ease naturally (sin)
+function weightGrams(t,seed){
+  seed=seed||0;
+  var w=weightFreq(seed);
+  // 8–192g so 0/200 aren't hard stops; 100g is the fast midpoint
+  return 100+92*Math.sin(w*t+seed);
+}
+function weightError(g){return Math.abs((g||0)-100);}
+
+/* ===== jump: one leap over an obstacle, approach time varies ===== */
+function jumpPlan(seed){
+  seed=seed||0;
+  var r1=frac01(seed*3.11), r2=frac01(seed*7.77);
+  var tOpt=3.2+r1*3.3;          // 3.2–6.5s until the jump window
+  var lead=0.18;                // must leave the ground this early
+  var tHit=tOpt+lead;           // would collide here if they never jump
+  var speed=0.62+r2*0.32;
+  return {tOpt:tOpt,tHit:tHit,lead:lead,speed:speed,seed:seed};
+}
+function jumpError(tTap,tOpt){return Math.abs((tTap||0)-(tOpt||0));}
+
+/* ===== crane: claw sweeps, drop is deterministic (no RNG slip) ===== */
+function craneSweep(t,seed){
+  seed=seed||0;
+  var spd=0.85+0.55*frac01(seed*2.4);
+  var gold=0.30+0.40*frac01(seed*5.9); // golden candy not always centered
+  var pos=0.5+0.46*Math.sin(spd*t+seed);
+  return {pos:pos,gold:gold,spd:spd};
+}
+function craneError(pos,gold){return Math.abs((pos||0)-(gold||0));}
+function craneHold(err,limits){
+  // Deterministic: tight = hold gold, mid = hold a nearby regular, wide = empty/slip
+  limits=limits||defaultLimits().crane;
+  if(err<=limits[1]) return 'gold';
+  if(err<=limits[3]) return 'regular';
+  return 'none';
+}
+
 /* ===== human-like sim helpers ===== */
 function randn(rng){ // Box-Muller
   var u=1-rng(), v=1-rng();
@@ -267,13 +312,16 @@ function distro(errs,limits,falseStarts){
 }
 
 G.EGLogic={
-  GAMES:GAMES, PRIZE_NAMES:PRIZE_NAMES, TIER_KO:TIER_KO, STACK_N:STACK_N, TARGET_FLIGHT:TARGET_FLIGHT,
+  GAMES:GAMES, LAUNCHER_GAMES:LAUNCHER_GAMES, PRIZE_NAMES:PRIZE_NAMES, TIER_KO:TIER_KO, STACK_N:STACK_N, TARGET_FLIGHT:TARGET_FLIGHT,
   defaultCfg:defaultCfg, defaultLimits:defaultLimits, mergeCfg:mergeCfg,
   pickTierIndex:pickTierIndex, awardPrize:awardPrize, applyAward:applyAward, prizeList:prizeList, inStock:inStock,
   centerPos:centerPos, centerSpeed:centerSpeed, centerError:centerError, centerDist:centerDist,
   targetState:targetState, targetHit:targetHit,
   stackPieceSpeed:stackPieceSpeed, stackDropError:stackDropError, stackScore:stackScore,
   timingError:timingError,
+  weightGrams:weightGrams, weightError:weightError, weightFreq:weightFreq,
+  jumpPlan:jumpPlan, jumpError:jumpError,
+  craneSweep:craneSweep, craneError:craneError, craneHold:craneHold,
   simCenter:simCenter, simTarget:simTarget, simStack:simStack, simTiming:simTiming, distro:distro, randn:randn,
   defaultHits:defaultHits, mergeHits:mergeHits, bumpExact:bumpExact, resetHits:resetHits
 };
