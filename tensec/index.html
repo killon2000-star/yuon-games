@@ -147,6 +147,11 @@ h1{font-size:clamp(28px,7.2vmin,52px);margin:4px 0 6px;color:var(--title);-webki
 @keyframes gradepop{0%{opacity:1;transform:scale(.72)}60%{opacity:1;transform:scale(1.1)}100%{opacity:1;transform:scale(1)}}
 @keyframes hitpop{0%{opacity:1;transform:translateY(10px) scale(.7)}55%{opacity:1;transform:translateY(-22px) scale(1.25)}100%{opacity:0;transform:translateY(-44px) scale(1)}}
 .low #hitsPlus.pop{animation:none;opacity:1}
+@media (orientation:portrait){
+  /* Lift only the in-play STOP button off the bottom edge. Title START and the
+     result record stay put, and landscape is unchanged. */
+  #go.stop{margin-bottom:40px}
+}
 </style>
 </head>
 <body>
@@ -232,9 +237,9 @@ var LOW=/[?&]low=1/.test(location.search)||(window.matchMedia&&matchMedia('(pref
 if(LOW) document.body.classList.add('low');
 var LANGS=['ko','en','id'];
 var I18N={
-ko:{title:'10초 맞추기',help:'시작을 누른 뒤, 마음속으로 10초를 세고 정지를 누르세요. 숫자는 약 4초 후 사라집니다.',start:'시작',stop:'정지',next:'다음 참가자',again:'다시 하기',hideMsg:'이제 감각으로!',rec:'기록',errFast:'초 빠름',errSlow:'초 느림',errExact:'정확해요!',tier:['참가상','1등','2등','3등','4등'],stockLeft:'남은 수량',fallen:'재고가 없어 아래 등급으로 지급되었습니다',soldOut:'상품이 모두 소진되었습니다',pinTitle:'관리자',pinWrong:'비밀번호가 달라요',cancel:'취소',adTitle:'이벤트 설정',lbHide:'타이머 숨기기',lbHideSec:'숨기는 시간(초)',lbStaff:'다음 참가자 확인',lbSfx:'효과음',lbVib:'진동',lbPin:'비밀번호 4자리',lbPrizes:'상품·오차 기준',prizeHint:'오차는 절대값(초). 재고를 비우면 무제한. 재고 0이면 아래 등급으로 내려갑니다.',lbLog:'참가 기록',thName:'상품명',thErr:'오차 ≤',thStock:'재고',save:'저장',csv:'CSV 저장',resetLog:'기록 지우기',close:'닫기',on:'켜짐',off:'꺼짐',sum:'회',confirmReset:'참가 기록을 모두 지울까요?',saved:'저장했습니다',langName:'한국어',fs:'전체화면',fsExit:'전체화면 종료',lbFsStart:'시작 시 전체화면',iosHint:'공유 → 홈 화면에 추가하면 전체화면으로 실행돼요',lbMusic:'배경음악',lbVol:'음악 크기',hits:'오늘 정확히 맞춘 사람 {n}명',resetHits:'정확 횟수 지우기',confirmResetHits:'오늘 정확히 맞춘 횟수를 지울까요?'},
-en:{title:'Hit 10 Seconds',help:'Press Start, count to 10 in your head, then press Stop. The numbers hide after about 4 seconds.',start:'START',stop:'STOP',next:'Next player',again:'Play again',hideMsg:'Feel the time!',rec:'Time',errFast:'s early',errSlow:'s late',errExact:'Perfect!',tier:['Thanks','1st','2nd','3rd','4th'],stockLeft:'Left',fallen:'This prize was out of stock, so the next prize was given',soldOut:'All prizes are gone',pinTitle:'Staff',pinWrong:'Wrong PIN',cancel:'Cancel',adTitle:'Event settings',lbHide:'Hide the timer',lbHideSec:'Hide after (sec)',lbStaff:'Staff must confirm next',lbSfx:'Sound',lbVib:'Vibration',lbPin:'4-digit PIN',lbPrizes:'Prizes & error limits',prizeHint:'Error is absolute seconds. Leave stock blank for unlimited. Stock 0 falls to the next prize.',lbLog:'Play log',thName:'Prize',thErr:'Error ≤',thStock:'Stock',save:'Save',csv:'Export CSV',resetLog:'Clear log',close:'Close',on:'ON',off:'OFF',sum:'plays',confirmReset:'Clear the whole play log?',saved:'Saved',langName:'English',fs:'Full screen',fsExit:'Exit full screen',lbFsStart:'Full screen on Start',iosHint:'Share → Add to Home Screen to play full screen',lbMusic:'Music',lbVol:'Music volume',hits:'Exact hits today: {n}',resetHits:'Reset exact hits',confirmResetHits:'Clear today’s exact-hit count?'},
-id:{title:'Tebak 10 Detik',help:'Tekan Mulai, hitung 10 detik dalam hati, lalu tekan Berhenti. Angka hilang setelah sekitar 4 detik.',start:'MULAI',stop:'BERHENTI',next:'Peserta berikut',again:'Main lagi',hideMsg:'Rasakan waktunya!',rec:'Waktu',errFast:' dtk lebih cepat',errSlow:' dtk lebih lambat',errExact:'Tepat sekali!',tier:['Hadiah trobosan','Juara 1','Juara 2','Juara 3','Juara 4'],stockLeft:'Sisa',fallen:'Stok habis, hadiah tingkat berikutnya diberikan',soldOut:'Semua hadiah habis',pinTitle:'Staf',pinWrong:'PIN salah',cancel:'Batal',adTitle:'Pengaturan acara',lbHide:'Sembunyikan timer',lbHideSec:'Sembunyi setelah (dtk)',lbStaff:'Staf konfirmasi peserta berikut',lbSfx:'Suara',lbVib:'Getar',lbPin:'PIN 4 digit',lbPrizes:'Hadiah & batas selisih',prizeHint:'Selisih dalam detik mutlak. Kosongkan stok untuk tak terbatas. Stok 0 turun ke hadiah berikutnya.',lbLog:'Catatan main',thName:'Hadiah',thErr:'Selisih ≤',thStock:'Stok',save:'Simpan',csv:'Unduh CSV',resetLog:'Hapus catatan',close:'Tutup',on:'NYALA',off:'MATI',sum:'kali',confirmReset:'Hapus semua catatan?',saved:'Tersimpan',langName:'Bahasa Indonesia',fs:'Layar penuh',fsExit:'Keluar layar penuh',lbFsStart:'Layar penuh saat Mulai',iosHint:'Bagikan → Tambah ke Layar Utama untuk tampilan penuh',lbMusic:'Musik',lbVol:'Volume musik',hits:'Tepat hari ini: {n} orang',resetHits:'Hapus jumlah tepat',confirmResetHits:'Hapus jumlah tepat hari ini?'}
+ko:{title:'10초 맞추기',help:'시작을 누른 뒤, 마음속으로 10초를 세고 정지를 누르세요. 숫자는 약 4초 후 사라집니다. 정확히 맞추면 스티커, 못 맞추면 하리보 젤리예요.',start:'시작',stop:'정지',next:'다음 참가자',again:'다시 하기',hideMsg:'이제 감각으로!',rec:'기록',errFast:'초 빠름',errSlow:'초 느림',errExact:'정확해요!',tier:['참가상','1등','2등','3등','4등'],stockLeft:'남은 수량',fallen:'재고가 없어 아래 등급으로 지급되었습니다',soldOut:'상품이 모두 소진되었습니다',pinTitle:'관리자',pinWrong:'비밀번호가 달라요',cancel:'취소',adTitle:'이벤트 설정',lbHide:'타이머 숨기기',lbHideSec:'숨기는 시간(초)',lbStaff:'다음 참가자 확인',lbSfx:'효과음',lbVib:'진동',lbPin:'비밀번호 4자리',lbPrizes:'상품·오차 기준',prizeHint:'오차는 절대값(초). 재고를 비우면 무제한. 재고 0이면 아래 등급으로 내려갑니다.',lbLog:'참가 기록',thName:'상품명',thErr:'오차 ≤',thStock:'재고',save:'저장',csv:'CSV 저장',resetLog:'기록 지우기',close:'닫기',on:'켜짐',off:'꺼짐',sum:'회',confirmReset:'참가 기록을 모두 지울까요?',saved:'저장했습니다',langName:'한국어',fs:'전체화면',fsExit:'전체화면 종료',lbFsStart:'시작 시 전체화면',iosHint:'공유 → 홈 화면에 추가하면 전체화면으로 실행돼요',lbMusic:'배경음악',lbVol:'음악 크기',hits:'오늘 정확히 맞춘 사람 {n}명',resetHits:'정확 횟수 지우기',confirmResetHits:'오늘 정확히 맞춘 횟수를 지울까요?'},
+en:{title:'Hit 10 Seconds',help:'Press Start, count to 10 in your head, then press Stop. The numbers hide after about 4 seconds. Hit 10.00 exactly for a sticker, or get Haribo jelly if you miss.',start:'START',stop:'STOP',next:'Next player',again:'Play again',hideMsg:'Feel the time!',rec:'Time',errFast:'s early',errSlow:'s late',errExact:'Perfect!',tier:['Thanks','1st','2nd','3rd','4th'],stockLeft:'Left',fallen:'This prize was out of stock, so the next prize was given',soldOut:'All prizes are gone',pinTitle:'Staff',pinWrong:'Wrong PIN',cancel:'Cancel',adTitle:'Event settings',lbHide:'Hide the timer',lbHideSec:'Hide after (sec)',lbStaff:'Staff must confirm next',lbSfx:'Sound',lbVib:'Vibration',lbPin:'4-digit PIN',lbPrizes:'Prizes & error limits',prizeHint:'Error is absolute seconds. Leave stock blank for unlimited. Stock 0 falls to the next prize.',lbLog:'Play log',thName:'Prize',thErr:'Error ≤',thStock:'Stock',save:'Save',csv:'Export CSV',resetLog:'Clear log',close:'Close',on:'ON',off:'OFF',sum:'plays',confirmReset:'Clear the whole play log?',saved:'Saved',langName:'English',fs:'Full screen',fsExit:'Exit full screen',lbFsStart:'Full screen on Start',iosHint:'Share → Add to Home Screen to play full screen',lbMusic:'Music',lbVol:'Music volume',hits:'Exact hits today: {n}',resetHits:'Reset exact hits',confirmResetHits:'Clear today’s exact-hit count?'},
+id:{title:'Tebak 10 Detik',help:'Tekan Mulai, hitung 10 detik dalam hati, lalu tekan Berhenti. Angka hilang setelah sekitar 4 detik. Tepat 10.00 detik berhadiah stiker; jika tidak, permen jeli Haribo.',start:'MULAI',stop:'BERHENTI',next:'Peserta berikut',again:'Main lagi',hideMsg:'Rasakan waktunya!',rec:'Waktu',errFast:' dtk lebih cepat',errSlow:' dtk lebih lambat',errExact:'Tepat sekali!',tier:['Hadiah trobosan','Juara 1','Juara 2','Juara 3','Juara 4'],stockLeft:'Sisa',fallen:'Stok habis, hadiah tingkat berikutnya diberikan',soldOut:'Semua hadiah habis',pinTitle:'Staf',pinWrong:'PIN salah',cancel:'Batal',adTitle:'Pengaturan acara',lbHide:'Sembunyikan timer',lbHideSec:'Sembunyi setelah (dtk)',lbStaff:'Staf konfirmasi peserta berikut',lbSfx:'Suara',lbVib:'Getar',lbPin:'PIN 4 digit',lbPrizes:'Hadiah & batas selisih',prizeHint:'Selisih dalam detik mutlak. Kosongkan stok untuk tak terbatas. Stok 0 turun ke hadiah berikutnya.',lbLog:'Catatan main',thName:'Hadiah',thErr:'Selisih ≤',thStock:'Stok',save:'Simpan',csv:'Unduh CSV',resetLog:'Hapus catatan',close:'Tutup',on:'NYALA',off:'MATI',sum:'kali',confirmReset:'Hapus semua catatan?',saved:'Tersimpan',langName:'Bahasa Indonesia',fs:'Layar penuh',fsExit:'Keluar layar penuh',lbFsStart:'Layar penuh saat Mulai',iosHint:'Bagikan → Tambah ke Layar Utama untuk tampilan penuh',lbMusic:'Musik',lbVol:'Volume musik',hits:'Tepat hari ini: {n} orang',resetHits:'Hapus jumlah tepat',confirmResetHits:'Hapus jumlah tepat hari ini?'}
 };
 function detectLang(){
   var q=/[?&]lang=(en|id|ko)/.exec(location.search);if(q)return q[1];
@@ -246,11 +251,11 @@ function detectLang(){
 function defaultCfg(){
   return{pin:'0000',hideTimer:true,hideAfterSec:4,uiVer:2,staffReset:true,fsOnStart:true,sfx:true,vib:true,music:true,musicVol:0.55,lang:'',
     prizes:[
-      {name:'하리보 젤리 큰 봉지',maxErr:0.005,stock:null},
+      {name:'스티커',maxErr:0.005,stock:null},
       {name:'하리보 젤리',maxErr:0.05,stock:null},
-      {name:'캔디 3개',maxErr:0.20,stock:null},
-      {name:'캔디 1개',maxErr:0.50,stock:null},
-      {name:'마이쮸 1개',maxErr:Infinity,stock:null}
+      {name:'하리보 젤리',maxErr:0.20,stock:null},
+      {name:'하리보 젤리',maxErr:0.50,stock:null},
+      {name:'하리보 젤리',maxErr:Infinity,stock:null}
     ]};
 }
 function absErr(t){return Math.abs(Number(t)-TARGET)}
@@ -298,9 +303,11 @@ function mergeCfg(raw){
       if(p.stock==null||p.stock==='')q.stock=null;
       else{var s=Number(p.stock);q.stock=isFinite(s)&&s>=0?Math.floor(s):null}
     }
-    var ph=['1등 상품','2등 상품','3등 상품','4등 상품','참가상'],allPh=true;
-    for(var j=0;j<5;j++)if(d.prizes[j].name!==ph[j]){allPh=false;break}
-    if(allPh){var nn=['하리보 젤리 큰 봉지','하리보 젤리','캔디 3개','캔디 1개','마이쮸 1개'];for(var j=0;j<5;j++)d.prizes[j].name=nn[j]}
+    var ph=['1등 상품','2등 상품','3등 상품','4등 상품','참가상'];
+    var oldSnack=['하리보 젤리 큰 봉지','하리보 젤리','캔디 3개','캔디 1개','마이쮸 1개'];
+    var neu=['스티커','하리보 젤리','하리보 젤리','하리보 젤리','하리보 젤리'];
+    function allNames(arr){for(var j=0;j<5;j++)if(d.prizes[j].name!==arr[j])return false;return true}
+    if(allNames(ph)||allNames(oldSnack)){for(var j=0;j<5;j++)d.prizes[j].name=neu[j]}
   }
   return d;
 }
@@ -385,12 +392,38 @@ function drawBag(c,x,y,s){
   c.fillStyle='#ff8fab';rr(c,-16,-22,32,8,3);c.fill();c.stroke();
   c.restore();
 }
+function drawSticker(c,x,y,s){
+  c.save();c.translate(x,y);c.scale(s,s);c.lineJoin='round';c.lineCap='round';
+  c.fillStyle='#fff';c.strokeStyle='rgba(80,52,30,.65)';c.lineWidth=2;
+  c.beginPath();
+  var i,a,r;
+  for(i=0;i<14;i++){
+    a=-Math.PI/2+i*Math.PI/7;r=i%2?21:16.5;
+    if(i===0)c.moveTo(Math.cos(a)*r,Math.sin(a)*r);
+    else c.lineTo(Math.cos(a)*r,Math.sin(a)*r);
+  }
+  c.closePath();c.fill();c.stroke();
+  c.fillStyle='#ffd76a';
+  c.beginPath();c.arc(0,1,12,0,Math.PI*2);c.fill();c.stroke();
+  c.fillStyle='#ff8fab';
+  c.beginPath();
+  for(i=0;i<5;i++){
+    a=-Math.PI/2+i*2*Math.PI/5;
+    var a2=a+Math.PI/5;
+    c.lineTo(Math.cos(a)*8,Math.sin(a)*8+1);
+    c.lineTo(Math.cos(a2)*3.3,Math.sin(a2)*3.3+1);
+  }
+  c.closePath();c.fill();c.stroke();
+  c.restore();
+}
 function drawSnack(c,x,y,s,tier){
-  if(tier===0)drawBag(c,x,y,s);
-  else if(tier===1)drawGummy(c,x,y,s*1.3,'#ff8fab');
-  else if(tier===2){drawCandy(c,x-16,y,s*0.85,'#ffd76a');drawCandy(c,x,y-4,s*0.85,'#ff8fab');drawCandy(c,x+16,y,s*0.85,'#9be3b0');}
-  else if(tier===3)drawCandy(c,x,y,s,'#ffd76a');
-  else drawChew(c,x,y,s);
+  if(tier===0)drawSticker(c,x,y,s);
+  else drawGummy(c,x,y,s*1.3,tier===1?'#ff8fab':(tier===2?'#ffd76a':(tier===3?'#9be3b0':'#ffb3c7')));
+}
+function prizeLabel(name){
+  var map={'스티커':{ko:'스티커',en:'Sticker',id:'Stiker'},'하리보 젤리':{ko:'하리보 젤리',en:'Haribo Jelly',id:'Permen jeli Haribo'}};
+  var m=map[name];
+  return (m&&(m[lang]||m.ko))||name;
 }
 
 function capyHero(c,st){
@@ -1254,7 +1287,7 @@ function renderResult(a){
   var rank=a.soldOut?'':(a.index>=0&&a.index<=3?t('tier')[a.index+1]:t('tier')[0]);
   $('tier').textContent=rank;
   $('prize').className=(a.soldOut||a.index<0||a.index>=4)?'t0':('t'+(a.index+1));
-  $('prize').textContent=a.soldOut?t('soldOut'):a.prize.name;
+  $('prize').textContent=a.soldOut?t('soldOut'):prizeLabel(a.prize.name);
   fitPrize();
   var dir=a.elapsed<TARGET?t('errFast'):a.elapsed>TARGET?t('errSlow'):t('errExact');
   var line=t('rec')+' '+f.main+f.third+'s  ·  ';
@@ -1432,7 +1465,7 @@ if('serviceWorker' in navigator&&location.protocol!=='file:'&&!/[?&]nosw=1/.test
 }
 
 window.__ts={
-  TARGET:TARGET, defaultCfg:defaultCfg, mergeCfg:mergeCfg, absErr:absErr, toMs:toMs, inStock:inStock,
+  TARGET:TARGET, defaultCfg:defaultCfg, prizeLabel:prizeLabel, mergeCfg:mergeCfg, absErr:absErr, toMs:toMs, inStock:inStock,
   isIOS:isIOS, isStandalone:isStandalone, canFS:canFS, isFS:isFS, enterFS:enterFS, exitFS:exitFS, toggleFS:toggleFS, updateFSUI:updateFSUI, syncChrome:syncChrome,
   unlockMs:function(){return window.__tsUnlockMs}, musOn:function(){return !!(mus&&mus.on)}, musUnlocked:function(){return !!(mus&&mus.unlocked)}, hasBgm:function(){return !!(mus&&(mus.fileSrc||mus.fileBuf))}, fxLive:function(){var n=0,i;for(i=0;i<FXN;i++) if(bits[i]&&bits[i].on)n++;return n;}, capDpr:capDpr, clearFx:clearFx, pickTierIndex:pickTierIndex, awardPrize:awardPrize, applyAward:applyAward, fmtTime:fmtTime,
   get cfg(){return cfg}, set cfg(v){cfg=mergeCfg(v)}, get log(){return log}, set log(v){log=v},
