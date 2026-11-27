@@ -1776,7 +1776,7 @@ function render(){
   var hint=$('#hint');
   hint.classList.toggle('last',rem===1);
   var locked=!(prefs.left>0&&mine);
-  hint.textContent=rem===0?'\u00a0':locked?'티켓을 터치해 뽑아 주세요':rem===1?'마지막 1장이에요!':'원하는 티켓을 불러주세요! (남은 '+prefs.left+'회)';
+  hint.textContent=rem===0?'\u00a0':locked?'티켓을 터치해 뽑아 주세요':rem===1?'마지막 1장이에요!':'원하는 티켓을 불러주세요!';
   $('#soldout').hidden=!(rem===0&&!busy);
   $('#lockOv').hidden=!(rem>0&&locked&&!busy);
   $('#grid').classList.toggle('still',!$('#lockOv').hidden||rem===0); // nothing sparkles under the blurred lock overlay
