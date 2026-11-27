@@ -14,7 +14,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#EFE4D4">
+<meta name="theme-color" content="#0d0b0a">
 <meta name="color-scheme" content="only light">
 <meta name="supported-color-schemes" content="light">
 <title>SMG STORE 11월 고객감사 이벤트</title>
@@ -26,13 +26,13 @@
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html{color-scheme:only light!important}
 html,body{height:100%;overflow:hidden;overscroll-behavior:none;touch-action:manipulation;
-  color-scheme:only light!important;-webkit-filter:none!important;filter:none!important;background-color:#EFE4D4}
+  color-scheme:only light!important;-webkit-filter:none!important;filter:none!important;background-color:#0d0b0a}
 *{color-scheme:only light}
 /* Fully Kiosk / Android WebView forced-dark: keep light rendering */
 @media (prefers-color-scheme: dark){
   html,body,#app{color-scheme:only light!important;
     -webkit-filter:none!important;filter:none!important}
-  html,body{background-color:#EFE4D4!important}
+  html,body{background-color:#0d0b0a!important}
 }
 body{font-family:var(--font);color:#fff;background:#EFE4D4;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;word-break:keep-all}
 input,textarea,select{font-family:inherit;user-select:text;-webkit-user-select:text}
@@ -1022,9 +1022,9 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 :root{--gold:#A3522C!important;--gold2:#5C3A24!important;--red:#A3522C!important;--ink:#3A2618!important;
   --autumn-ink:#3A2618;--autumn-cocoa:#5C3A24;--autumn-rust:#A3522C;--autumn-maple:#C26A3A;
   --autumn-tan:#C9A98A;--autumn-beige:#E6D5C0;--autumn-paper:#F7F1E8;--autumn-bg:#EFE4D4;--autumn-cream:#FFF9F2;--autumn-ginkgo:#B89B4A}
-html,body,#app{background:#EFE4D4!important;background-color:#EFE4D4!important;color:#3A2618!important}
-@media (prefers-color-scheme: dark){html,body,#app{background:#EFE4D4!important;background-color:#EFE4D4!important;color:#3A2618!important}}
-body{color:#3A2618!important;background:#EFE4D4!important;background-color:#EFE4D4!important}
+html,body,#app{background:#EFE4D4!important;background-color:#0d0b0a!important;color:#3A2618!important}
+@media (prefers-color-scheme: dark){html,body,#app{background:#EFE4D4!important;background-color:#0d0b0a!important;color:#3A2618!important}}
+body{color:#3A2618!important;background:#EFE4D4!important;background-color:#0d0b0a!important}
 #app{box-sizing:border-box!important;padding:22px!important;background:transparent!important}
 .nov-fx{position:fixed;inset:0;pointer-events:none!important;z-index:0;overflow:hidden}
 .nov-fx .nov-paper{position:absolute;inset:0;
@@ -1194,6 +1194,38 @@ body{color:#3A2618!important;background:#EFE4D4!important;background-color:#EFE4
   .tier-name{font-size:clamp(12px,1.3vh,16px)}
   .tier-prize,.tier-count{font-size:clamp(11px,1.2vh,15px)}
 }
+
+/* nov-black-canvas: page is near-black; cream/beige panels, tickets, and the logo stay as they are */
+:root{--autumn-bg:#0d0b0a}
+html,body,#app{background:#0d0b0a!important;background-color:#0d0b0a!important;color:#F7F1E8!important}
+@media (prefers-color-scheme: dark){
+  html,body,#app{background:#0d0b0a!important;background-color:#0d0b0a!important;color:#F7F1E8!important}
+}
+body{background:#0d0b0a!important;background-color:#0d0b0a!important}
+#app{background:#0d0b0a!important}
+.nov-fx .nov-paper{
+  background:
+    radial-gradient(circle at 14% 8%,rgba(194,106,58,.18),transparent 34%),
+    radial-gradient(circle at 88% 16%,rgba(184,155,74,.12),transparent 30%),
+    radial-gradient(circle at 80% 92%,rgba(163,82,44,.10),transparent 32%)!important;
+}
+.stage{background:transparent!important}
+.bn-wordmark{color:#F7F1E8}
+.bn-wordmark .bn-ty{color:#E6D5C0!important}
+.bn-wordmark .bn-nov{color:#FFF9F2!important}
+.bn-wordmark .bn-ko{color:#C9A98A!important}
+.board-head .bh-title{color:#F7F1E8!important;text-shadow:0 1px 2px rgba(0,0,0,.65)!important}
+.board-head .bh-sub{color:#C9A98A!important}
+.leaf{opacity:.84}
+.overlay{background:radial-gradient(circle at 50% 45%,rgba(28,20,14,.78),rgba(8,6,5,.92))!important}
+.lockov{background:rgba(8,6,5,.72)!important}
+
+/* Large custom cursor: dark fill + thick white outline, readable on black and on beige tickets */
+html,body,#app,.stage,.board,.grid-wrap,.grid-scroll,.ticket,.icon-btn,.pay-btn,
+.topbar,.overlay,.modal,.result,.btn,.tab,button{
+  cursor:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAAC/0lEQVR42u3dy0osMRAG4FR5G3AxK9//AV25EFzoxI0DYWg1Sae6/roEBs/hcOzm/1KV9AWmlBw5cuTIkSOHyqCZ/1Rrrd0HIKKM+ffB0gcYwUqARPAJcEVICEWArAZhgJfzcyJoV0AiALSgRABYA17Oz90Q0RFEF+ERhKgQ4rugbEkA29BEALgOSASAC7FEALgSHt0heYdgrQNnNSgDJAIAQCIAAERHYJQTiXr7gtFOKNoOiRFPKlJLYtQTi4LAyCcXAYHRT9A7Als4Sc+3L9jSbPFYDWytZL0hmAPwhmASwBOCWYCZxTkBlKsBcYfkAsByS3IDYBXBFYBFBHcA1hBcAszskLQg3AJYqQb3AOgIIQCQEcIAoCKEAphZnBNAuRqkd0hhAVBaUmgABITwAKMICeAMIQEmd0gJoFcNlACOWtK99aBe3941DkullJoVoLyDSQAHCCEfyidAIvhZhLcQehdmIjrf3m1ofl6aT/v3smoBnt7Tbt0TQZt9AwinPxDaT7n5c7agFe2o1vpRSvlsPl/Nz7YClocPCbByXz+A8LnRcqp0+HAA1/CVEC6/tJ0YuyDJK1rkN6gZIfit8FeDoCIw8qyPgMCo4UdBYOTwIyAwevjeF2a2Er4EHAICW5r5HhEYKXwieoqGwNLBD4T/WEr5IiKVjYEWAmvP+ib89navykKugcCA4deer77SRoAF2Bt+828hEFgx/Ifyz1OmCAh8dPhEdOoJ38DFGsFVQOc28/qkqfaEr1kFR1QCK4bf/dBDE+GP30srqkD8yzybfl/3tpye466asf+BEtFdWfDkjA+Y+cv6/VGVcOQNw/sFQdANJm3097o3fKRbJksnqMDv2XpzeGnwEq1oNPxVLYiEUMVn+koErfClAA4bexEmgm93cksq2/SbcXu+Ln0i/Mef8JeuZ+a/7320CiaCPzXBL39pyzzACMJky7mMXLmHBJi5OOxsOeLvhroBWIXQtByxWb/7QszrOKLluK6A2SqQXmhDAYwiaMz6dnwD7fVHxsV9/BcAAAAASUVORK5CYII=") 18 10, auto!important;
+}
+input,textarea,select,[contenteditable]{cursor:text!important}
 </style>
 <style id="pageStyle">@page{size:80mm 200mm;margin:0}</style>
 </head>
