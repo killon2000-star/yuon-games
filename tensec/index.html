@@ -13,7 +13,7 @@
 <title>10초 맞추기</title>
 <style>
 :root{--bg:#fde7ef;--ink:#5b4636;--card:#fff;--btn:#9be3b0;--stop:#ff9aa8;--btn2:#ffd59e;--btn3:#cfd8ff;--title:#ff8fab;--chip:#ffe3ef;--line:#5b4636;--gold:#ffd76a;--miss:#e8d5c8;--ov:rgba(255,240,246,.96);--chrome-h:76px}
-html,body{margin:0;position:fixed;inset:0;width:100%;height:100%;height:100dvh;height:var(--app-h,100dvh);overflow:hidden;background:var(--bg);overscroll-behavior:none;overscroll-behavior-y:none;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink);word-break:keep-all;overflow-wrap:break-word}
+html,body{margin:0;position:fixed;inset:0;width:100%;height:100%;height:100dvh;height:var(--app-h,100dvh);overflow:hidden;background:var(--bg);overscroll-behavior:none;overscroll-behavior-y:none;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;font-family:"Noto Sans CJK KR","Noto Sans CJK SC","Noto Sans CJK JP","Noto Sans KR",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink);word-break:keep-all;overflow-wrap:break-word}
 #bg,#fx,#app{position:fixed;left:0;right:0;top:var(--app-top,0);width:100%;height:100%;height:var(--app-h,100dvh);box-sizing:border-box}
 #bg{pointer-events:none;background:
  radial-gradient(ellipse at 20% 10%,#fff6c8 0%,transparent 50%),
@@ -166,12 +166,51 @@ h1{font-size:clamp(28px,7.2vmin,52px);margin:4px 0 6px;color:var(--title);-webki
 #entryGate.out{animation:gateout .28s ease both;pointer-events:none}
 #entryGate:not(.hide):not(.out){animation:gatein .4s ease both}
 .low #entryGate:not(.hide):not(.out),.low #entryGate.out{animation:none}
-.entryCard{background:#fff;border:4px solid var(--line);border-radius:24px;box-shadow:0 5px 0 var(--line);padding:12px 22px 10px;width:max-content;max-width:min(94vw,18em);text-align:center;box-sizing:border-box;overflow:visible;color:var(--ink);pointer-events:auto;font-size:clamp(26px,7vmin,44px)}
+.entryCard{background:#fff;border:4px solid var(--line);border-radius:24px;box-shadow:0 5px 0 var(--line);padding:12px 22px 10px;width:max-content;max-width:min(94vw,26em);text-align:center;box-sizing:border-box;overflow:visible;color:var(--ink);pointer-events:auto;font-size:clamp(26px,7vmin,44px)}
 #entryMsg{margin:0;font-weight:900;font-size:1em;line-height:1.25;letter-spacing:-0.02em;white-space:nowrap}
 #entryMsg b{color:var(--title);-webkit-text-stroke:1px var(--line);paint-order:stroke fill}
 #entryHint{margin:8px 0 0;font-weight:700;font-size:clamp(12px,2.6vmin,16px);line-height:1.35;opacity:.82}
+#entryI18n{margin:6px 0 0;display:flex;flex-direction:column;gap:2px;text-align:left}
+.entryLang{margin:0;font-weight:700;font-size:clamp(10px,1.85vmin,13px);line-height:1.3;opacity:.9;white-space:normal;word-break:keep-all;overflow-wrap:anywhere;letter-spacing:0;font-family:"Noto Sans CJK KR","Noto Sans CJK SC","Noto Sans CJK JP","Noto Sans KR",system-ui,sans-serif}
+.entryLang .langTag{display:inline-block;min-width:3.2em;margin-right:.35em;font-size:.82em;font-weight:800;opacity:.7}
+#board{margin:8px auto 2px;background:#fff;border:3px solid var(--line);border-radius:22px;box-shadow:0 3px 0 var(--line);padding:8px 16px 8px;width:max-content;max-width:min(94%,22em);text-align:center;box-sizing:border-box;pointer-events:none;z-index:6;color:var(--ink)}
+#board.hide{display:none!important}
+#boardPlays{font-weight:800;font-size:clamp(14px,3.4vmin,20px);margin:0 0 4px;line-height:1.3}
+#boardPlays b{color:var(--title);font-size:1.15em;-webkit-text-stroke:1px var(--line);paint-order:stroke fill}
+#boardTitle{font-weight:900;font-size:clamp(13px,3.2vmin,17px);margin:0 0 2px;letter-spacing:-0.02em}
+#boardList{list-style:none;margin:0 auto;padding:0;width:max-content;min-width:9.5em;text-align:left}
+#boardList li{display:flex;align-items:baseline;justify-content:space-between;gap:0.7em;font-weight:800;font-size:clamp(15px,3.8vmin,22px);line-height:1.35;margin:0;font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+#boardList .rk{flex:0 0 auto;min-width:2.2em;text-align:left;color:var(--title);font-weight:900}
+#boardList .tm{flex:1 1 auto;text-align:right;font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
+#boardEmpty{font-weight:700;font-size:clamp(13px,3.2vmin,18px);opacity:.82;margin:2px 0 0;line-height:1.35}
+#todayRank{display:none;margin:6px auto 2px;padding:6px 16px;border-radius:999px;border:4px solid var(--line);background:#ffd76a;font-weight:900;font-size:clamp(16px,3.8vmin,26px);box-shadow:0 3px 0 var(--line);color:var(--ink);letter-spacing:-0.02em}
+#todayRank.on{display:inline-block}
+@media (orientation:portrait) and (max-height:1400px){
+  .entryLang{font-size:clamp(10px,1.8vmin,12px);line-height:1.25}
+  #entryI18n{margin:4px 0 0;gap:1px}
+  #board{padding:6px 12px 6px;margin:6px auto 2px}
+}
+@media (min-width:720px){
+  .entryLang{white-space:nowrap;overflow-wrap:normal;word-break:keep-all}
+}
 body.gateTight #help{display:none!important}
 body.gateTightBanner #ruleHint{visibility:hidden!important}
+body.gateTightBoard #board{visibility:hidden!important}
+body.gateCompactLand .entryCard{font-size:clamp(20px,4.6vmin,32px);padding:8px 16px 6px}
+body.gateCompactLand .entryLang{font-size:11px;line-height:1.25;white-space:nowrap}
+body.gateCompactLand #entryI18n{margin:4px 0 0;gap:1px}
+body.gateCompactLand #entryHint{margin:3px 0 0;font-size:11px}
+@media (orientation:landscape) and (max-height:900px){
+  .entryCard{font-size:clamp(20px,4.8vmin,32px);padding:8px 16px 6px}
+  .entryLang{font-size:clamp(10px,1.5vmin,12px);line-height:1.25;white-space:nowrap}
+  #entryI18n{margin:4px 0 0;gap:1px}
+  #entryHint{margin:4px 0 0;font-size:11px}
+  #board{padding:4px 12px 4px;margin:4px auto 2px}
+  #boardPlays{font-size:clamp(12px,2.6vmin,16px);margin:0 0 2px}
+  #boardTitle{font-size:clamp(11px,2.4vmin,14px);margin:0 0 1px}
+  #boardList li{font-size:clamp(13px,3vmin,18px);line-height:1.25}
+  #hits{margin-bottom:4px}
+}
 @media (orientation:portrait) and (max-height:1400px){
   .entryCard{font-size:clamp(20px,5.2vmin,36px);padding:8px 16px 6px}
   #entryHint{margin:4px 0 0;font-size:clamp(11px,2.4vmin,14px)}
@@ -198,6 +237,7 @@ html:not([lang="ko"]) #entryMsg{white-space:normal;overflow-wrap:break-word;word
     <div id="entryGate" class="hide" role="dialog" aria-modal="true" aria-labelledby="entryMsg" aria-describedby="entryHint">
       <div class="entryCard">
         <p id="entryMsg"></p>
+        <div id="entryI18n"></div>
         <p id="entryHint"></p>
       </div>
     </div>
@@ -207,6 +247,12 @@ html:not([lang="ko"]) #entryMsg{white-space:normal;overflow-wrap:break-word;word
       <h1 id="title"></h1>
       <p class="help" id="help"></p>
       <div id="hitsWrap"><div id="hits"></div><div id="hitsPlus">+1</div></div>
+      <div id="board" class="hide" aria-live="polite">
+        <div id="boardPlays"></div>
+        <div id="boardTitle"></div>
+        <ol id="boardList"></ol>
+        <div id="boardEmpty"></div>
+      </div>
       <div id="ruleHint" class="hide" aria-live="polite"></div>
     </div>
     <div class="landCol" id="dock">
@@ -218,6 +264,7 @@ html:not([lang="ko"]) #entryMsg{white-space:normal;overflow-wrap:break-word;word
       <div id="grade" class="" aria-hidden="true"></div>
       <div id="result" class="hide">
         <div id="tier"></div>
+        <div id="todayRank"></div>
         <div id="prizeRow">
           <canvas id="prizeIcon" width="96" height="96"></canvas>
           <div id="prize"></div>
@@ -270,14 +317,14 @@ html:not([lang="ko"]) #entryMsg{white-space:normal;overflow-wrap:break-word;word
 <script>
 (function(){
 'use strict';
-var APP_VER='1.2.8',TARGET=10, LS_CFG='tensec_cfg', LS_LOG='tensec_log', AUTO_STOP=30, GATE_IDLE_SEC=20;
+var APP_VER='1.2.9',TARGET=10, LS_CFG='tensec_cfg', LS_LOG='tensec_log', AUTO_STOP=30, GATE_IDLE_SEC=20;
 var LOW=/[?&]low=1/.test(location.search)||(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
 if(LOW) document.body.classList.add('low');
 var LANGS=['ko','en','id'];
 var I18N={
-ko:{title:'10초 맞추기',help:'마음속으로 10초를 세고 정지를 누르세요. 정확히 맞추면 스티커, 못 맞추면 하리보 젤리예요.',hideRule:'{n}초부터 시계가 사라져요!',start:'시작',stop:'정지',next:'다음 참가자',again:'다시 하기',hideMsg:'이제 감각으로!',rec:'기록',errFast:'초 빠름',errSlow:'초 느림',errExact:'정확해요!',tier:['참가상','1등','2등','3등','4등'],stockLeft:'남은 수량',fallen:'재고가 없어 아래 등급으로 지급되었습니다',soldOut:'상품이 모두 소진되었습니다',pinTitle:'관리자',pinWrong:'비밀번호가 달라요',cancel:'취소',adTitle:'이벤트 설정',lbHide:'타이머 숨기기',lbHideSec:'숨기는 시간(초)',lbStaff:'다음 참가자 확인',lbSfx:'효과음',lbVib:'진동',lbPin:'비밀번호 4자리',lbPrizes:'상품·오차 기준',prizeHint:'오차는 절대값(초). 재고를 비우면 무제한. 재고 0이면 아래 등급으로 내려갑니다.',lbLog:'참가 기록',thName:'상품명',thErr:'오차 ≤',thStock:'재고',save:'저장',csv:'CSV 저장',resetLog:'기록 지우기',close:'닫기',on:'켜짐',off:'꺼짐',sum:'회',confirmReset:'참가 기록을 모두 지울까요?',saved:'저장했습니다',langName:'한국어',fs:'전체화면',fsExit:'전체화면 종료',lbFsStart:'시작 시 전체화면',iosHint:'공유 → 홈 화면에 추가하면 전체화면으로 실행돼요',lbMusic:'배경음악',lbVol:'음악 크기',hits:'오늘 정확히 맞춘 사람 {n}명',resetHits:'정확 횟수 지우기',confirmResetHits:'오늘 정확히 맞춘 횟수를 지울까요?',entryMsg:'SMG 스토어 1만원 이상|구매고객 참여가능',entryHint:'화면을 터치하면 시작할 수 있어요'},
-en:{title:'Hit 10 Seconds',help:'Count to 10 in your head, then press Stop. Hit 10.00 exactly for a sticker, or get Haribo jelly if you miss.',hideRule:'The clock hides after {n} seconds!',start:'START',stop:'STOP',next:'Next player',again:'Play again',hideMsg:'Feel the time!',rec:'Time',errFast:'s early',errSlow:'s late',errExact:'Perfect!',tier:['Thanks','1st','2nd','3rd','4th'],stockLeft:'Left',fallen:'This prize was out of stock, so the next prize was given',soldOut:'All prizes are gone',pinTitle:'Staff',pinWrong:'Wrong PIN',cancel:'Cancel',adTitle:'Event settings',lbHide:'Hide the timer',lbHideSec:'Hide after (sec)',lbStaff:'Staff must confirm next',lbSfx:'Sound',lbVib:'Vibration',lbPin:'4-digit PIN',lbPrizes:'Prizes & error limits',prizeHint:'Error is absolute seconds. Leave stock blank for unlimited. Stock 0 falls to the next prize.',lbLog:'Play log',thName:'Prize',thErr:'Error ≤',thStock:'Stock',save:'Save',csv:'Export CSV',resetLog:'Clear log',close:'Close',on:'ON',off:'OFF',sum:'plays',confirmReset:'Clear the whole play log?',saved:'Saved',langName:'English',fs:'Full screen',fsExit:'Exit full screen',lbFsStart:'Full screen on Start',iosHint:'Share → Add to Home Screen to play full screen',lbMusic:'Music',lbVol:'Music volume',hits:'Exact hits today: {n}',resetHits:'Reset exact hits',confirmResetHits:'Clear today’s exact-hit count?',entryMsg:'For SMG STORE customers|who spent ₩10,000 or more',entryHint:'Tap the screen to start'},
-id:{title:'Tebak 10 Detik',help:'Hitung 10 detik dalam hati, lalu tekan Berhenti. Tepat 10.00 detik berhadiah stiker; jika tidak, permen jeli Haribo.',hideRule:'Jam menghilang setelah {n} detik!',start:'MULAI',stop:'BERHENTI',next:'Peserta berikut',again:'Main lagi',hideMsg:'Rasakan waktunya!',rec:'Waktu',errFast:' dtk lebih cepat',errSlow:' dtk lebih lambat',errExact:'Tepat sekali!',tier:['Hadiah trobosan','Juara 1','Juara 2','Juara 3','Juara 4'],stockLeft:'Sisa',fallen:'Stok habis, hadiah tingkat berikutnya diberikan',soldOut:'Semua hadiah habis',pinTitle:'Staf',pinWrong:'PIN salah',cancel:'Batal',adTitle:'Pengaturan acara',lbHide:'Sembunyikan timer',lbHideSec:'Sembunyi setelah (dtk)',lbStaff:'Staf konfirmasi peserta berikut',lbSfx:'Suara',lbVib:'Getar',lbPin:'PIN 4 digit',lbPrizes:'Hadiah & batas selisih',prizeHint:'Selisih dalam detik mutlak. Kosongkan stok untuk tak terbatas. Stok 0 turun ke hadiah berikutnya.',lbLog:'Catatan main',thName:'Hadiah',thErr:'Selisih ≤',thStock:'Stok',save:'Simpan',csv:'Unduh CSV',resetLog:'Hapus catatan',close:'Tutup',on:'NYALA',off:'MATI',sum:'kali',confirmReset:'Hapus semua catatan?',saved:'Tersimpan',langName:'Bahasa Indonesia',fs:'Layar penuh',fsExit:'Keluar layar penuh',lbFsStart:'Layar penuh saat Mulai',iosHint:'Bagikan → Tambah ke Layar Utama untuk tampilan penuh',lbMusic:'Musik',lbVol:'Volume musik',hits:'Tepat hari ini: {n} orang',resetHits:'Hapus jumlah tepat',confirmResetHits:'Hapus jumlah tepat hari ini?',entryMsg:'Untuk pelanggan SMG STORE|yang belanja ₩10.000 atau lebih',entryHint:'Sentuh layar untuk mulai'}
+ko:{title:'10초 맞추기',help:'마음속으로 10초를 세고 정지를 누르세요. 정확히 맞추면 스티커, 못 맞추면 하리보 젤리예요.',hideRule:'{n}초부터 시계가 사라져요!',start:'시작',stop:'정지',next:'다음 참가자',again:'다시 하기',hideMsg:'이제 감각으로!',rec:'기록',errFast:'초 빠름',errSlow:'초 느림',errExact:'정확해요!',tier:['참가상','1등','2등','3등','4등'],stockLeft:'남은 수량',fallen:'재고가 없어 아래 등급으로 지급되었습니다',soldOut:'상품이 모두 소진되었습니다',pinTitle:'관리자',pinWrong:'비밀번호가 달라요',cancel:'취소',adTitle:'이벤트 설정',lbHide:'타이머 숨기기',lbHideSec:'숨기는 시간(초)',lbStaff:'다음 참가자 확인',lbSfx:'효과음',lbVib:'진동',lbPin:'비밀번호 4자리',lbPrizes:'상품·오차 기준',prizeHint:'오차는 절대값(초). 재고를 비우면 무제한. 재고 0이면 아래 등급으로 내려갑니다.',lbLog:'참가 기록',thName:'상품명',thErr:'오차 ≤',thStock:'재고',save:'저장',csv:'CSV 저장',resetLog:'기록 지우기',close:'닫기',on:'켜짐',off:'꺼짐',sum:'회',confirmReset:'참가 기록을 모두 지울까요?',saved:'저장했습니다',langName:'한국어',fs:'전체화면',fsExit:'전체화면 종료',lbFsStart:'시작 시 전체화면',iosHint:'공유 → 홈 화면에 추가하면 전체화면으로 실행돼요',lbMusic:'배경음악',lbVol:'음악 크기',hits:'오늘 정확히 맞춘 사람 {n}명',boardPlays:'오늘 참여자 {n}명',boardTitle:'오늘 기록 TOP 3',boardEmpty:'오늘 첫 도전자가 되어보세요!',boardRank:'{n}등',todayRank:'오늘 {n}등!',resetHits:'정확 횟수 지우기',confirmResetHits:'오늘 정확히 맞춘 횟수를 지울까요?',entryMsg:'SMG 스토어 1만원 이상|구매고객 참여가능',entryHint:'화면을 터치하면 시작할 수 있어요'},
+en:{title:'Hit 10 Seconds',help:'Count to 10 in your head, then press Stop. Hit 10.00 exactly for a sticker, or get Haribo jelly if you miss.',hideRule:'The clock hides after {n} seconds!',start:'START',stop:'STOP',next:'Next player',again:'Play again',hideMsg:'Feel the time!',rec:'Time',errFast:'s early',errSlow:'s late',errExact:'Perfect!',tier:['Thanks','1st','2nd','3rd','4th'],stockLeft:'Left',fallen:'This prize was out of stock, so the next prize was given',soldOut:'All prizes are gone',pinTitle:'Staff',pinWrong:'Wrong PIN',cancel:'Cancel',adTitle:'Event settings',lbHide:'Hide the timer',lbHideSec:'Hide after (sec)',lbStaff:'Staff must confirm next',lbSfx:'Sound',lbVib:'Vibration',lbPin:'4-digit PIN',lbPrizes:'Prizes & error limits',prizeHint:'Error is absolute seconds. Leave stock blank for unlimited. Stock 0 falls to the next prize.',lbLog:'Play log',thName:'Prize',thErr:'Error ≤',thStock:'Stock',save:'Save',csv:'Export CSV',resetLog:'Clear log',close:'Close',on:'ON',off:'OFF',sum:'plays',confirmReset:'Clear the whole play log?',saved:'Saved',langName:'English',fs:'Full screen',fsExit:'Exit full screen',lbFsStart:'Full screen on Start',iosHint:'Share → Add to Home Screen to play full screen',lbMusic:'Music',lbVol:'Music volume',hits:'Exact hits today: {n}',boardPlays:'Players today: {n}',boardTitle:'Today\'s TOP 3',boardEmpty:'Be the first to play today!',boardRank:'#{n}',todayRank:'Today\'s #{n}!',resetHits:'Reset exact hits',confirmResetHits:'Clear today’s exact-hit count?',entryMsg:'For SMG STORE customers|who spent ₩10,000 or more',entryHint:'Tap the screen to start'},
+id:{title:'Tebak 10 Detik',help:'Hitung 10 detik dalam hati, lalu tekan Berhenti. Tepat 10.00 detik berhadiah stiker; jika tidak, permen jeli Haribo.',hideRule:'Jam menghilang setelah {n} detik!',start:'MULAI',stop:'BERHENTI',next:'Peserta berikut',again:'Main lagi',hideMsg:'Rasakan waktunya!',rec:'Waktu',errFast:' dtk lebih cepat',errSlow:' dtk lebih lambat',errExact:'Tepat sekali!',tier:['Hadiah trobosan','Juara 1','Juara 2','Juara 3','Juara 4'],stockLeft:'Sisa',fallen:'Stok habis, hadiah tingkat berikutnya diberikan',soldOut:'Semua hadiah habis',pinTitle:'Staf',pinWrong:'PIN salah',cancel:'Batal',adTitle:'Pengaturan acara',lbHide:'Sembunyikan timer',lbHideSec:'Sembunyi setelah (dtk)',lbStaff:'Staf konfirmasi peserta berikut',lbSfx:'Suara',lbVib:'Getar',lbPin:'PIN 4 digit',lbPrizes:'Hadiah & batas selisih',prizeHint:'Selisih dalam detik mutlak. Kosongkan stok untuk tak terbatas. Stok 0 turun ke hadiah berikutnya.',lbLog:'Catatan main',thName:'Hadiah',thErr:'Selisih ≤',thStock:'Stok',save:'Simpan',csv:'Unduh CSV',resetLog:'Hapus catatan',close:'Tutup',on:'NYALA',off:'MATI',sum:'kali',confirmReset:'Hapus semua catatan?',saved:'Tersimpan',langName:'Bahasa Indonesia',fs:'Layar penuh',fsExit:'Keluar layar penuh',lbFsStart:'Layar penuh saat Mulai',iosHint:'Bagikan → Tambah ke Layar Utama untuk tampilan penuh',lbMusic:'Musik',lbVol:'Volume musik',hits:'Tepat hari ini: {n} orang',boardPlays:'Peserta hari ini: {n}',boardTitle:'TOP 3 hari ini',boardEmpty:'Jadilah yang pertama bermain hari ini!',boardRank:'No. {n}',todayRank:'Hari ini No. {n}!',resetHits:'Hapus jumlah tepat',confirmResetHits:'Hapus jumlah tepat hari ini?',entryMsg:'Untuk pelanggan SMG STORE|yang belanja ₩10.000 atau lebih',entryHint:'Sentuh layar untuk mulai'}
 };
 function detectLang(){
   var q=/[?&]lang=(en|id|ko)/.exec(location.search);if(q)return q[1];
@@ -365,7 +412,10 @@ function fmtTime(t){
 function fmtErr(err){var n=Math.round(err*1000)/1000;return(n.toFixed(3).replace(/0+$/,'').replace(/\.$/,''))}
 function pad2(n){n=String(n);return n.length<2?'0'+n:n}
 var LS_HITS='tensec_hits';
-function todayKey(){var d=new Date();return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate())}
+function todayKey(){
+  try{return new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date())}
+  catch(e){var d=new Date();return d.getFullYear()+'-'+pad2(d.getMonth()+1)+'-'+pad2(d.getDate())}
+}
 function loadHits(){try{var o=JSON.parse(localStorage.getItem(LS_HITS)||'{}');if(o.day!==todayKey())return{day:todayKey(),n:0};return{day:o.day,n:Number(o.n)||0}}catch(e){return{day:todayKey(),n:0}}}
 function saveHits(h){try{localStorage.setItem(LS_HITS,JSON.stringify(h))}catch(e){}}
 var hits=loadHits();
@@ -377,6 +427,97 @@ function renderHits(bump){
 function isExactHit(a){if(!a||a.err==null)return false;var lim=cfg&&cfg.prizes&&cfg.prizes[0]?cfg.prizes[0].maxErr:0.005;return toMs(a.err)<=toMs(lim)}
 function addExactHit(){hits=loadHits();hits.n+=1;hits.day=todayKey();saveHits(hits);renderHits(true)}
 function resetHits(){if(!confirm(t('confirmResetHits')))return;hits={day:todayKey(),n:0};saveHits(hits);renderHits(false)}
+var LS_BOARD='tensec_board';
+var ENTRY_I18N=[
+  {lang:'en',tag:'EN',text:'Customers who purchase ₩10,000+ at SMG STORE can play'},
+  {lang:'zh-Hans',tag:'中文',text:'在SMG STORE消费满10,000韩元的顾客可参加'},
+  {lang:'ja',tag:'日本語',text:'SMG STOREで10,000ウォン以上ご購入のお客様が参加できます'}
+];
+function emptyBoard(){return{day:todayKey(),plays:0,top:[]}}
+function loadBoard(){
+  try{
+    var o=JSON.parse(localStorage.getItem(LS_BOARD)||'{}');
+    if(!o||o.day!==todayKey())return emptyBoard();
+    var top=Array.isArray(o.top)?o.top.filter(function(x){return x&&isFinite(Number(x.t))}).map(function(x){return{t:Number(x.t),at:Number(x.at)||0}}):[];
+    return{day:o.day,plays:Math.max(0,Number(o.plays)||0),top:top};
+  }catch(e){return emptyBoard()}
+}
+function saveBoard(b){try{localStorage.setItem(LS_BOARD,JSON.stringify(b))}catch(e){}}
+var board=loadBoard();
+var lastTodayRank=0;
+function recErr(rec){return Math.abs((rec&&rec.t||0)-TARGET)}
+function sortTop(list){
+  return list.slice().sort(function(a,b){
+    var d=recErr(a)-recErr(b);
+    if(d)return d;
+    return (a.at||0)-(b.at||0);
+  });
+}
+function addPlay(elapsed){
+  board=loadBoard();
+  board.plays+=1;
+  var rec={t:Number(elapsed),at:Date.now()};
+  var list=sortTop(board.top.concat([rec]));
+  var rank=-1;
+  for(var i=0;i<list.length;i++){if(list[i]===rec){rank=i+1;break}}
+  board.top=list.slice(0,3);
+  if(rank>3)rank=-1;
+  board.day=todayKey();
+  lastTodayRank=rank;
+  saveBoard(board);
+  renderBoard();
+  return rank;
+}
+function renderBoard(){
+  board=loadBoard();
+  var root=$('board'); if(!root)return;
+  var plays=$('boardPlays'), title=$('boardTitle'), list=$('boardList'), empty=$('boardEmpty');
+  if(plays)plays.innerHTML=String(t('boardPlays')||'').replace('{n}','<b>'+board.plays+'</b>');
+  if(title)title.textContent=t('boardTitle')||'';
+  var rows=board.top||[];
+  if(list){
+    list.innerHTML='';
+    list.classList.toggle('hide',!rows.length);
+    rows.forEach(function(rec,i){
+      var li=document.createElement('li');
+      var f=fmtTime(rec.t);
+      var label=String(t('boardRank')||'{n}등').replace('{n}',String(i+1));
+      li.innerHTML='<span class="rk">'+label+'</span><span class="tm">'+f.main+(f.third||'')+'초</span>';
+      list.appendChild(li);
+    });
+  }
+  if(empty){
+    empty.textContent=t('boardEmpty')||'';
+    empty.classList.toggle('hide',!!rows.length);
+  }
+  if(typeof entryOpen!=='undefined'&&entryOpen&&typeof layoutEntryGate==='function') layoutEntryGate();
+}
+function renderEntryI18n(){
+  var host=$('entryI18n'); if(!host)return;
+  host.innerHTML=ENTRY_I18N.map(function(x){
+    return '<p class="entryLang" lang="'+x.lang+'"><span class="langTag">'+x.tag+'</span>'+x.text+'</p>';
+  }).join('');
+}
+function showTodayRankBadge(rank){
+  var el=$('todayRank'); if(!el)return;
+  el.classList.remove('on');
+  el.textContent='';
+  if(!(rank>=1&&rank<=3))return;
+  el.textContent=String(t('todayRank')||'').replace('{n}',String(rank));
+  el.classList.add('on');
+  requestAnimationFrame(function(){
+    var r=el.getBoundingClientRect();
+    if(r.width<2||r.height<2)return;
+    function box(id){var n=$(id);if(!n||n.classList.contains('hide'))return null;var b=n.getBoundingClientRect(),st=getComputedStyle(n);if(st.display==='none'||st.visibility==='hidden'||b.width<2)return null;return b;}
+    var ov=function(a,b){return a&&b&&a.left<b.right-2&&a.right>b.left+2&&a.top<b.bottom-2&&a.bottom>b.top+2};
+    if(ov(r,box('logo'))||ov(r,box('topRight'))||ov(r,box('hits'))){el.classList.remove('on');}
+  });
+}
+function setBoardVisible(on){
+  var el=$('board'); if(!el)return;
+  el.classList.toggle('hide',!on);
+  if(on)renderBoard();
+}
 
 
 /* ===== mascot ===== */
@@ -612,7 +753,9 @@ function spinRadius(sc,sq){
 }
 function spinFits(sc){
   var b=layoutBand(),rad=spinRadius(sc||capy.scale||1)+capyPad();
-  return 2*rad<=Math.min(b.W,b.right)-8;
+  var wide=2*rad<=Math.min(b.W,b.right)-8;
+  var tall=2*rad<=Math.max(80,(b.uiTop||0)-(b.clearBot||b.hudBot||0)-8);
+  return wide&&tall;
 }
 function maxTilt(){
   var b=layoutBand(),loc=capyLocal(),sc=capy.scale||1,sq=1.18,br=1.05;
@@ -813,6 +956,10 @@ function drawScene(){
     capy._box=capyScreenBox(cx,cy,sc);
   }
   nudgeBox();nudgeBox();
+  if(capy._box&&capy._box.bottom>band.uiTop-2){
+    cy-=capy._box.bottom-(band.uiTop-2);
+    capy._box=capyScreenBox(cx,cy,sc);
+  }
   c.save();c.translate(cx,cy);capyShadow(c,sc/1.2);c.restore();
   c.save();
   c.translate(cx, cy-lift);
@@ -1236,6 +1383,8 @@ function applyLang(){
   else if(mode==='run'&&hidden)setRuleHint('hide');
   else setRuleHint(false);
   syncChrome();
+  renderEntryI18n();
+  renderBoard();
 }
 function setToggle(el,on){el.className='tg'+(on?' on':'');el.textContent=on?t('on'):t('off');el.setAttribute('aria-pressed',on?'true':'false')}
 
@@ -1316,6 +1465,7 @@ function startReveal(a){
   revealing=true;mode='reveal';keepOn(true);clearIdleGate();
   $('result').classList.add('hide');$('go').classList.add('hide');
   $('title').classList.add('hide');$('help').classList.add('hide');
+  setBoardVisible(false);
   paintRecord(a.elapsed,true);
   setPose('ready');sfxStop();syncChrome();
   revealT=setTimeout(function(){revealT=0;showPrize(a)}, Math.round(REVEAL_HOLD*1000));
@@ -1327,6 +1477,7 @@ function entryMsgHtml(){
 }
 function paintEntryGate(){
   if($('entryMsg'))$('entryMsg').innerHTML=entryMsgHtml();
+  renderEntryI18n();
   if($('entryHint'))$('entryHint').textContent=t('entryHint');
 }
 function isEntryGateOn(){return !!entryOpen}
@@ -1368,10 +1519,13 @@ function layoutEntryGate(){
   if(!entryOpen||el.classList.contains('hide')){
     document.body.classList.remove('gateTight');
     document.body.classList.remove('gateTightBanner');
+    document.body.classList.remove('gateTightBoard');
+    document.body.classList.remove('gateCompactLand');
     el.style.top='';el.style.left='';el.style.width='';
     return;
   }
   var card=el.querySelector('.entryCard'); if(!card)return;
+  document.body.classList.remove('gateTight','gateTightBanner','gateTightBoard','gateCompactLand');
   el.style.top='0px';el.style.left='0px';el.style.width='auto';
   void el.offsetHeight;
   function box(id){
@@ -1384,12 +1538,11 @@ function layoutEntryGate(){
   }
   var host=el.offsetParent||el.parentElement||document.documentElement;
   var hostR=host.getBoundingClientRect();
-  var cardW=card.getBoundingClientRect().width;
-  var cardH=card.getBoundingClientRect().height;
   var vw=window.innerWidth||document.documentElement.clientWidth;
   var vh=window.innerHeight||document.documentElement.clientHeight;
-  var hint=box('ruleHint')||box('hits')||box('help')||box('title');
-  var go=box('go'), logo=box('logo'), tr=box('topRight'), hits=box('hits');
+  var isPort=vw<=vh;
+  var hint=box('ruleHint')||box('board')||box('hits')||box('help')||box('title');
+  var go=box('go'), logo=box('logo'), tr=box('topRight'), hits=box('hits'), board=box('board');
   var band=typeof layoutBand==='function'?layoutBand():null;
   var capyTop=null, capyLeft=0, capyRight=vw, capyBot=vh;
   if(band){
@@ -1403,27 +1556,39 @@ function layoutEntryGate(){
     capyRight=Math.max(capyRight,(capy._box.right||0)+8);
     capyBot=Math.max(capyBot,capy._box.bottom+8);
   }
+  var cardW=card.getBoundingClientRect().width;
+  var cardH=card.getBoundingClientRect().height;
   var preferTop=hint?hint.bottom+16:Math.max(hostR.top+80,(logo?logo.bottom+12:80));
-  var needTight=(vw<=vh)&&capyTop!=null&&hint&&(capyTop-hint.bottom<cardH+20);
-  var tightOn=document.body.classList.contains('gateTight');
-  if(!!needTight!==tightOn){
-    document.body.classList.toggle('gateTight',!!needTight);
+  var needTight=(isPort&&vw<=520)||(isPort&&capyTop!=null&&hint&&(capyTop-hint.bottom<cardH+20));
+  var hideBanner=!!needTight&&isPort;
+  var hideBoard=false;
+  if(hideBanner){
+    var under=board||hits||box('title');
+    hideBoard=!!(capyTop!=null&&under&&(capyTop-under.bottom<cardH+16))||(isPort&&vw<=520);
   }
-  var hideBanner=!!needTight&&vw<=520&&vw<=vh;
+  document.body.classList.toggle('gateTight',!!needTight);
   document.body.classList.toggle('gateTightBanner',hideBanner);
-  if(needTight||hideBanner){
-    hint=hideBanner?(box('hits')||box('title')):(box('ruleHint')||box('hits')||box('help')||box('title'));
-    hits=box('hits'); go=box('go');
-    preferTop=hint?hint.bottom+(hideBanner?12:16):preferTop;
-    if(typeof capy!=='undefined'&&capy._box&&capy._box.top){
-      capyTop=Math.min(capyTop, capy._box.top-8);
-    }
-  }
-  if(!entryOpen){document.body.classList.remove('gateTight');document.body.classList.remove('gateTightBanner')}
+  document.body.classList.toggle('gateTightBoard',hideBoard);
   var chromeBot=0;
   if(logo) chromeBot=Math.max(chromeBot,logo.bottom);
   if(tr) chromeBot=Math.max(chromeBot,tr.bottom);
-  function overlaps(x,y,obs,pad){
+  if(!isPort&&go){
+    var colTop0=chromeBot+16, colBot0=go.top-16;
+    document.body.classList.toggle('gateCompactLand', colBot0-colTop0<cardH);
+  }
+  void el.offsetHeight;
+  cardW=card.getBoundingClientRect().width;
+  cardH=card.getBoundingClientRect().height;
+  hint=hideBanner?(box('board')||box('hits')||box('title')):(box('ruleHint')||box('board')||box('hits')||box('help')||box('title'));
+  hits=box('hits'); go=box('go'); board=box('board');
+  preferTop=hint?hint.bottom+(hideBanner?12:16):preferTop;
+  if(typeof capy!=='undefined'&&capy._box&&capy._box.top){
+    capyTop=Math.min(capyTop, capy._box.top-8);
+  }
+  if(!entryOpen){
+    document.body.classList.remove('gateTight','gateTightBanner','gateTightBoard','gateCompactLand');
+  }
+    function overlaps(x,y,obs,pad){
     pad=pad||0;
     var L=x-pad,R=x+cardW+pad,T=y-pad,B=y+cardH+pad;
     for(var i=0;i<obs.length;i++){
@@ -1432,7 +1597,7 @@ function layoutEntryGate(){
     }
     return null;
   }
-  var obs=[logo,tr,box('title'),box('help'),hits,hint,go];
+  var obs=[logo,tr,box('title'),box('help'),hits,hint,board,go];
   if(capyTop!=null) obs.push({left:0,right:Math.min(vw,capyRight),top:capyTop,bottom:Math.max(capyBot,vh),kind:'capy'});
   var candidates=[];
   var cx=Math.max(8,(vw-cardW)/2);
@@ -1442,10 +1607,10 @@ function layoutEntryGate(){
   if(gapBot-preferTop>=cardH){
     var yCenter=preferTop+(gapBot-preferTop-cardH)/2;
     var below=gapBot-(yCenter+cardH);
-    if(vw<=vh&&vh<1800&&below<56) candidates.push({x:cx,y:preferTop,score:100});
+    if(isPort&&vh<1800&&below<56) candidates.push({x:cx,y:preferTop,score:100});
     else candidates.push({x:cx,y:yCenter,score:100});
   }
-  if(go && vw>vh){
+  if(go && !isPort){
     var dock=$('dock');
     var d=dock?dock.getBoundingClientRect():null;
     var colR=Math.min(vw-12, go.right+24);
@@ -1453,9 +1618,6 @@ function layoutEntryGate(){
     var capyEdge=(band&&band.right)?band.right: (d&&d.left>80?d.left:vw);
     var colL=Math.min(go.left-8, capyEdge+12);
     if(colR-colL<cardW) colL=Math.max(8, colR-cardW);
-    if(colL<capyEdge+8 && capyTop!=null){
-      /* card may enter capy x-range: keep it above the capy head */
-    }
     var x=colL+Math.max(0,(colR-colL-cardW)/2);
     if(x+cardW>vw-8) x=vw-8-cardW;
     var colTop=chromeBot+16;
@@ -1494,8 +1656,6 @@ function layoutEntryGate(){
   el.style.left=Math.round(picked.x-hostR.left)+'px';
   el.style.width=Math.round(cardW)+'px';
 }
-
-
 
 function showEntryGate(){
   clearIdleGate();
@@ -1548,6 +1708,7 @@ function showTitle(){
   $('clockWrap').classList.add('hide');
   hideGrade();
   setRuleHint('rule');
+  setBoardVisible(true);
   setPose('idle');setMusicState('idle');syncChrome();
   showEntryGate();
   if(typeof maybeSWReload==='function')maybeSWReload();
@@ -1560,6 +1721,7 @@ function startRun(ev){
   audio();
   t0=performance.now();mode='run';hidden=false;clearIdleGate();
   $('result').classList.add('hide');$('title').classList.add('hide');$('help').classList.add('hide');
+  setBoardVisible(false);
   $('go').classList.remove('hide');$('go').classList.add('stop');$('go').textContent=t('stop');
   $('clock').className='';$('clock').textContent='0.00';$('hintHide').classList.remove('on','snap');
   $('clockWrap').classList.remove('hide');
@@ -1593,6 +1755,7 @@ function finish(elapsed){
   keepOn(false);
   var a=applyAward(elapsed,cfg,log);lastAward=a;saveCfg(cfg);saveLog(log);
   if(isExactHit(a))addExactHit();
+  addPlay(a.elapsed);
   startReveal(a);
 }
 function renderResult(a){
@@ -1606,6 +1769,7 @@ function renderResult(a){
   $('prize').className=(a.soldOut||a.index<0||a.index>=4)?'t0':('t'+(a.index+1));
   $('prize').textContent=a.soldOut?t('soldOut'):prizeLabel(a.prize.name);
   fitPrize();
+  showTodayRankBadge(lastTodayRank);
   var dir=a.elapsed<TARGET?t('errFast'):a.elapsed>TARGET?t('errSlow'):t('errExact');
   var line=t('rec')+' '+f.main+f.third+'s  ·  ';
   if(a.err<0.0005)line+=t('errExact');else line+='Δ '+fmtErr(a.err)+dir;
@@ -1840,7 +2004,7 @@ window.__ts={
   unlockMs:function(){return window.__tsUnlockMs}, musOn:function(){return !!(mus&&mus.on)}, musUnlocked:function(){return !!(mus&&mus.unlocked)}, hasBgm:function(){return !!(mus&&(mus.fileSrc||mus.fileBuf))}, fxLive:function(){var n=0,i;for(i=0;i<FXN;i++) if(bits[i]&&bits[i].on)n++;return n;}, capDpr:capDpr, clearFx:clearFx, pickTierIndex:pickTierIndex, awardPrize:awardPrize, applyAward:applyAward, fmtTime:fmtTime,
   get cfg(){return cfg}, set cfg(v){cfg=mergeCfg(v)}, get log(){return log}, set log(v){log=v},
   get mode(){return mode}, get lang(){return lang}, get hidden(){return hidden}, get lastAward(){return lastAward},
-  setRuleHint:setRuleHint, hideRuleText:hideRuleText, showTitle:showTitle, startRun:startRun, stopRun:stopRun, finish:finish, renderResult:renderResult, showEntryGate:showEntryGate, hideEntryGate:hideEntryGate, gateOn:isEntryGateOn, APP_VER:APP_VER, GATE_IDLE_SEC:GATE_IDLE_SEC, fireIdleGate:fireIdleGate, armIdleGate:armIdleGate, idleArmed:function(){return !!idleT}, maybeSWReload:maybeSWReload,
+  setRuleHint:setRuleHint, hideRuleText:hideRuleText, showTitle:showTitle, startRun:startRun, stopRun:stopRun, finish:finish, renderResult:renderResult, addPlay:addPlay, loadBoard:loadBoard, renderBoard:renderBoard, todayKey:todayKey, get board(){return board}, get lastTodayRank(){return lastTodayRank}, seedBoard:function(o){o=o||{};var times=o.times||o.top||[];board={day:todayKey(),plays:Math.max(0,Number(o.plays)||times.length),top:times.map(function(x,i){if(x&&typeof x==='object')return{t:Number(x.t),at:Number(x.at)||(i+1)};return{t:Number(x),at:i+1}})};saveBoard(board);if(o.hits!=null){hits={day:todayKey(),n:Number(o.hits)||0};saveHits(hits);renderHits(false)}renderBoard();}, resetBoardSilent:function(){board=emptyBoard();saveBoard(board);lastTodayRank=0;renderBoard()}, showEntryGate:showEntryGate, hideEntryGate:hideEntryGate, gateOn:isEntryGateOn, APP_VER:APP_VER, GATE_IDLE_SEC:GATE_IDLE_SEC, fireIdleGate:fireIdleGate, armIdleGate:armIdleGate, idleArmed:function(){return !!idleT}, maybeSWReload:maybeSWReload,
   openAdmin:function(bypass){if(bypass&&/[?&](nosw|test)=1/.test(location.search))openAdmin();else showPin()},
   showPin:showPin, closeAdmin:closeAdmin, saveCfg:saveCfg, saveLog:saveLog, loadCfg:loadCfg,
   forceRun:function(elapsed,hide){
@@ -1855,11 +2019,11 @@ window.__ts={
     else{$('clock').className='';$('clock').textContent=fmtTime(elapsed).main;$('hintHide').classList.remove('on','snap');setRuleHint(false);setPose('run');setMusicState('run')}
     keepOn(true);syncChrome();
   },
-  forceResult:function(elapsed){idleSkipArm=true;clearIdleGate();hideEntryGate(true);idleSkipArm=false;if(raf){cancelAnimationFrame(raf);raf=0}clearReveal();mode='result';var a=applyAward(elapsed,cfg,log);lastAward=a;saveCfg(cfg);saveLog(log);if(isExactHit(a))addExactHit();showPrize(a)},
+  forceResult:function(elapsed){idleSkipArm=true;clearIdleGate();hideEntryGate(true);idleSkipArm=false;if(raf){cancelAnimationFrame(raf);raf=0}clearReveal();mode='result';var a=applyAward(elapsed,cfg,log);lastAward=a;saveCfg(cfg);saveLog(log);if(isExactHit(a))addExactHit();addPlay(a.elapsed);showPrize(a)},
   forceReveal:function(elapsed){if(raf){cancelAnimationFrame(raf);raf=0}var a=awardPrize(elapsed,cfg);lastAward=a;startReveal(a)},
   get revealing(){return revealing}, REVEAL_HOLD:REVEAL_HOLD,
   setLang:function(l){if(LANGS.indexOf(l)>=0){lang=l;cfg.lang=l;applyLang()}},
-  padChrome:padChrome, setCapyPose:setPose, capy:capy, capyBounds:function(){return capy._box||null}, stepScene:stepScene, spinFits:spinFits, fitCapyScale:fitCapyScale, layoutBand:layoutBand, unlockMusic:unlockMusic, addExactHit:addExactHit, resetHitsSilent:function(){hits={day:todayKey(),n:0};saveHits(hits);renderHits(false)}, get hits(){return hits}, setMusicOn:setMusicOn, setMusicVol:setMusicVol,
+  padChrome:padChrome, layoutEntryGate:layoutEntryGate, setCapyPose:setPose, capy:capy, capyBounds:function(){return capy._box||null}, stepScene:stepScene, spinFits:spinFits, fitCapyScale:fitCapyScale, layoutBand:layoutBand, unlockMusic:unlockMusic, addExactHit:addExactHit, resetHitsSilent:function(){hits={day:todayKey(),n:0};saveHits(hits);renderHits(false)}, get hits(){return hits}, setMusicOn:setMusicOn, setMusicVol:setMusicVol,
   musicCaptureStream:musicCaptureStream, get mus(){return mus}, playJingle:playJingle, setMusicState:setMusicState
 };
 })();
