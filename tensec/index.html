@@ -317,7 +317,7 @@ html:not([lang="ko"]) #entryMsg{white-space:normal;overflow-wrap:break-word;word
 <script>
 (function(){
 'use strict';
-var APP_VER='1.2.9',TARGET=10, LS_CFG='tensec_cfg', LS_LOG='tensec_log', AUTO_STOP=30, GATE_IDLE_SEC=20;
+var APP_VER='1.2.10',TARGET=10, LS_CFG='tensec_cfg', LS_LOG='tensec_log', AUTO_STOP=30, GATE_IDLE_SEC=20;
 var LOW=/[?&]low=1/.test(location.search)||(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
 if(LOW) document.body.classList.add('low');
 var LANGS=['ko','en','id'];
@@ -429,9 +429,9 @@ function addExactHit(){hits=loadHits();hits.n+=1;hits.day=todayKey();saveHits(hi
 function resetHits(){if(!confirm(t('confirmResetHits')))return;hits={day:todayKey(),n:0};saveHits(hits);renderHits(false)}
 var LS_BOARD='tensec_board';
 var ENTRY_I18N=[
-  {lang:'en',tag:'EN',text:'Customers who purchase ₩10,000+ at SMG STORE can play'},
-  {lang:'zh-Hans',tag:'中文',text:'在SMG STORE消费满10,000韩元的顾客可参加'},
-  {lang:'ja',tag:'日本語',text:'SMG STOREで10,000ウォン以上ご購入のお客様が参加できます'}
+  {lang:'en',tag:'EN',text:'Available with a purchase of ₩10,000 or more at SMG STORE'},
+  {lang:'zh-Hans',tag:'中文',text:'在SMG STORE单笔消费满₩10,000即可参与'},
+  {lang:'ja',tag:'日本語',text:'SMG STOREで₩10,000以上お買い上げのお客様がご参加いただけます'}
 ];
 function emptyBoard(){return{day:todayKey(),plays:0,top:[]}}
 function loadBoard(){
