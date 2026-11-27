@@ -1233,26 +1233,43 @@ input,textarea,select,[contenteditable]{cursor:text!important}
   background:rgba(8,6,5,.08);transition:opacity .3s ease;cursor:inherit}
 #attractOv.show{opacity:1;pointer-events:auto}
 #attractOv.hiding{opacity:0;pointer-events:auto}
-.attract-card{width:52%;max-width:55%;min-width:50%;height:28%;max-height:30%;min-height:25%;
+.attract-card{width:62%;max-width:78%;min-width:56%;height:auto;max-height:48%;min-height:0;
   box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;
   padding:clamp(10px,1.6vh,22px) clamp(16px,2.2vw,36px);
   background:linear-gradient(180deg,#FFF9F2 0%,#F7F1E8 100%);
   color:#3A2618;border:4px solid #5C3A24;border-radius:18px;
   box-shadow:0 0 0 3px #C9A98A,0 12px 28px rgba(0,0,0,.28);
-  text-align:center;line-height:1.15;overflow:visible;
+  text-align:center;line-height:1.15;overflow:hidden;
   animation:attractPulse 2.8s ease-in-out infinite}
 @keyframes attractPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.02)}}
 @media (prefers-reduced-motion:reduce){.attract-card{animation:none}}
 .attract-line1,.attract-line2{margin:0;padding:0;overflow:visible;max-width:100%;flex:0 0 auto;
-  font-family:"Apple SD Gothic Neo","Noto Sans KR","Noto Sans CJK KR",sans-serif;
+  font-family:"Noto Sans CJK KR","Noto Sans KR","Apple SD Gothic Neo","Noto Sans CJK SC","Noto Sans CJK JP",sans-serif;
   font-weight:900;letter-spacing:-0.02em;word-break:keep-all;text-wrap:balance}
-.attract-line1{font-size:clamp(20px,2.2vw,42px);color:#3A2618;line-height:1.35}
-.attract-line2{font-size:clamp(26px,3vw,56px);color:#5C3A24;margin-top:.08em;line-height:1.3}
+.attract-line1{font-size:clamp(18px,2.1vw,40px);color:#3A2618;line-height:1.3}
+.attract-line2{font-size:clamp(22px,2.6vw,48px);color:#5C3A24;margin-top:.06em;line-height:1.25}
+.attract-line1 b,.attract-line2 b{color:#C42429;-webkit-text-stroke:0;paint-order:stroke fill}
 .attract-brand{color:#C42429;font-weight:900;letter-spacing:0.02em}
+.attract-i18n{margin:8px 0 0;display:flex;flex-direction:column;align-items:center;gap:2px;width:100%;text-align:center;flex:0 0 auto}
+.attract-lang{margin:0;font-weight:700;font-size:clamp(10px,1.35vw,15px);line-height:1.35;opacity:.92;
+  letter-spacing:0;white-space:normal;word-break:keep-all;overflow-wrap:anywhere;text-align:center;
+  font-family:"Noto Sans CJK KR","Noto Sans CJK SC","Noto Sans CJK JP","Noto Sans KR","Noto Sans SC","Noto Sans JP",system-ui,sans-serif}
+.attract-lang .langTag{display:inline;min-width:0;margin:0 .35em 0 0;font-size:.82em;font-weight:800;opacity:.7}
+@media (orientation:landscape){
+  .attract-card{width:58%;max-width:68%;min-width:50%}
+  .attract-lang{white-space:nowrap;overflow-wrap:normal}
+}
+@media (orientation:portrait) and (max-width:520px){
+  .attract-card{width:94%;max-width:96%;min-width:90%;padding:10px 12px 10px}
+  .attract-i18n{margin:6px 0 0;gap:3px}
+  .attract-lang{font-size:clamp(9px,2.55vw,12px);line-height:1.4;overflow-wrap:anywhere;word-break:break-word}
+}
 @media (min-width:3000px){
   .attract-card{padding:28px 48px;border-width:6px;border-radius:24px}
-  .attract-line1{font-size:clamp(56px,2.2vw,96px)}
-  .attract-line2{font-size:clamp(72px,3vw,128px)}
+  .attract-line1{font-size:clamp(48px,2.0vw,88px)}
+  .attract-line2{font-size:clamp(60px,2.6vw,112px)}
+  .attract-lang{font-size:clamp(18px,1.1vw,28px)}
+  .attract-i18n{margin:14px 0 0;gap:4px}
 }
 </style>
 <style id="pageStyle">@page{size:80mm 200mm;margin:0}</style>
@@ -3434,44 +3451,72 @@ if(sync.on) syncStart();
       var wrap=document.getElementById('gridWrap')||document.getElementById('gridScroll');
       var card=ov.querySelector('.attract-card'); if(!card||!wrap) return;
       var wr=wrap.getBoundingClientRect();
-      var t=document.querySelector('#grid button.ticket');
-      var th=t?t.getBoundingClientRect().height:wr.height/10;
-      var gap=8;
-      var h=th*3+gap*2;
-      var minH=wr.height*0.25, maxH=wr.height*0.30;
-      if(h<minH) h=minH; if(h>maxH) h=maxH;
-      var w=wr.width*0.52;
-      if(w<wr.width*0.50) w=wr.width*0.50;
-      if(w>wr.width*0.55) w=wr.width*0.55;
+      var portrait=wr.height>=wr.width;
+      var wRatio=portrait?0.78:0.62;
+      var minW=wr.width*(portrait?0.70:0.52);
+      var maxW=wr.width*(portrait?0.92:0.78);
+      var w=wr.width*wRatio;
+      if(w<minW) w=minW; if(w>maxW) w=maxW;
       card.style.width=Math.round(w)+'px';
-      card.style.maxWidth=Math.round(wr.width*0.55)+'px';
-      card.style.minWidth=Math.round(wr.width*0.50)+'px';
-      card.style.height=Math.round(h)+'px';
-      card.style.maxHeight=Math.round(wr.height*0.30)+'px';
-      card.style.minHeight=Math.round(wr.height*0.25)+'px';
+      card.style.maxWidth=Math.round(maxW)+'px';
+      card.style.minWidth=Math.round(minW)+'px';
+      card.style.height='auto';
+      card.style.minHeight='0';
+      var maxBox=Math.round(Math.min(wr.height*0.48, wr.height-24));
+      card.style.maxHeight=maxBox+'px';
       var cs=getComputedStyle(card);
       var padX=(parseFloat(cs.paddingLeft)||0)+(parseFloat(cs.paddingRight)||0);
       var padY=(parseFloat(cs.paddingTop)||0)+(parseFloat(cs.paddingBottom)||0);
-      var maxW=card.clientWidth-padX;
-      var maxH=card.clientHeight-padY;
-      var lines=card.querySelectorAll('.attract-line1,.attract-line2');
-      function totalH(){ var h=0; for(var i=0;i<lines.length;i++) h+=lines[i].scrollHeight; return h; }
-      for(var i=0;i<lines.length;i++){ lines[i].style.fontSize=''; lines[i].style.letterSpacing=''; }
-      var guard=0;
-      while(guard++<24){
-        var overflow=false;
-        for(var i=0;i<lines.length;i++){
-          if(lines[i].scrollWidth>maxW+1) overflow=true;
+      var maxTextW=Math.max(40, card.clientWidth-padX);
+      var maxTextH=Math.max(40, Math.min(card.clientHeight||maxBox, maxBox)-padY);
+      var heads=card.querySelectorAll('.attract-line1,.attract-line2');
+      var langs=card.querySelectorAll('.attract-lang');
+      var i18n=card.querySelector('.attract-i18n');
+      function reset(){
+        for(var i=0;i<heads.length;i++){ heads[i].style.fontSize=''; heads[i].style.letterSpacing=''; }
+        for(var i=0;i<langs.length;i++){ langs[i].style.fontSize=''; langs[i].style.letterSpacing=''; langs[i].style.whiteSpace=''; }
+        if(i18n) i18n.style.marginTop='';
+      }
+      function contentH(){
+        var h=0;
+        for(var i=0;i<heads.length;i++) h+=heads[i].scrollHeight;
+        if(i18n){
+          var im=getComputedStyle(i18n);
+          h+=(parseFloat(im.marginTop)||0)+i18n.scrollHeight;
         }
-        if(totalH()>maxH+1) overflow=true;
-        if(!overflow) break;
-        for(var i=0;i<lines.length;i++){
-          var e=lines[i], f=parseFloat(e.style.fontSize||getComputedStyle(e).fontSize)||32;
-          e.style.fontSize=(f*0.94)+'px';
+        return h;
+      }
+      function overflow(){
+        if(contentH()>maxTextH+1) return true;
+        for(var i=0;i<heads.length;i++){ if(heads[i].scrollWidth>maxTextW+1) return true; }
+        for(var i=0;i<langs.length;i++){ if(langs[i].scrollWidth>maxTextW+1) return true; }
+        return false;
+      }
+      reset();
+      var guard=0;
+      while(guard++<28 && overflow()){
+        for(var i=0;i<heads.length;i++){
+          var e=heads[i], f=parseFloat(e.style.fontSize||getComputedStyle(e).fontSize)||28;
+          e.style.fontSize=Math.max(13, f*0.94)+'px';
+        }
+        for(var i=0;i<langs.length;i++){
+          var e=langs[i], f=parseFloat(e.style.fontSize||getComputedStyle(e).fontSize)||12;
+          e.style.fontSize=Math.max(9, f*0.94)+'px';
+          if(portrait) e.style.whiteSpace='normal';
+        }
+        if(i18n && guard>8){
+          var m=parseFloat(getComputedStyle(i18n).marginTop)||8;
+          i18n.style.marginTop=Math.max(4, m*0.9)+'px';
         }
       }
-      for(var i=0;i<lines.length;i++){
-        if(lines[i].scrollWidth>maxW+1) lines[i].style.letterSpacing='-0.04em';
+      for(var i=0;i<heads.length;i++){
+        if(heads[i].scrollWidth>maxTextW+1) heads[i].style.letterSpacing='-0.04em';
+      }
+      for(var i=0;i<langs.length;i++){
+        if(langs[i].scrollWidth>maxTextW+1){
+          langs[i].style.whiteSpace='normal';
+          langs[i].style.overflowWrap='anywhere';
+        }
       }
     }
         function show(){
@@ -3535,8 +3580,13 @@ if(sync.on) syncStart();
       ov.setAttribute('aria-label','참여 안내');
       ov.setAttribute('aria-hidden','false');
       ov.innerHTML='<div class="attract-card">'+
-        '<p class="attract-line1"><span class="attract-brand">SMG STORE</span> 5만원 이상 구매고객</p>'+
-        '<p class="attract-line2">참여 가능합니다</p>'+
+        '<p class="attract-line1"><span class="attract-brand">SMG 스토어</span> <b>5만원</b> 이상</p>'+
+        '<p class="attract-line2">구매고객 참여가능</p>'+
+        '<div class="attract-i18n">'+
+          '<p class="attract-lang" lang="en"><span class="langTag">EN</span>Available with a purchase of ₩50,000 or more at SMG STORE</p>'+
+          '<p class="attract-lang" lang="zh"><span class="langTag">中文</span>在SMG STORE单笔消费满₩50,000即可参与</p>'+
+          '<p class="attract-lang" lang="ja"><span class="langTag">日本語</span>SMG STOREで₩50,000以上お買い上げのお客様がご参加いただけます</p>'+
+        '</div>'+
         '</div>';
       var host=document.getElementById('gridWrap');
       if(host){ if(getComputedStyle(host).position==='static') host.style.position='relative'; host.appendChild(ov); }
