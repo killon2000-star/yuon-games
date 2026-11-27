@@ -171,6 +171,12 @@ h1{font-size:clamp(28px,7.2vmin,52px);margin:4px 0 6px;color:var(--title);-webki
 #entryMsg b{color:var(--title);-webkit-text-stroke:1px var(--line);paint-order:stroke fill}
 #entryHint{margin:8px 0 0;font-weight:700;font-size:clamp(12px,2.6vmin,16px);line-height:1.35;opacity:.82}
 body.gateTight #help{display:none!important}
+body.gateTightBanner #ruleHint{visibility:hidden!important}
+@media (orientation:portrait) and (max-height:1400px){
+  .entryCard{font-size:clamp(20px,5.2vmin,36px);padding:8px 16px 6px}
+  #entryHint{margin:4px 0 0;font-size:clamp(11px,2.4vmin,14px)}
+}
+html:not([lang="ko"]) #entryMsg{white-space:normal;overflow-wrap:break-word;word-break:normal}
 @keyframes gatein{0%{opacity:0}100%{opacity:1}}
 @keyframes gateout{0%{opacity:1}100%{opacity:0}}
 #appVer{position:fixed;left:max(8px,env(safe-area-inset-left));bottom:max(6px,env(safe-area-inset-bottom));z-index:8;margin:0;padding:0;font-weight:700;font-size:11px;letter-spacing:.02em;color:var(--ink);opacity:.48;pointer-events:none;line-height:1}
@@ -264,7 +270,7 @@ body.gateTight #help{display:none!important}
 <script>
 (function(){
 'use strict';
-var APP_VER='1.2.7',TARGET=10, LS_CFG='tensec_cfg', LS_LOG='tensec_log', AUTO_STOP=30, GATE_IDLE_SEC=20;
+var APP_VER='1.2.8',TARGET=10, LS_CFG='tensec_cfg', LS_LOG='tensec_log', AUTO_STOP=30, GATE_IDLE_SEC=20;
 var LOW=/[?&]low=1/.test(location.search)||(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
 if(LOW) document.body.classList.add('low');
 var LANGS=['ko','en','id'];
@@ -597,12 +603,6 @@ function layoutBand(){
     var hb=hint.getBoundingClientRect();
     if(hb.height>8) clearBot=Math.max(clearBot, hb.bottom);
   }
-  var gate=document.getElementById('entryGate');
-  if(gate&&!gate.classList.contains('hide')){
-    var gc=gate.querySelector('.entryCard');
-    var gb=(gc||gate).getBoundingClientRect();
-    if(gb.height>8&&gb.left<right&&gb.right>0) clearBot=Math.max(clearBot, gb.bottom);
-  }
   return{W:W,H:H,uiTop:uiTop,hudBot:hudBot,clearBot:clearBot,right:right,avail:Math.max(80,uiTop-hudBot-12)};
 }
 function spinRadius(sc,sq){
@@ -777,9 +777,24 @@ function drawScene(){
   var sq=Math.max(0.7,Math.abs(capy.squash||1));
   var lift=loc.lift*sc*sq;
   var cx=capy.x*W, cy=gy-feetPx+capy.hop*sc*0.65;
+  var maxCy=band.uiTop-feetPx;
+  if(entryOpen&&mode==='title'&&(capy.pose==='idle'||capy.pose==='ready')){
+    var gEl=$('entryGate'), gCard=gEl&&gEl.querySelector('.entryCard');
+    if(gCard&&gEl&&!gEl.classList.contains('hide')){
+      var gR=gCard.getBoundingClientRect();
+      var preview=capyScreenBox(cx,cy,sc);
+      if(gR.height>2&&preview.right>gR.left+2&&preview.left<gR.right-2){
+        var need=gR.bottom+8-preview.top;
+        if(need>0&&sc*0.65>0.01){
+          capy.hop+=need/(sc*0.65);
+          cy=gy-feetPx+capy.hop*sc*0.65;
+          if(cy>maxCy){cy=maxCy;capy.hop=(cy-(gy-feetPx))/(sc*0.65)}
+        }
+      }
+    }
+  }
   var topY=cy-lift-loc.up*sc*sq;
   if(topY<(band.clearBot||band.hudBot)+8)cy+=((band.clearBot||band.hudBot)+8-topY);
-  var maxCy=band.uiTop-feetPx;
   if(cy>maxCy)cy=maxCy;
   function nudgeBox(){
     capy._box=capyScreenBox(cx,cy,sc);
@@ -1352,6 +1367,7 @@ function layoutEntryGate(){
   var el=$('entryGate'); if(!el)return;
   if(!entryOpen||el.classList.contains('hide')){
     document.body.classList.remove('gateTight');
+    document.body.classList.remove('gateTightBanner');
     el.style.top='';el.style.left='';el.style.width='';
     return;
   }
@@ -1378,7 +1394,7 @@ function layoutEntryGate(){
   var capyTop=null, capyLeft=0, capyRight=vw, capyBot=vh;
   if(band){
     var capyH=(typeof capy!=='undefined'&&capy.hRatio)?capy.hRatio*band.H:band.H*0.28;
-    capyTop=band.uiTop-capyH*1.35-24;
+    capyTop=band.uiTop-capyH*((band.H<1800&&band.W<=band.H)?1.55:1.35)-((band.H<1800&&band.W<=band.H)?40:24);
     capyRight=band.right||vw;
   }
   if(typeof capy!=='undefined'&&capy._box&&capy._box.height!==0){
@@ -1392,14 +1408,18 @@ function layoutEntryGate(){
   var tightOn=document.body.classList.contains('gateTight');
   if(!!needTight!==tightOn){
     document.body.classList.toggle('gateTight',!!needTight);
-    hint=box('ruleHint')||box('hits')||box('help')||box('title');
+  }
+  var hideBanner=!!needTight&&vw<=520&&vw<=vh;
+  document.body.classList.toggle('gateTightBanner',hideBanner);
+  if(needTight||hideBanner){
+    hint=hideBanner?(box('hits')||box('title')):(box('ruleHint')||box('hits')||box('help')||box('title'));
     hits=box('hits'); go=box('go');
-    preferTop=hint?hint.bottom+16:preferTop;
+    preferTop=hint?hint.bottom+(hideBanner?12:16):preferTop;
     if(typeof capy!=='undefined'&&capy._box&&capy._box.top){
       capyTop=Math.min(capyTop, capy._box.top-8);
     }
   }
-  if(!entryOpen) document.body.classList.remove('gateTight');
+  if(!entryOpen){document.body.classList.remove('gateTight');document.body.classList.remove('gateTightBanner')}
   var chromeBot=0;
   if(logo) chromeBot=Math.max(chromeBot,logo.bottom);
   if(tr) chromeBot=Math.max(chromeBot,tr.bottom);
@@ -1420,7 +1440,10 @@ function layoutEntryGate(){
   if(capyTop!=null) gapBot=Math.min(gapBot,capyTop-8);
   if(go&&cx<go.right-8&&cx+cardW>go.left+8) gapBot=Math.min(gapBot,go.top-16);
   if(gapBot-preferTop>=cardH){
-    candidates.push({x:cx,y:preferTop+(gapBot-preferTop-cardH)/2,score:100});
+    var yCenter=preferTop+(gapBot-preferTop-cardH)/2;
+    var below=gapBot-(yCenter+cardH);
+    if(vw<=vh&&vh<1800&&below<56) candidates.push({x:cx,y:preferTop,score:100});
+    else candidates.push({x:cx,y:yCenter,score:100});
   }
   if(go && vw>vh){
     var dock=$('dock');
