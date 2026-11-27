@@ -1226,6 +1226,34 @@ html,body,#app,.stage,.board,.grid-wrap,.grid-scroll,.ticket,.icon-btn,.pay-btn,
   cursor:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAAC/0lEQVR42u3dy0osMRAG4FR5G3AxK9//AV25EFzoxI0DYWg1Sae6/roEBs/hcOzm/1KV9AWmlBw5cuTIkSOHyqCZ/1Rrrd0HIKKM+ffB0gcYwUqARPAJcEVICEWArAZhgJfzcyJoV0AiALSgRABYA17Oz90Q0RFEF+ERhKgQ4rugbEkA29BEALgOSASAC7FEALgSHt0heYdgrQNnNSgDJAIAQCIAAERHYJQTiXr7gtFOKNoOiRFPKlJLYtQTi4LAyCcXAYHRT9A7Als4Sc+3L9jSbPFYDWytZL0hmAPwhmASwBOCWYCZxTkBlKsBcYfkAsByS3IDYBXBFYBFBHcA1hBcAszskLQg3AJYqQb3AOgIIQCQEcIAoCKEAphZnBNAuRqkd0hhAVBaUmgABITwAKMICeAMIQEmd0gJoFcNlACOWtK99aBe3941DkullJoVoLyDSQAHCCEfyidAIvhZhLcQehdmIjrf3m1ofl6aT/v3smoBnt7Tbt0TQZt9AwinPxDaT7n5c7agFe2o1vpRSvlsPl/Nz7YClocPCbByXz+A8LnRcqp0+HAA1/CVEC6/tJ0YuyDJK1rkN6gZIfit8FeDoCIw8qyPgMCo4UdBYOTwIyAwevjeF2a2Er4EHAICW5r5HhEYKXwieoqGwNLBD4T/WEr5IiKVjYEWAmvP+ib89navykKugcCA4deer77SRoAF2Bt+828hEFgx/Ifyz1OmCAh8dPhEdOoJ38DFGsFVQOc28/qkqfaEr1kFR1QCK4bf/dBDE+GP30srqkD8yzybfl/3tpye466asf+BEtFdWfDkjA+Y+cv6/VGVcOQNw/sFQdANJm3097o3fKRbJksnqMDv2XpzeGnwEq1oNPxVLYiEUMVn+koErfClAA4bexEmgm93cksq2/SbcXu+Ln0i/Mef8JeuZ+a/7320CiaCPzXBL39pyzzACMJky7mMXLmHBJi5OOxsOeLvhroBWIXQtByxWb/7QszrOKLluK6A2SqQXmhDAYwiaMz6dnwD7fVHxsV9/BcAAAAASUVORK5CYII=") 18 10, auto!important;
 }
 input,textarea,select,[contenteditable]{cursor:text!important}
+
+/* nov-attract-popup: compact centered banner over the ticket board; numbers stay visible around it */
+#attractOv{position:absolute;inset:0;z-index:25;display:flex;align-items:center;justify-content:center;
+  box-sizing:border-box;opacity:0;pointer-events:none;
+  background:rgba(8,6,5,.08);transition:opacity .3s ease;cursor:inherit}
+#attractOv.show{opacity:1;pointer-events:auto}
+#attractOv.hiding{opacity:0;pointer-events:auto}
+.attract-card{width:52%;max-width:55%;min-width:50%;height:28%;max-height:30%;min-height:25%;
+  box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:clamp(10px,1.6vh,22px) clamp(16px,2.2vw,36px);
+  background:linear-gradient(180deg,#FFF9F2 0%,#F7F1E8 100%);
+  color:#3A2618;border:4px solid #5C3A24;border-radius:18px;
+  box-shadow:0 0 0 3px #C9A98A,0 12px 28px rgba(0,0,0,.28);
+  text-align:center;line-height:1.15;overflow:visible;
+  animation:attractPulse 2.8s ease-in-out infinite}
+@keyframes attractPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.02)}}
+@media (prefers-reduced-motion:reduce){.attract-card{animation:none}}
+.attract-line1,.attract-line2{margin:0;padding:0;overflow:visible;max-width:100%;flex:0 0 auto;
+  font-family:"Apple SD Gothic Neo","Noto Sans KR","Noto Sans CJK KR",sans-serif;
+  font-weight:900;letter-spacing:-0.02em;word-break:keep-all;text-wrap:balance}
+.attract-line1{font-size:clamp(20px,2.2vw,42px);color:#3A2618;line-height:1.35}
+.attract-line2{font-size:clamp(26px,3vw,56px);color:#5C3A24;margin-top:.08em;line-height:1.3}
+.attract-brand{color:#C42429;font-weight:900;letter-spacing:0.02em}
+@media (min-width:3000px){
+  .attract-card{padding:28px 48px;border-width:6px;border-radius:24px}
+  .attract-line1{font-size:clamp(56px,2.2vw,96px)}
+  .attract-line2{font-size:clamp(72px,3vw,128px)}
+}
 </style>
 <style id="pageStyle">@page{size:80mm 200mm;margin:0}</style>
 </head>
@@ -3385,6 +3413,150 @@ if(sync.on) syncStart();
   function watchSet(){ var body=document.getElementById('setBody'); if(!body||mo) return; mo=new MutationObserver(function(){ syncUi(); }); mo.observe(body,{childList:true,subtree:true}); }
   if(document.body) watchSet(); else document.addEventListener('DOMContentLoaded',watchSet);
 }catch(e){} })();
+
+</script>
+<script>
+/* Attract / idle popup — shown on the idle board, dismissed by any input */
+(function(){
+  try{
+    var IDLE=20000, BLOCK=300, FADE=300;
+    var ov=null, shown=false, hiding=false, idleT=0, hideT=0, blockUntil=0, lastIn=0;
+    function idleMs(){ var n=+window.__smgAttractIdleMs; return (n>0&&isFinite(n))?n:IDLE; }
+    function boardQuiet(){
+      var ids=['drawOv','settings','pinModal','playModal','dialog'];
+      for(var i=0;i<ids.length;i++){ var el=document.getElementById(ids[i]); if(el&&el.classList.contains('show')) return false; }
+      var so=document.getElementById('soldout');
+      if(so&&!so.hidden&&so.offsetWidth) return false;
+      return true;
+    }
+    function sizeAndFit(){
+      if(!ov||!shown) return;
+      var wrap=document.getElementById('gridWrap')||document.getElementById('gridScroll');
+      var card=ov.querySelector('.attract-card'); if(!card||!wrap) return;
+      var wr=wrap.getBoundingClientRect();
+      var t=document.querySelector('#grid button.ticket');
+      var th=t?t.getBoundingClientRect().height:wr.height/10;
+      var gap=8;
+      var h=th*3+gap*2;
+      var minH=wr.height*0.25, maxH=wr.height*0.30;
+      if(h<minH) h=minH; if(h>maxH) h=maxH;
+      var w=wr.width*0.52;
+      if(w<wr.width*0.50) w=wr.width*0.50;
+      if(w>wr.width*0.55) w=wr.width*0.55;
+      card.style.width=Math.round(w)+'px';
+      card.style.maxWidth=Math.round(wr.width*0.55)+'px';
+      card.style.minWidth=Math.round(wr.width*0.50)+'px';
+      card.style.height=Math.round(h)+'px';
+      card.style.maxHeight=Math.round(wr.height*0.30)+'px';
+      card.style.minHeight=Math.round(wr.height*0.25)+'px';
+      var cs=getComputedStyle(card);
+      var padX=(parseFloat(cs.paddingLeft)||0)+(parseFloat(cs.paddingRight)||0);
+      var padY=(parseFloat(cs.paddingTop)||0)+(parseFloat(cs.paddingBottom)||0);
+      var maxW=card.clientWidth-padX;
+      var maxH=card.clientHeight-padY;
+      var lines=card.querySelectorAll('.attract-line1,.attract-line2');
+      function totalH(){ var h=0; for(var i=0;i<lines.length;i++) h+=lines[i].scrollHeight; return h; }
+      for(var i=0;i<lines.length;i++){ lines[i].style.fontSize=''; lines[i].style.letterSpacing=''; }
+      var guard=0;
+      while(guard++<24){
+        var overflow=false;
+        for(var i=0;i<lines.length;i++){
+          if(lines[i].scrollWidth>maxW+1) overflow=true;
+        }
+        if(totalH()>maxH+1) overflow=true;
+        if(!overflow) break;
+        for(var i=0;i<lines.length;i++){
+          var e=lines[i], f=parseFloat(e.style.fontSize||getComputedStyle(e).fontSize)||32;
+          e.style.fontSize=(f*0.94)+'px';
+        }
+      }
+      for(var i=0;i<lines.length;i++){
+        if(lines[i].scrollWidth>maxW+1) lines[i].style.letterSpacing='-0.04em';
+      }
+    }
+        function show(){
+      if(!ov||!boardQuiet()) return;
+      clearTimeout(hideT); hiding=false;
+      ov.classList.remove('hiding'); ov.classList.add('show'); shown=true;
+      ov.setAttribute('aria-hidden','false');
+      requestAnimationFrame(sizeAndFit);
+    }
+    function hide(){
+      if(!ov||!shown) return;
+      shown=false; hiding=true;
+      ov.classList.add('hiding'); ov.classList.remove('show');
+      ov.setAttribute('aria-hidden','true');
+      clearTimeout(hideT);
+      hideT=setTimeout(function(){ hiding=false; ov.classList.remove('hiding'); },FADE);
+    }
+    function armIdle(){
+      clearTimeout(idleT);
+      idleT=setTimeout(function(){ if(boardQuiet()) show(); }, idleMs());
+    }
+    function dismiss(ev){
+      lastIn=Date.now();
+      if(shown||hiding){
+        var typ=ev&&ev.type||'';
+        var tap=/^(mousedown|pointerdown|click|touchstart)$/.test(typ);
+        if(tap){
+          blockUntil=Date.now()+BLOCK;
+          var t=ev.target;
+          var onTicket=t&&t.closest&&(t.closest('#grid button.ticket')||t.closest('#attractOv')||t.closest('#gridWrap'));
+          if(onTicket||typ==='click'||typ==='pointerdown'||typ==='touchstart'||typ==='mousedown'){
+            if(onTicket||(t&&t.closest&&t.closest('#attractOv'))){
+              ev.preventDefault(); ev.stopPropagation();
+              if(ev.stopImmediatePropagation) ev.stopImmediatePropagation();
+            }
+          }
+        }
+        hide();
+      }
+      armIdle();
+    }
+    function blockDraw(ev){
+      if(Date.now()>=blockUntil) return;
+      var t=ev.target;
+      if(t&&t.closest&&t.closest('#grid button.ticket,#grid,#gridScroll,#gridWrap,#attractOv')){
+        ev.preventDefault(); ev.stopPropagation();
+        if(ev.stopImmediatePropagation) ev.stopImmediatePropagation();
+      }
+    }
+    var B=window.__smgAttract={
+      show:show, hide:function(){ hide(); armIdle(); },
+      isShown:function(){ return !!(ov&&shown); },
+      setIdleMs:function(ms){ window.__smgAttractIdleMs=ms; armIdle(); }
+    };
+    function mount(){
+      if(ov) return;
+      ov=document.createElement('div');
+      ov.id='attractOv';
+      ov.className='show';
+      ov.setAttribute('role','dialog');
+      ov.setAttribute('aria-label','참여 안내');
+      ov.setAttribute('aria-hidden','false');
+      ov.innerHTML='<div class="attract-card">'+
+        '<p class="attract-line1"><span class="attract-brand">SMG STORE</span> 5만원 이상 구매고객</p>'+
+        '<p class="attract-line2">참여 가능합니다</p>'+
+        '</div>';
+      var host=document.getElementById('gridWrap');
+      if(host){ if(getComputedStyle(host).position==='static') host.style.position='relative'; host.appendChild(ov); }
+      else document.body.appendChild(ov);
+      shown=true;
+      requestAnimationFrame(sizeAndFit);
+      ['pointerdown','mousedown','click','touchstart','keydown','wheel','mousemove'].forEach(function(t){
+        document.addEventListener(t, dismiss, {capture:true,passive:false});
+      });
+      ['pointerdown','mousedown','click','touchstart'].forEach(function(t){
+        document.addEventListener(t, blockDraw, {capture:true,passive:false});
+      });
+      window.addEventListener('resize', function(){ requestAnimationFrame(sizeAndFit); });
+      setInterval(function(){
+        if((shown||hiding) && !boardQuiet()) hide();
+      }, 300);
+    }
+    if(document.body) mount(); else document.addEventListener('DOMContentLoaded', mount);
+  }catch(e){}
+})();
 
 </script>
 </body>
