@@ -24,7 +24,7 @@ html,body{margin:0;position:fixed;inset:0;width:100%;height:100%;height:100dvh;h
 #app{display:flex;flex-direction:column;align-items:center;padding:0 max(14px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left));z-index:1}
 #scene{position:fixed;left:0;right:0;top:var(--app-top,0);width:100%;height:var(--app-h,100dvh);z-index:0;pointer-events:auto}
 #app{pointer-events:none;background:transparent}
- #app button,#app input,#app table,#app .ov,#app .card,#app #chipLang,#app #clockWrap,#app #result,#app #iosHint,#app #prizeRow,#app #entryGate,#pin,#admin{pointer-events:auto}
+ #app button,#app input,#app table,#app .ov,#app .card,#app #chipLang,#app #clockWrap,#app #result,#app #iosHint,#app #prizeRow,#app #entryGate,#app #entryCatch,#pin,#admin{pointer-events:auto}
 #logo{position:absolute;top:max(8px,env(safe-area-inset-top));left:max(10px,env(safe-area-inset-left));z-index:25;background:#fff;border:3px solid var(--line);border-radius:16px;padding:4px 8px;font-family:inherit;box-shadow:0 3px 0 var(--line);line-height:0}
 #logo img{display:block;height:44px;width:auto;max-width:168px}
 #logo:active{transform:translateY(2px);box-shadow:0 1px 0 var(--line)}
@@ -159,17 +159,21 @@ h1{font-size:clamp(28px,7.2vmin,52px);margin:4px 0 6px;color:var(--title);-webki
   #go.stop{margin-bottom:40px}
 }
 
-#entryGate{position:fixed;left:0;right:0;bottom:0;top:calc(var(--app-top,0px) + var(--chrome-h));z-index:20;display:flex;align-items:center;justify-content:center;padding:12px 16px max(16px,env(safe-area-inset-bottom));background:var(--ov);box-sizing:border-box;pointer-events:auto}
+#entryCatch{position:fixed;left:0;right:0;bottom:0;top:calc(var(--app-top,0px) + var(--chrome-h));z-index:20;background:transparent;pointer-events:auto}
+#entryCatch.hide{display:none!important}
+#entryGate{position:absolute;left:0;right:0;top:0;z-index:21;display:flex;justify-content:center;align-items:flex-start;width:100%;margin:0;padding:0 8px;box-sizing:border-box;background:transparent;pointer-events:auto}
 #entryGate.hide{display:none!important}
 #entryGate.out{animation:gateout .28s ease both;pointer-events:none}
-#entryGate:not(.hide):not(.out){animation:gatein .45s ease both}
+#entryGate:not(.hide):not(.out){animation:gatein .4s ease both}
 .low #entryGate:not(.hide):not(.out),.low #entryGate.out{animation:none}
-.entryCard{background:#fff;border:5px solid var(--line);border-radius:28px;box-shadow:0 7px 0 var(--line);padding:clamp(18px,3.6vmin,32px) clamp(18px,4vmin,36px) clamp(16px,3vmin,26px);width:min(640px,94%);max-width:94vw;max-height:100%;text-align:center;box-sizing:border-box;overflow:auto;color:var(--ink)}
-#entryMsg{margin:0;font-weight:900;font-size:clamp(24px,6.2vmin,48px);line-height:1.3;letter-spacing:-0.02em;word-break:keep-all;overflow-wrap:anywhere}
+body.gated #title,body.gated #help{visibility:hidden}
+.entryCard{background:#fff;border:4px solid var(--line);border-radius:22px;box-shadow:0 5px 0 var(--line);padding:10px 16px 8px;width:min(460px,92%);max-width:92vw;text-align:center;box-sizing:border-box;overflow:visible;color:var(--ink)}
+#entryMsg{margin:0;font-weight:900;font-size:clamp(22px,4.2vmin,28px);line-height:1.3;letter-spacing:-0.02em;word-break:keep-all;overflow-wrap:anywhere}
 #entryMsg b{color:var(--title);font-size:1.04em;-webkit-text-stroke:1px var(--line);paint-order:stroke fill}
-#entryHint{margin:14px 0 0;font-weight:700;font-size:clamp(14px,3.2vmin,20px);line-height:1.35;opacity:.82}
-@keyframes gatein{0%{opacity:0;transform:translateY(18px) scale(.92)}62%{opacity:1;transform:translateY(-4px) scale(1.03)}100%{opacity:1;transform:translateY(0) scale(1)}}
-@keyframes gateout{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(10px) scale(.96)}}
+#entryHint{margin:6px 0 0;font-weight:700;font-size:clamp(12px,2.6vmin,16px);line-height:1.35;opacity:.82}
+@keyframes gatein{0%{opacity:0}100%{opacity:1}}
+@keyframes gateout{0%{opacity:1}100%{opacity:0}}
+#appVer{position:fixed;left:max(8px,env(safe-area-inset-left));bottom:max(6px,env(safe-area-inset-bottom));z-index:8;margin:0;padding:0;font-weight:700;font-size:11px;letter-spacing:.02em;color:var(--ink);opacity:.48;pointer-events:none;line-height:1}
 
 </style>
 </head>
@@ -184,14 +188,16 @@ h1{font-size:clamp(28px,7.2vmin,52px);margin:4px 0 6px;color:var(--title);-webki
     <button id="btnFS" type="button" class="hide" aria-label="fullscreen">⛶</button>
     <button id="chipLang" type="button"></button>
   </div>
-    <div id="entryGate" class="hide" role="dialog" aria-modal="true" aria-labelledby="entryMsg" aria-describedby="entryHint">
-    <div class="entryCard">
-      <p id="entryMsg"></p>
-      <p id="entryHint"></p>
-    </div>
-  </div>
+    <div id="entryCatch" class="hide" aria-hidden="true"></div>
+    <div id="appVer" aria-hidden="true"></div>
 <div id="stage">
     <div class="landCol hud">
+      <div id="entryGate" class="hide" role="dialog" aria-modal="true" aria-labelledby="entryMsg" aria-describedby="entryHint">
+        <div class="entryCard">
+          <p id="entryMsg"></p>
+          <p id="entryHint"></p>
+        </div>
+      </div>
       <h1 id="title"></h1>
       <p class="help" id="help"></p>
       <div id="hitsWrap"><div id="hits"></div><div id="hitsPlus">+1</div></div>
@@ -258,7 +264,7 @@ h1{font-size:clamp(28px,7.2vmin,52px);margin:4px 0 6px;color:var(--title);-webki
 <script>
 (function(){
 'use strict';
-var TARGET=10, LS_CFG='tensec_cfg', LS_LOG='tensec_log', AUTO_STOP=30;
+var APP_VER='1.2.5',TARGET=10, LS_CFG='tensec_cfg', LS_LOG='tensec_log', AUTO_STOP=30;
 var LOW=/[?&]low=1/.test(location.search)||(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
 if(LOW) document.body.classList.add('low');
 var LANGS=['ko','en','id'];
@@ -1153,6 +1159,7 @@ function padChrome(){
   });
   var h=Math.max(64, Math.ceil(bot+10));
   document.documentElement.style.setProperty('--chrome-h',h+'px');
+  if(typeof layoutEntryGate==='function')layoutEntryGate();
 }
 function syncChrome(){
   updateFSUI();
@@ -1203,6 +1210,7 @@ function applyLang(){
   else if(mode==='run')$('go').textContent=t('stop');
   $('next').textContent=cfg.staffReset?t('next'):t('again');
   paintEntryGate();
+  layoutEntryGate();
   if(mode==='title')setRuleHint('rule');
   else if(mode==='run'&&hidden)setRuleHint('hide');
   else setRuleHint(false);
@@ -1298,14 +1306,46 @@ function paintEntryGate(){
   if($('entryHint'))$('entryHint').textContent=t('entryHint');
 }
 function isEntryGateOn(){return !!entryOpen}
+function setCatch(on){
+  var c=$('entryCatch'); if(!c)return;
+  c.classList.toggle('hide',!on);
+  c.setAttribute('aria-hidden',on?'false':'true');
+}
+function layoutEntryGate(){
+  var wrap=$('hitsWrap');
+  if(wrap) wrap.style.marginTop='';
+  if(!entryOpen)return;
+  var el=$('entryGate'), card=el&&el.querySelector('.entryCard');
+  if(!card||!wrap||el.classList.contains('hide'))return;
+  var prevA=el.style.animation;
+  el.style.animation='none';
+  void wrap.offsetHeight;
+  var cur=parseFloat(getComputedStyle(wrap).marginTop)||0;
+  var cr=card.getBoundingClientRect(), hr=wrap.getBoundingClientRect();
+  var need=10-(hr.top-cr.bottom);
+  if(need>0) wrap.style.marginTop=Math.ceil(cur+need)+'px';
+  el.style.animation=prevA;
+}
 function showEntryGate(){
   var el=$('entryGate'); if(!el)return;
   if(entryHideT){clearTimeout(entryHideT);entryHideT=0}
   paintEntryGate();
   entryOpen=true;
+  document.body.classList.add('gated');
   el.classList.remove('hide','out');
   el.setAttribute('aria-hidden','false');
+  setCatch(true);
   void el.offsetWidth;
+  if(typeof padChrome==='function')padChrome();
+  layoutEntryGate();
+}
+function finishHideGate(){
+  var el=$('entryGate');
+  if(el){el.classList.add('hide');el.classList.remove('out')}
+  document.body.classList.remove('gated');
+  setCatch(false);
+  layoutEntryGate();
+  if(typeof padChrome==='function')padChrome();
 }
 function hideEntryGate(instant){
   var el=$('entryGate'); if(!el)return;
@@ -1313,13 +1353,13 @@ function hideEntryGate(instant){
   el.setAttribute('aria-hidden','true');
   if(entryHideT){clearTimeout(entryHideT);entryHideT=0}
   if(instant||LOW||el.classList.contains('hide')){
-    el.classList.add('hide');el.classList.remove('out');
+    finishHideGate();
     return;
   }
   el.classList.add('out');
   entryHideT=setTimeout(function(){
     entryHideT=0;
-    if(!entryOpen){el.classList.add('hide');el.classList.remove('out')}
+    if(!entryOpen)finishHideGate();
   },280);
 }
 function showTitle(){
@@ -1333,6 +1373,7 @@ function showTitle(){
   setRuleHint('rule');
   setPose('idle');setMusicState('idle');syncChrome();
   showEntryGate();
+  if(typeof maybeSWReload==='function')maybeSWReload();
 }
 function startRun(ev){
   if(ev){ev.preventDefault();ev.stopPropagation()}
@@ -1568,11 +1609,48 @@ if($('entryGate')){
   $('entryGate').addEventListener('pointerdown',onGateDismiss);
   $('entryGate').addEventListener('click',onGateDismiss);
 }
-buildPad();applyLang();applyMusicCfg();showTitle();startScene();
-
-if('serviceWorker' in navigator&&location.protocol!=='file:'&&!/[?&]nosw=1/.test(location.search)){
-  navigator.serviceWorker.register('sw.js');
+if($('entryCatch')){
+  $('entryCatch').addEventListener('pointerdown',onGateDismiss);
+  $('entryCatch').addEventListener('click',onGateDismiss);
 }
+if($('appVer'))$('appVer').textContent='v'+APP_VER;
+
+var swReloadPending=false,swJustReloaded=false;
+function canSWReload(){
+  if(typeof revealing!=='undefined'&&revealing)return false;
+  if(typeof mode!=='undefined'&&(mode==='run'||mode==='reveal'||mode==='result'))return false;
+  return true;
+}
+function maybeSWReload(){
+  if(!swReloadPending||swJustReloaded||!canSWReload())return;
+  swJustReloaded=true;
+  try{sessionStorage.setItem('ts_sw_reloaded','1')}catch(e){}
+  location.reload();
+}
+function setupSWUpdates(){
+  if(!('serviceWorker' in navigator)||location.protocol==='file:'||/[?&]nosw=1/.test(location.search))return;
+  try{
+    swJustReloaded=sessionStorage.getItem('ts_sw_reloaded')==='1';
+    if(swJustReloaded)sessionStorage.removeItem('ts_sw_reloaded');
+  }catch(e){}
+  navigator.serviceWorker.addEventListener('controllerchange',function(){
+    if(swJustReloaded)return;
+    if(!canSWReload()){swReloadPending=true;return}
+    swJustReloaded=true;
+    try{sessionStorage.setItem('ts_sw_reloaded','1')}catch(e){}
+    location.reload();
+  });
+  var registration=navigator.serviceWorker.register('sw.js');
+  function poke(){registration.then(function(r){return r.update()}).catch(function(){})}
+  poke();
+  document.addEventListener('visibilitychange',function(){
+    if(document.visibilityState==='visible'){poke();maybeSWReload()}
+  });
+  setInterval(poke,30000);
+}
+setupSWUpdates();
+
+buildPad();applyLang();applyMusicCfg();showTitle();startScene();
 
 window.__ts={
   TARGET:TARGET, defaultCfg:defaultCfg, prizeLabel:prizeLabel, mergeCfg:mergeCfg, absErr:absErr, toMs:toMs, inStock:inStock,
@@ -1580,7 +1658,7 @@ window.__ts={
   unlockMs:function(){return window.__tsUnlockMs}, musOn:function(){return !!(mus&&mus.on)}, musUnlocked:function(){return !!(mus&&mus.unlocked)}, hasBgm:function(){return !!(mus&&(mus.fileSrc||mus.fileBuf))}, fxLive:function(){var n=0,i;for(i=0;i<FXN;i++) if(bits[i]&&bits[i].on)n++;return n;}, capDpr:capDpr, clearFx:clearFx, pickTierIndex:pickTierIndex, awardPrize:awardPrize, applyAward:applyAward, fmtTime:fmtTime,
   get cfg(){return cfg}, set cfg(v){cfg=mergeCfg(v)}, get log(){return log}, set log(v){log=v},
   get mode(){return mode}, get lang(){return lang}, get hidden(){return hidden}, get lastAward(){return lastAward},
-  setRuleHint:setRuleHint, hideRuleText:hideRuleText, showTitle:showTitle, startRun:startRun, stopRun:stopRun, finish:finish, renderResult:renderResult, showEntryGate:showEntryGate, hideEntryGate:hideEntryGate, gateOn:isEntryGateOn,
+  setRuleHint:setRuleHint, hideRuleText:hideRuleText, showTitle:showTitle, startRun:startRun, stopRun:stopRun, finish:finish, renderResult:renderResult, showEntryGate:showEntryGate, hideEntryGate:hideEntryGate, gateOn:isEntryGateOn, APP_VER:APP_VER, maybeSWReload:maybeSWReload,
   openAdmin:function(bypass){if(bypass&&/[?&](nosw|test)=1/.test(location.search))openAdmin();else showPin()},
   showPin:showPin, closeAdmin:closeAdmin, saveCfg:saveCfg, saveLog:saveLog, loadCfg:loadCfg,
   forceRun:function(elapsed,hide){
