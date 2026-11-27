@@ -1,4 +1,4 @@
-var CACHE='yts-5c9d6aaa',FILES=['./','index.html','manifest.json','icons/icon-192.png','icons/icon-512.png','icons/apple-touch-icon.png','assets/smg_logo.png','assets/bgm.m4a','assets/bgm.mp3','assets/win.m4a','assets/win.mp3'];
+var CACHE='yts-14c2a383',FILES=['./','index.html','manifest.json','icons/icon-192.png','icons/icon-512.png','icons/apple-touch-icon.png','assets/smg_logo.png','assets/bgm.m4a','assets/bgm.mp3','assets/win.m4a','assets/win.mp3'];
 function isIndexReq(r){
   if(r.mode==='navigate')return true;
   var u=new URL(r.url),p=u.pathname;
