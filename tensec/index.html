@@ -161,16 +161,16 @@ h1{font-size:clamp(28px,7.2vmin,52px);margin:4px 0 6px;color:var(--title);-webki
 
 #entryCatch{position:fixed;left:0;right:0;bottom:0;top:calc(var(--app-top,0px) + var(--chrome-h));z-index:20;background:transparent;pointer-events:auto}
 #entryCatch.hide{display:none!important}
-#entryGate{position:absolute;left:0;right:0;top:0;z-index:21;display:flex;justify-content:center;align-items:flex-start;width:100%;margin:0;padding:0 8px;box-sizing:border-box;background:transparent;pointer-events:auto}
+#entryGate{position:absolute;left:0;top:0;z-index:21;display:flex;justify-content:center;align-items:flex-start;width:auto;max-width:94vw;margin:0;padding:0;box-sizing:border-box;background:transparent;pointer-events:none}
 #entryGate.hide{display:none!important}
 #entryGate.out{animation:gateout .28s ease both;pointer-events:none}
 #entryGate:not(.hide):not(.out){animation:gatein .4s ease both}
 .low #entryGate:not(.hide):not(.out),.low #entryGate.out{animation:none}
-body.gated #title,body.gated #help{visibility:hidden}
-.entryCard{background:#fff;border:4px solid var(--line);border-radius:22px;box-shadow:0 5px 0 var(--line);padding:10px 16px 8px;width:min(460px,92%);max-width:92vw;text-align:center;box-sizing:border-box;overflow:visible;color:var(--ink)}
-#entryMsg{margin:0;font-weight:900;font-size:clamp(22px,4.2vmin,28px);line-height:1.3;letter-spacing:-0.02em;word-break:keep-all;overflow-wrap:anywhere}
-#entryMsg b{color:var(--title);font-size:1.04em;-webkit-text-stroke:1px var(--line);paint-order:stroke fill}
-#entryHint{margin:6px 0 0;font-weight:700;font-size:clamp(12px,2.6vmin,16px);line-height:1.35;opacity:.82}
+.entryCard{background:#fff;border:4px solid var(--line);border-radius:24px;box-shadow:0 5px 0 var(--line);padding:12px 22px 10px;width:max-content;max-width:min(94vw,18em);text-align:center;box-sizing:border-box;overflow:visible;color:var(--ink);pointer-events:auto;font-size:clamp(26px,7vmin,44px)}
+#entryMsg{margin:0;font-weight:900;font-size:1em;line-height:1.25;letter-spacing:-0.02em;white-space:nowrap}
+#entryMsg b{color:var(--title);-webkit-text-stroke:1px var(--line);paint-order:stroke fill}
+#entryHint{margin:8px 0 0;font-weight:700;font-size:clamp(12px,2.6vmin,16px);line-height:1.35;opacity:.82}
+body.gateTight #help{display:none!important}
 @keyframes gatein{0%{opacity:0}100%{opacity:1}}
 @keyframes gateout{0%{opacity:1}100%{opacity:0}}
 #appVer{position:fixed;left:max(8px,env(safe-area-inset-left));bottom:max(6px,env(safe-area-inset-bottom));z-index:8;margin:0;padding:0;font-weight:700;font-size:11px;letter-spacing:.02em;color:var(--ink);opacity:.48;pointer-events:none;line-height:1}
@@ -189,15 +189,15 @@ body.gated #title,body.gated #help{visibility:hidden}
     <button id="chipLang" type="button"></button>
   </div>
     <div id="entryCatch" class="hide" aria-hidden="true"></div>
+    <div id="entryGate" class="hide" role="dialog" aria-modal="true" aria-labelledby="entryMsg" aria-describedby="entryHint">
+      <div class="entryCard">
+        <p id="entryMsg"></p>
+        <p id="entryHint"></p>
+      </div>
+    </div>
     <div id="appVer" aria-hidden="true"></div>
 <div id="stage">
     <div class="landCol hud">
-      <div id="entryGate" class="hide" role="dialog" aria-modal="true" aria-labelledby="entryMsg" aria-describedby="entryHint">
-        <div class="entryCard">
-          <p id="entryMsg"></p>
-          <p id="entryHint"></p>
-        </div>
-      </div>
       <h1 id="title"></h1>
       <p class="help" id="help"></p>
       <div id="hitsWrap"><div id="hits"></div><div id="hitsPlus">+1</div></div>
@@ -264,14 +264,14 @@ body.gated #title,body.gated #help{visibility:hidden}
 <script>
 (function(){
 'use strict';
-var APP_VER='1.2.6',TARGET=10, LS_CFG='tensec_cfg', LS_LOG='tensec_log', AUTO_STOP=30, GATE_IDLE_SEC=20;
+var APP_VER='1.2.7',TARGET=10, LS_CFG='tensec_cfg', LS_LOG='tensec_log', AUTO_STOP=30, GATE_IDLE_SEC=20;
 var LOW=/[?&]low=1/.test(location.search)||(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
 if(LOW) document.body.classList.add('low');
 var LANGS=['ko','en','id'];
 var I18N={
-ko:{title:'10초 맞추기',help:'마음속으로 10초를 세고 정지를 누르세요. 정확히 맞추면 스티커, 못 맞추면 하리보 젤리예요.',hideRule:'{n}초부터 시계가 사라져요!',start:'시작',stop:'정지',next:'다음 참가자',again:'다시 하기',hideMsg:'이제 감각으로!',rec:'기록',errFast:'초 빠름',errSlow:'초 느림',errExact:'정확해요!',tier:['참가상','1등','2등','3등','4등'],stockLeft:'남은 수량',fallen:'재고가 없어 아래 등급으로 지급되었습니다',soldOut:'상품이 모두 소진되었습니다',pinTitle:'관리자',pinWrong:'비밀번호가 달라요',cancel:'취소',adTitle:'이벤트 설정',lbHide:'타이머 숨기기',lbHideSec:'숨기는 시간(초)',lbStaff:'다음 참가자 확인',lbSfx:'효과음',lbVib:'진동',lbPin:'비밀번호 4자리',lbPrizes:'상품·오차 기준',prizeHint:'오차는 절대값(초). 재고를 비우면 무제한. 재고 0이면 아래 등급으로 내려갑니다.',lbLog:'참가 기록',thName:'상품명',thErr:'오차 ≤',thStock:'재고',save:'저장',csv:'CSV 저장',resetLog:'기록 지우기',close:'닫기',on:'켜짐',off:'꺼짐',sum:'회',confirmReset:'참가 기록을 모두 지울까요?',saved:'저장했습니다',langName:'한국어',fs:'전체화면',fsExit:'전체화면 종료',lbFsStart:'시작 시 전체화면',iosHint:'공유 → 홈 화면에 추가하면 전체화면으로 실행돼요',lbMusic:'배경음악',lbVol:'음악 크기',hits:'오늘 정확히 맞춘 사람 {n}명',resetHits:'정확 횟수 지우기',confirmResetHits:'오늘 정확히 맞춘 횟수를 지울까요?',entryMsg:'SMG 스토어 1만원 이상 구매고객 참여가능',entryHint:'화면을 터치하면 시작할 수 있어요'},
-en:{title:'Hit 10 Seconds',help:'Count to 10 in your head, then press Stop. Hit 10.00 exactly for a sticker, or get Haribo jelly if you miss.',hideRule:'The clock hides after {n} seconds!',start:'START',stop:'STOP',next:'Next player',again:'Play again',hideMsg:'Feel the time!',rec:'Time',errFast:'s early',errSlow:'s late',errExact:'Perfect!',tier:['Thanks','1st','2nd','3rd','4th'],stockLeft:'Left',fallen:'This prize was out of stock, so the next prize was given',soldOut:'All prizes are gone',pinTitle:'Staff',pinWrong:'Wrong PIN',cancel:'Cancel',adTitle:'Event settings',lbHide:'Hide the timer',lbHideSec:'Hide after (sec)',lbStaff:'Staff must confirm next',lbSfx:'Sound',lbVib:'Vibration',lbPin:'4-digit PIN',lbPrizes:'Prizes & error limits',prizeHint:'Error is absolute seconds. Leave stock blank for unlimited. Stock 0 falls to the next prize.',lbLog:'Play log',thName:'Prize',thErr:'Error ≤',thStock:'Stock',save:'Save',csv:'Export CSV',resetLog:'Clear log',close:'Close',on:'ON',off:'OFF',sum:'plays',confirmReset:'Clear the whole play log?',saved:'Saved',langName:'English',fs:'Full screen',fsExit:'Exit full screen',lbFsStart:'Full screen on Start',iosHint:'Share → Add to Home Screen to play full screen',lbMusic:'Music',lbVol:'Music volume',hits:'Exact hits today: {n}',resetHits:'Reset exact hits',confirmResetHits:'Clear today’s exact-hit count?',entryMsg:'For SMG STORE customers who spent ₩10,000 or more',entryHint:'Tap the screen to start'},
-id:{title:'Tebak 10 Detik',help:'Hitung 10 detik dalam hati, lalu tekan Berhenti. Tepat 10.00 detik berhadiah stiker; jika tidak, permen jeli Haribo.',hideRule:'Jam menghilang setelah {n} detik!',start:'MULAI',stop:'BERHENTI',next:'Peserta berikut',again:'Main lagi',hideMsg:'Rasakan waktunya!',rec:'Waktu',errFast:' dtk lebih cepat',errSlow:' dtk lebih lambat',errExact:'Tepat sekali!',tier:['Hadiah trobosan','Juara 1','Juara 2','Juara 3','Juara 4'],stockLeft:'Sisa',fallen:'Stok habis, hadiah tingkat berikutnya diberikan',soldOut:'Semua hadiah habis',pinTitle:'Staf',pinWrong:'PIN salah',cancel:'Batal',adTitle:'Pengaturan acara',lbHide:'Sembunyikan timer',lbHideSec:'Sembunyi setelah (dtk)',lbStaff:'Staf konfirmasi peserta berikut',lbSfx:'Suara',lbVib:'Getar',lbPin:'PIN 4 digit',lbPrizes:'Hadiah & batas selisih',prizeHint:'Selisih dalam detik mutlak. Kosongkan stok untuk tak terbatas. Stok 0 turun ke hadiah berikutnya.',lbLog:'Catatan main',thName:'Hadiah',thErr:'Selisih ≤',thStock:'Stok',save:'Simpan',csv:'Unduh CSV',resetLog:'Hapus catatan',close:'Tutup',on:'NYALA',off:'MATI',sum:'kali',confirmReset:'Hapus semua catatan?',saved:'Tersimpan',langName:'Bahasa Indonesia',fs:'Layar penuh',fsExit:'Keluar layar penuh',lbFsStart:'Layar penuh saat Mulai',iosHint:'Bagikan → Tambah ke Layar Utama untuk tampilan penuh',lbMusic:'Musik',lbVol:'Volume musik',hits:'Tepat hari ini: {n} orang',resetHits:'Hapus jumlah tepat',confirmResetHits:'Hapus jumlah tepat hari ini?',entryMsg:'Untuk pelanggan SMG STORE yang belanja ₩10.000 atau lebih',entryHint:'Sentuh layar untuk mulai'}
+ko:{title:'10초 맞추기',help:'마음속으로 10초를 세고 정지를 누르세요. 정확히 맞추면 스티커, 못 맞추면 하리보 젤리예요.',hideRule:'{n}초부터 시계가 사라져요!',start:'시작',stop:'정지',next:'다음 참가자',again:'다시 하기',hideMsg:'이제 감각으로!',rec:'기록',errFast:'초 빠름',errSlow:'초 느림',errExact:'정확해요!',tier:['참가상','1등','2등','3등','4등'],stockLeft:'남은 수량',fallen:'재고가 없어 아래 등급으로 지급되었습니다',soldOut:'상품이 모두 소진되었습니다',pinTitle:'관리자',pinWrong:'비밀번호가 달라요',cancel:'취소',adTitle:'이벤트 설정',lbHide:'타이머 숨기기',lbHideSec:'숨기는 시간(초)',lbStaff:'다음 참가자 확인',lbSfx:'효과음',lbVib:'진동',lbPin:'비밀번호 4자리',lbPrizes:'상품·오차 기준',prizeHint:'오차는 절대값(초). 재고를 비우면 무제한. 재고 0이면 아래 등급으로 내려갑니다.',lbLog:'참가 기록',thName:'상품명',thErr:'오차 ≤',thStock:'재고',save:'저장',csv:'CSV 저장',resetLog:'기록 지우기',close:'닫기',on:'켜짐',off:'꺼짐',sum:'회',confirmReset:'참가 기록을 모두 지울까요?',saved:'저장했습니다',langName:'한국어',fs:'전체화면',fsExit:'전체화면 종료',lbFsStart:'시작 시 전체화면',iosHint:'공유 → 홈 화면에 추가하면 전체화면으로 실행돼요',lbMusic:'배경음악',lbVol:'음악 크기',hits:'오늘 정확히 맞춘 사람 {n}명',resetHits:'정확 횟수 지우기',confirmResetHits:'오늘 정확히 맞춘 횟수를 지울까요?',entryMsg:'SMG 스토어 1만원 이상|구매고객 참여가능',entryHint:'화면을 터치하면 시작할 수 있어요'},
+en:{title:'Hit 10 Seconds',help:'Count to 10 in your head, then press Stop. Hit 10.00 exactly for a sticker, or get Haribo jelly if you miss.',hideRule:'The clock hides after {n} seconds!',start:'START',stop:'STOP',next:'Next player',again:'Play again',hideMsg:'Feel the time!',rec:'Time',errFast:'s early',errSlow:'s late',errExact:'Perfect!',tier:['Thanks','1st','2nd','3rd','4th'],stockLeft:'Left',fallen:'This prize was out of stock, so the next prize was given',soldOut:'All prizes are gone',pinTitle:'Staff',pinWrong:'Wrong PIN',cancel:'Cancel',adTitle:'Event settings',lbHide:'Hide the timer',lbHideSec:'Hide after (sec)',lbStaff:'Staff must confirm next',lbSfx:'Sound',lbVib:'Vibration',lbPin:'4-digit PIN',lbPrizes:'Prizes & error limits',prizeHint:'Error is absolute seconds. Leave stock blank for unlimited. Stock 0 falls to the next prize.',lbLog:'Play log',thName:'Prize',thErr:'Error ≤',thStock:'Stock',save:'Save',csv:'Export CSV',resetLog:'Clear log',close:'Close',on:'ON',off:'OFF',sum:'plays',confirmReset:'Clear the whole play log?',saved:'Saved',langName:'English',fs:'Full screen',fsExit:'Exit full screen',lbFsStart:'Full screen on Start',iosHint:'Share → Add to Home Screen to play full screen',lbMusic:'Music',lbVol:'Music volume',hits:'Exact hits today: {n}',resetHits:'Reset exact hits',confirmResetHits:'Clear today’s exact-hit count?',entryMsg:'For SMG STORE customers|who spent ₩10,000 or more',entryHint:'Tap the screen to start'},
+id:{title:'Tebak 10 Detik',help:'Hitung 10 detik dalam hati, lalu tekan Berhenti. Tepat 10.00 detik berhadiah stiker; jika tidak, permen jeli Haribo.',hideRule:'Jam menghilang setelah {n} detik!',start:'MULAI',stop:'BERHENTI',next:'Peserta berikut',again:'Main lagi',hideMsg:'Rasakan waktunya!',rec:'Waktu',errFast:' dtk lebih cepat',errSlow:' dtk lebih lambat',errExact:'Tepat sekali!',tier:['Hadiah trobosan','Juara 1','Juara 2','Juara 3','Juara 4'],stockLeft:'Sisa',fallen:'Stok habis, hadiah tingkat berikutnya diberikan',soldOut:'Semua hadiah habis',pinTitle:'Staf',pinWrong:'PIN salah',cancel:'Batal',adTitle:'Pengaturan acara',lbHide:'Sembunyikan timer',lbHideSec:'Sembunyi setelah (dtk)',lbStaff:'Staf konfirmasi peserta berikut',lbSfx:'Suara',lbVib:'Getar',lbPin:'PIN 4 digit',lbPrizes:'Hadiah & batas selisih',prizeHint:'Selisih dalam detik mutlak. Kosongkan stok untuk tak terbatas. Stok 0 turun ke hadiah berikutnya.',lbLog:'Catatan main',thName:'Hadiah',thErr:'Selisih ≤',thStock:'Stok',save:'Simpan',csv:'Unduh CSV',resetLog:'Hapus catatan',close:'Tutup',on:'NYALA',off:'MATI',sum:'kali',confirmReset:'Hapus semua catatan?',saved:'Tersimpan',langName:'Bahasa Indonesia',fs:'Layar penuh',fsExit:'Keluar layar penuh',lbFsStart:'Layar penuh saat Mulai',iosHint:'Bagikan → Tambah ke Layar Utama untuk tampilan penuh',lbMusic:'Musik',lbVol:'Volume musik',hits:'Tepat hari ini: {n} orang',resetHits:'Hapus jumlah tepat',confirmResetHits:'Hapus jumlah tepat hari ini?',entryMsg:'Untuk pelanggan SMG STORE|yang belanja ₩10.000 atau lebih',entryHint:'Sentuh layar untuk mulai'}
 };
 function detectLang(){
   var q=/[?&]lang=(en|id|ko)/.exec(location.search);if(q)return q[1];
@@ -596,6 +596,12 @@ function layoutBand(){
   if(hint&&hint.classList.contains('on')&&!hint.classList.contains('hide')){
     var hb=hint.getBoundingClientRect();
     if(hb.height>8) clearBot=Math.max(clearBot, hb.bottom);
+  }
+  var gate=document.getElementById('entryGate');
+  if(gate&&!gate.classList.contains('hide')){
+    var gc=gate.querySelector('.entryCard');
+    var gb=(gc||gate).getBoundingClientRect();
+    if(gb.height>8&&gb.left<right&&gb.right>0) clearBot=Math.max(clearBot, gb.bottom);
   }
   return{W:W,H:H,uiTop:uiTop,hudBot:hudBot,clearBot:clearBot,right:right,avail:Math.max(80,uiTop-hudBot-12)};
 }
@@ -1302,7 +1308,7 @@ function startReveal(a){
 
 var entryOpen=false,entryHideT=0;
 function entryMsgHtml(){
-  return String(t('entryMsg')||'').replace(/(₩?10[,.]000|1만원)/g,'<b>$1</b>');
+  return String(t('entryMsg')||'').replace(/\|/g,'<br>').replace(/(₩?10[,.]000|1만원)/g,'<b>$1</b>');
 }
 function paintEntryGate(){
   if($('entryMsg'))$('entryMsg').innerHTML=entryMsgHtml();
@@ -1343,18 +1349,131 @@ function setCatch(on){
 function layoutEntryGate(){
   var wrap=$('hitsWrap');
   if(wrap) wrap.style.marginTop='';
-  if(!entryOpen)return;
-  var el=$('entryGate'), card=el&&el.querySelector('.entryCard');
-  if(!card||!wrap||el.classList.contains('hide'))return;
-  var prevA=el.style.animation;
-  el.style.animation='none';
-  void wrap.offsetHeight;
-  var cur=parseFloat(getComputedStyle(wrap).marginTop)||0;
-  var cr=card.getBoundingClientRect(), hr=wrap.getBoundingClientRect();
-  var need=10-(hr.top-cr.bottom);
-  if(need>0) wrap.style.marginTop=Math.ceil(cur+need)+'px';
-  el.style.animation=prevA;
+  var el=$('entryGate'); if(!el)return;
+  if(!entryOpen||el.classList.contains('hide')){
+    document.body.classList.remove('gateTight');
+    el.style.top='';el.style.left='';el.style.width='';
+    return;
+  }
+  var card=el.querySelector('.entryCard'); if(!card)return;
+  el.style.top='0px';el.style.left='0px';el.style.width='auto';
+  void el.offsetHeight;
+  function box(id){
+    var n=$(id); if(!n||n.classList.contains('hide'))return null;
+    var st=getComputedStyle(n);
+    if(st.display==='none'||st.visibility==='hidden')return null;
+    var r=n.getBoundingClientRect();
+    if(r.width<2||r.height<2)return null;
+    return r;
+  }
+  var host=el.offsetParent||el.parentElement||document.documentElement;
+  var hostR=host.getBoundingClientRect();
+  var cardW=card.getBoundingClientRect().width;
+  var cardH=card.getBoundingClientRect().height;
+  var vw=window.innerWidth||document.documentElement.clientWidth;
+  var vh=window.innerHeight||document.documentElement.clientHeight;
+  var hint=box('ruleHint')||box('hits')||box('help')||box('title');
+  var go=box('go'), logo=box('logo'), tr=box('topRight'), hits=box('hits');
+  var band=typeof layoutBand==='function'?layoutBand():null;
+  var capyTop=null, capyLeft=0, capyRight=vw, capyBot=vh;
+  if(band){
+    var capyH=(typeof capy!=='undefined'&&capy.hRatio)?capy.hRatio*band.H:band.H*0.28;
+    capyTop=band.uiTop-capyH*1.35-24;
+    capyRight=band.right||vw;
+  }
+  if(typeof capy!=='undefined'&&capy._box&&capy._box.height!==0){
+    capyTop=capyTop==null?capy._box.top-8:Math.min(capyTop, capy._box.top-8);
+    capyLeft=Math.max(0,(capy._box.left||0)-8);
+    capyRight=Math.max(capyRight,(capy._box.right||0)+8);
+    capyBot=Math.max(capyBot,capy._box.bottom+8);
+  }
+  var preferTop=hint?hint.bottom+16:Math.max(hostR.top+80,(logo?logo.bottom+12:80));
+  var needTight=(vw<=vh)&&capyTop!=null&&hint&&(capyTop-hint.bottom<cardH+20);
+  var tightOn=document.body.classList.contains('gateTight');
+  if(!!needTight!==tightOn){
+    document.body.classList.toggle('gateTight',!!needTight);
+    hint=box('ruleHint')||box('hits')||box('help')||box('title');
+    hits=box('hits'); go=box('go');
+    preferTop=hint?hint.bottom+16:preferTop;
+    if(typeof capy!=='undefined'&&capy._box&&capy._box.top){
+      capyTop=Math.min(capyTop, capy._box.top-8);
+    }
+  }
+  if(!entryOpen) document.body.classList.remove('gateTight');
+  var chromeBot=0;
+  if(logo) chromeBot=Math.max(chromeBot,logo.bottom);
+  if(tr) chromeBot=Math.max(chromeBot,tr.bottom);
+  function overlaps(x,y,obs,pad){
+    pad=pad||0;
+    var L=x-pad,R=x+cardW+pad,T=y-pad,B=y+cardH+pad;
+    for(var i=0;i<obs.length;i++){
+      var o=obs[i]; if(!o) continue;
+      if(L<o.right&&R>o.left&&T<o.bottom&&B>o.top) return o;
+    }
+    return null;
+  }
+  var obs=[logo,tr,box('title'),box('help'),hits,hint,go];
+  if(capyTop!=null) obs.push({left:0,right:Math.min(vw,capyRight),top:capyTop,bottom:Math.max(capyBot,vh),kind:'capy'});
+  var candidates=[];
+  var cx=Math.max(8,(vw-cardW)/2);
+  var gapBot=vh-12;
+  if(capyTop!=null) gapBot=Math.min(gapBot,capyTop-8);
+  if(go&&cx<go.right-8&&cx+cardW>go.left+8) gapBot=Math.min(gapBot,go.top-16);
+  if(gapBot-preferTop>=cardH){
+    candidates.push({x:cx,y:preferTop+(gapBot-preferTop-cardH)/2,score:100});
+  }
+  if(go && vw>vh){
+    var dock=$('dock');
+    var d=dock?dock.getBoundingClientRect():null;
+    var colR=Math.min(vw-12, go.right+24);
+    if(d&&d.left>vw*0.35) colR=Math.min(vw-12, Math.max(colR,d.right-8));
+    var capyEdge=(band&&band.right)?band.right: (d&&d.left>80?d.left:vw);
+    var colL=Math.min(go.left-8, capyEdge+12);
+    if(colR-colL<cardW) colL=Math.max(8, colR-cardW);
+    if(colL<capyEdge+8 && capyTop!=null){
+      /* card may enter capy x-range: keep it above the capy head */
+    }
+    var x=colL+Math.max(0,(colR-colL-cardW)/2);
+    if(x+cardW>vw-8) x=vw-8-cardW;
+    var colTop=chromeBot+16;
+    var colBot=go.top-16;
+    if(colBot-colTop>=cardH){
+      candidates.push({x:x,y:colTop+(colBot-colTop-cardH)/2,score:95});
+    }
+  }
+  candidates.sort(function(a,b){return b.score-a.score});
+  var picked=null;
+  for(var i=0;i<candidates.length;i++){
+    var c=candidates[i];
+    if(c.x<8) c.x=8;
+    if(c.x+cardW>vw-8) c.x=Math.max(8,vw-8-cardW);
+    if(c.y<8) c.y=8;
+    if(!overlaps(c.x,c.y,obs,2)){picked=c;break}
+  }
+  if(!picked){
+    var best=null,bestS=-1e9;
+    for(var y=Math.max(preferTop,chromeBot+8);y<=vh-cardH-8;y+=10){
+      for(var x=8;x<=vw-cardW-8;x+=10){
+        if(overlaps(x,y,obs,0)) continue;
+        var prefY=capyTop!=null&&gapBot-preferTop>0?preferTop+Math.max(0,(gapBot-preferTop-cardH)/2):preferTop;
+        var s=200-Math.abs(x-cx)*0.15-Math.abs(y-prefY)*0.25;
+        if(s>bestS){bestS=s;best={x:x,y:y}}
+      }
+    }
+    picked=best;
+  }
+  if(!picked){
+    var y=preferTop;
+    if(y+cardH>vh-8) y=Math.max(preferTop, vh-8-cardH);
+    picked={x:cx,y:y};
+  }
+  el.style.top=Math.round(picked.y-hostR.top)+'px';
+  el.style.left=Math.round(picked.x-hostR.left)+'px';
+  el.style.width=Math.round(cardW)+'px';
 }
+
+
+
 function showEntryGate(){
   clearIdleGate();
   var el=$('entryGate'); if(!el)return;
@@ -1368,6 +1487,10 @@ function showEntryGate(){
   void el.offsetWidth;
   if(typeof padChrome==='function')padChrome();
   layoutEntryGate();
+  requestAnimationFrame(function(){
+    layoutEntryGate();
+    requestAnimationFrame(function(){layoutEntryGate()});
+  });
 }
 function finishHideGate(){
   var el=$('entryGate');
