@@ -317,7 +317,7 @@ html:not([lang="ko"]) #entryMsg{white-space:normal;overflow-wrap:break-word;word
 <script>
 (function(){
 'use strict';
-var APP_VER='1.2.11',TARGET=10, LS_CFG='tensec_cfg', LS_LOG='tensec_log', AUTO_STOP=30, GATE_IDLE_SEC=20;
+var APP_VER='1.2.12',TARGET=10, LS_CFG='tensec_cfg', LS_LOG='tensec_log', AUTO_STOP=30, GATE_IDLE_SEC=20;
 var LOW=/[?&]low=1/.test(location.search)||(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
 if(LOW) document.body.classList.add('low');
 var LANGS=['ko','en','id'];
@@ -1028,7 +1028,10 @@ var mus={on:true,vol:.55,unlocked:false,state:'idle',step:0,nextT:0,timer:0,mast
 function audioBus(){
   var a=audio();if(!a)return null;
   if(!mus.master){
-    mus.master=a.createGain();mus.master.gain.value=1;mus.master.connect(a.destination);
+    mus.master=a.createGain();mus.master.gain.value=0.8;
+    /* limiter: keeps music+sfx+jingle from summing past 0 dBFS (speaker/webOS crackle) */
+    try{var lim=a.createDynamicsCompressor();lim.threshold.value=-8;lim.knee.value=6;lim.ratio.value=20;lim.attack.value=0.003;lim.release.value=0.12;mus.master.connect(lim);lim.connect(a.destination);mus.lim=lim}
+    catch(e){mus.master.connect(a.destination)}
     mus.musG=a.createGain();mus.musG.gain.value=0;mus.musG.connect(mus.master);
     mus.sfxG=a.createGain();mus.sfxG.gain.value=1;mus.sfxG.connect(mus.master);
     applyMusicGain();
@@ -1103,21 +1106,40 @@ function tryLoadBgm(){
   loadAudioCands(['assets/win.m4a','assets/win.mp3','assets/win.ogg','assets/win.wav'],function(b){mus.winBuf=b});
 }
 function bpmFor(st){return st==='tension'?144:st==='run'?126:112}
+function fadeKillSrc(s,g){
+  /* never hard-stop a playing buffer (that is an audible click); 40ms fade then stop */
+  try{
+    var a=AC,t=a?a.currentTime:0;
+    if(g&&a){g.gain.cancelScheduledValues(t);g.gain.setValueAtTime(g.gain.value,t);g.gain.linearRampToValueAtTime(0,t+0.04)}
+    s.stop(t+0.06);
+    s.onended=function(){try{s.disconnect();if(g)g.disconnect()}catch(e){}};
+  }catch(e){try{s.stop()}catch(e2){}}
+}
 function stopLoop(){
-  try{if(mus.fileSrc)mus.fileSrc.stop()}catch(e){}
-  mus.fileSrc=null;
+  if(mus.fileSrc)fadeKillSrc(mus.fileSrc,mus.fileG);
+  mus.fileSrc=null;mus.fileG=null;
   if(mus.timer){clearInterval(mus.timer);mus.timer=0}
 }
-function restartLoop(){
+function bgmRate(){return mus.state==='tension'?1.25:mus.state==='run'?1.12:1}
+function restartLoop(force){
+  var a=audioBus();
+  /* single-instance guard: if the bgm buffer is already looping, only retune it - do not cut and restart (every touch used to do this = pop) */
+  if(!force&&a&&mus.on&&mus.unlocked&&mus.fileBuf&&mus.fileSrc){
+    try{mus.fileSrc.playbackRate.setTargetAtTime(bgmRate(),a.currentTime,0.05)}catch(e){}
+    if(mus.state==='tension'){if(!mus.timer){mus.step=0;mus.nextT=a.currentTime+0.05;mus.timer=setInterval(schedMus,40)}}
+    else if(mus.timer){clearInterval(mus.timer);mus.timer=0}
+    return;
+  }
   stopLoop();
-  var a=audioBus();if(!a||!mus.on||!mus.unlocked)return;
+  if(!a||!mus.on||!mus.unlocked)return;
   if(a.state==='suspended'||a.state==='interrupted')return;
   if(mus.state==='hold'&&!mus.fileBuf){mus.step=0;mus.nextT=a.currentTime+0.05;mus.timer=setInterval(schedMus,40);return}
   if(mus.fileBuf){
     try{
-      var s=a.createBufferSource();s.buffer=mus.fileBuf;s.loop=true;
-      s.playbackRate.value=mus.state==='tension'?1.25:mus.state==='run'?1.12:1;
-      s.connect(mus.musG);s.start(0);mus.fileSrc=s;
+      var s=a.createBufferSource(),sg=a.createGain();s.buffer=mus.fileBuf;s.loop=true;
+      s.playbackRate.value=bgmRate();
+      var t0=a.currentTime;sg.gain.setValueAtTime(0,t0);sg.gain.linearRampToValueAtTime(0.85,t0+0.05);
+      s.connect(sg);sg.connect(mus.musG);s.start(0);mus.fileSrc=s;mus.fileG=sg;
     }catch(e){}
     if(mus.state==='tension'){mus.step=0;mus.nextT=a.currentTime+0.05;mus.timer=setInterval(schedMus,40)}
     return;
@@ -1130,8 +1152,7 @@ function setMusicState(st){
   if(st==='hold'){duckMus(.28,.2);if(!mus.fileBuf){/* keep a soft bed */}return}
   duckMus(1,.25);
   if(!mus.unlocked||!mus.on)return;
-  if(prev!==mus.state||!mus.timer&&!mus.fileSrc)restartLoop();
-  else if(mus.fileBuf)restartLoop();
+  restartLoop();
 }
 function schedMus(){
   var a=AC;if(!a||!mus.on||!mus.unlocked)return;
